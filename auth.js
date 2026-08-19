@@ -26,14 +26,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account?.provider !== "github") return true;
 
       try {
-        const { rows } = await pool.query(
+        const { rows: userRows } = await pool.query(
           `INSERT INTO users (github_id, github_username, avatar_url, github_access_token)
            VALUES ($1, $2, $3, $4)
            ON CONFLICT (github_id) DO UPDATE
              SET github_username     = EXCLUDED.github_username,
                  avatar_url          = EXCLUDED.avatar_url,
                  github_access_token = EXCLUDED.github_access_token
-           RETURNING id, project_id, role`,
+           RETURNING id`,
           [
             String(profile.id),
             profile.login,
@@ -42,9 +42,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           ]
         );
 
-        user.dbId = rows[0].id;
-        user.projectId = rows[0].project_id;
-        user.role = rows[0].role;
+        const dbId = userRows[0].id;
+        const { rows: memberRows } = await pool.query(
+          `SELECT project_id, role FROM project_members WHERE user_id = $1 ORDER BY joined_at ASC LIMIT 1`,
+          [dbId]
+        );
+
+        user.dbId = dbId;
+        user.projectId = memberRows[0]?.project_id || null;
+        user.role = memberRows[0]?.role || null;
         user.githubUsername = profile.login;
         user.avatarUrl = profile.avatar_url;
       } catch (err) {

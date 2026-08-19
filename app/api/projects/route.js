@@ -41,7 +41,9 @@ export async function POST(request) {
 
       // Attach the user to the project as leader
       await client.query(
-        `UPDATE users SET project_id = $1, role = 'leader' WHERE id = $2`,
+        `INSERT INTO project_members (project_id, user_id, role)
+         VALUES ($1, $2, 'leader')
+         ON CONFLICT (project_id, user_id) DO UPDATE SET role = 'leader'`,
         [project.id, session.user.dbId]
       );
 

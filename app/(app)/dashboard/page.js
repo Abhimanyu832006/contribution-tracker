@@ -18,13 +18,14 @@ export default async function DashboardPage() {
        u.id,
        u.github_username,
        u.avatar_url,
-       u.role,
+       pm.role,
        COALESCE(SUM(c.time_estimate), 0) AS total_hours,
        COUNT(c.id) AS contribution_count
-     FROM users u
-     LEFT JOIN contributions c ON c.user_id = u.id
-     WHERE u.project_id = $1
-     GROUP BY u.id
+     FROM project_members pm
+     JOIN users u ON u.id = pm.user_id
+     LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
+     WHERE pm.project_id = $1
+     GROUP BY u.id, pm.role
      ORDER BY total_hours DESC`,
     [projectId]
   );
@@ -43,7 +44,7 @@ export default async function DashboardPage() {
        u.avatar_url
      FROM contributions c
      JOIN users u ON u.id = c.user_id
-     WHERE u.project_id = $1
+     WHERE c.project_id = $1
      ORDER BY c.created_at DESC
      LIMIT 10`,
     [projectId]

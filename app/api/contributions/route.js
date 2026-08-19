@@ -30,7 +30,7 @@ export async function GET() {
          c.created_at
        FROM contributions c
        JOIN users u ON u.id = c.user_id
-       WHERE u.project_id = $1
+       WHERE c.project_id = $1
        ORDER BY c.created_at DESC`,
       [session.user.projectId]
     );
@@ -45,7 +45,7 @@ export async function GET() {
   }
 }
 
-// POST /api/contributions — user_id comes from session, not request body
+// POST /api/contributions — project_id & user_id come from session, not request body
 export async function POST(request) {
   try {
     const session = await auth();
@@ -72,10 +72,10 @@ export async function POST(request) {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO contributions (user_id, category, description, time_estimate)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO contributions (project_id, user_id, category, description, time_estimate)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [session.user.dbId, category, description, time_estimate]
+      [session.user.projectId, session.user.dbId, category, description, time_estimate]
     );
 
     return NextResponse.json(rows[0], { status: 201 });

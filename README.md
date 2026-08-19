@@ -84,9 +84,10 @@ Initialize the database schema using [schema.sql](file:///c:/Users/shive/OneDriv
 
 1. Open your database dashboard (e.g., Neon SQL Editor, Supabase SQL Editor, or `psql`).
 2. Run the queries inside `schema.sql` to create the tables:
-   - `projects`: Stores project spaces and invite codes
-   - `users`: Stores user profiles, roles (`leader` / `member`), and linked projects
-   - `contributions`: Stores tracked contribution logs, categories, time estimates, and status
+   - `users`: Stores user profiles and GitHub credentials (global identity)
+   - `projects`: Stores project spaces, invite codes, and project creator
+   - `project_members`: Join table managing multi-project memberships and roles (`leader` / `member`)
+   - `contributions`: Stores tracked contribution logs, scoped directly to `project_id` and `user_id`
 
 ---
 

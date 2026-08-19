@@ -33,22 +33,24 @@ export async function POST(request) {
 
     const projectId = projectRows[0].id;
 
-    // Check if user already belongs to a project
-    const { rows: userRows } = await pool.query(
-      "SELECT project_id FROM users WHERE id = $1",
-      [session.user.dbId]
+    // Check if user is already a member of this project
+    const { rows: existingMember } = await pool.query(
+      "SELECT id FROM project_members WHERE project_id = $1 AND user_id = $2",
+      [projectId, session.user.dbId]
     );
 
-    if (userRows[0]?.project_id) {
+    if (existingMember.length > 0) {
       return NextResponse.json(
-        { error: "You already belong to a project." },
+        { error: "You are already a member of this project." },
         { status: 409 }
       );
     }
 
     // Attach user to the project as member
     await pool.query(
-      `UPDATE users SET project_id = $1, role = 'member' WHERE id = $2`,
+      `INSERT INTO project_members (project_id, user_id, role)
+       VALUES ($1, $2, 'member')
+       ON CONFLICT (project_id, user_id) DO NOTHING`,
       [projectId, session.user.dbId]
     );
 
