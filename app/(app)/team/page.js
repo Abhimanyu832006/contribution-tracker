@@ -56,7 +56,12 @@ export default async function TeamPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
           {members.map((m) => (
-            <TeamMemberCard key={m.id} member={m} />
+            <TeamMemberCard
+              key={m.id}
+              member={m}
+              isLeader={session.user.role === "leader"}
+              currentUserId={session.user.dbId}
+            />
           ))}
         </div>
       </section>
