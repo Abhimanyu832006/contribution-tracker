@@ -1,3 +1,10 @@
+/**
+ * Node.js Runtime Auth.js initialization.
+ *
+ * This file handles full authentication logic (GitHub OAuth provider, PostgreSQL
+ * user upsert on signIn, and session creation). It runs in the Node runtime where
+ * database drivers like 'pg' are fully supported (unlike Edge middleware).
+ */
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import pool from "@/lib/db";

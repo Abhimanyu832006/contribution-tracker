@@ -1,8 +1,7 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import Card from "@/components/ui/Card";
-import Avatar from "@/components/ui/Avatar";
-import Badge from "@/components/ui/Badge";
+import TeamMemberCard from "@/components/TeamMemberCard";
 import ContributionList from "@/components/ContributionList";
 
 export const metadata = {
@@ -108,37 +107,7 @@ export default async function DashboardPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
           {members.map((m) => (
-            <Card key={m.id} hover>
-              <div className="flex items-center gap-3">
-                <Avatar
-                  src={m.avatar_url}
-                  name={m.github_username}
-                  size="lg"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
-                      {m.github_username}
-                    </p>
-                    <Badge
-                      variant={m.role === "leader" ? "indigo" : "default"}
-                    >
-                      {m.role === "leader" ? "Leader" : "Member"}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {Number(m.contribution_count)} contribution
-                    {Number(m.contribution_count) !== 1 ? "s" : ""}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-xl font-bold text-indigo-600">
-                    {Number(m.total_hours).toFixed(1)}
-                  </p>
-                  <p className="text-xs text-gray-400">hrs</p>
-                </div>
-              </div>
-            </Card>
+            <TeamMemberCard key={m.id} member={m} />
           ))}
         </div>
       </section>

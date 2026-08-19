@@ -27,12 +27,4 @@ export default function Badge({
   );
 }
 
-/** Map contribution categories to badge variants */
-export const CATEGORY_BADGE_MAP = {
-  Research:      "blue",
-  Design:        "purple",
-  Documentation: "yellow",
-  Testing:       "green",
-  Meeting:       "orange",
-  Other:         "default",
-};
+export { CATEGORY_BADGE_MAP } from "@/lib/constants";

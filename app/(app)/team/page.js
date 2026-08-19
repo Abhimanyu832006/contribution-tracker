@@ -1,7 +1,7 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import TeamMemberCard from "@/components/TeamMemberCard";
-import InviteCodeCard from "./InviteCodeCard";
+import InviteCodeCard from "@/components/InviteCodeCard";
 
 export const metadata = {
   title: "Team — Contribution Tracker",

@@ -1,6 +1,6 @@
 import { requireAuth } from "@/lib/auth";
 import pool from "@/lib/db";
-import AppShell from "./AppShell";
+import Sidebar from "@/components/Sidebar";
 
 export default async function AppLayout({ children }) {
   const session = await requireAuth();
@@ -19,15 +19,22 @@ export default async function AppLayout({ children }) {
   if (rows.length > 0) projectName = rows[0].name;
 
   return (
-    <AppShell
-      user={{
-        githubUsername: session.user.githubUsername,
-        avatarUrl: session.user.avatarUrl,
-        role: session.user.role,
-      }}
-      projectName={projectName}
-    >
-      {children}
-    </AppShell>
+    <div className="flex min-h-screen bg-[#fafafa]">
+      <Sidebar
+        user={{
+          githubUsername: session.user.githubUsername,
+          avatarUrl: session.user.avatarUrl,
+          role: session.user.role,
+        }}
+        projectName={projectName}
+      />
+
+      {/* Main content area — offset by sidebar width */}
+      <main className="flex-1 ml-64">
+        <div className="max-w-5xl mx-auto px-8 py-8">
+          {children}
+        </div>
+      </main>
+    </div>
   );
 }

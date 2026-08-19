@@ -1,3 +1,11 @@
+/**
+ * Edge-compatible Auth.js configuration.
+ *
+ * NOTE: Next.js middleware runs in the Edge Runtime, which cannot run Node-only
+ * packages like 'pg' (PostgreSQL). We keep this config dependency-free so
+ * middleware.js can use it for route protection without crashing.
+ * Node-only callbacks (like database upserts) live in auth.js.
+ */
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
   pages: {

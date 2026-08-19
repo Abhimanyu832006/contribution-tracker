@@ -4,15 +4,7 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
-
-const CATEGORIES = [
-  "Research",
-  "Design",
-  "Documentation",
-  "Testing",
-  "Meeting",
-  "Other",
-];
+import { CATEGORY_NAMES } from "@/lib/constants";
 
 export default function ContributionForm({ onSuccess }) {
   const [form, setForm] = useState({
@@ -98,7 +90,7 @@ export default function ContributionForm({ onSuccess }) {
           onChange={handleChange}
         >
           <option value="">Select category…</option>
-          {CATEGORIES.map((c) => (
+          {CATEGORY_NAMES.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
