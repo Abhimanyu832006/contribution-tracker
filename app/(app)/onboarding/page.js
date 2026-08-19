@@ -34,8 +34,6 @@ export default function OnboardingPage() {
         throw new Error(data.error || "Failed to create project.");
       }
       const data = await res.json();
-      // Set active_project_id cookie so server components immediately scope to new project
-      document.cookie = `active_project_id=${data.project_id}; path=/; max-age=2592000; SameSite=Lax`;
       // Update the session so projectId is available
       await update({ projectId: data.project_id, role: "leader" });
       router.push("/dashboard");
@@ -64,8 +62,6 @@ export default function OnboardingPage() {
         throw new Error(data.error || "Failed to join project.");
       }
       const data = await res.json();
-      // Set active_project_id cookie so server components immediately scope to joined project
-      document.cookie = `active_project_id=${data.project_id}; path=/; max-age=2592000; SameSite=Lax`;
       await update({ projectId: data.project_id, role: "member" });
       router.push("/dashboard");
     } catch (err) {

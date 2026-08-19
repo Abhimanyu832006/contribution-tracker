@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 // POST /api/projects/join — join a project via invite code
@@ -53,6 +54,13 @@ export async function POST(request) {
        ON CONFLICT (project_id, user_id) DO NOTHING`,
       [projectId, session.user.dbId]
     );
+
+    const cookieStore = await cookies();
+    cookieStore.set("active_project_id", String(projectId), {
+      path: "/",
+      maxAge: 2592000,
+      sameSite: "lax",
+    });
 
     return NextResponse.json({ project_id: projectId }, { status: 200 });
   } catch (err) {

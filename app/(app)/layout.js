@@ -1,4 +1,4 @@
-import { requireAuth, getActiveMembership } from "@/lib/auth";
+import { requireAuth, getActiveMembership, getUserProjects } from "@/lib/auth";
 import Sidebar from "@/components/Sidebar";
 
 export default async function AppLayout({ children }) {
@@ -10,6 +10,8 @@ export default async function AppLayout({ children }) {
     return <>{children}</>;
   }
 
+  const projects = await getUserProjects(session.user.dbId);
+
   return (
     <div className="flex min-h-screen bg-[#fafafa]">
       <Sidebar
@@ -19,6 +21,8 @@ export default async function AppLayout({ children }) {
           role: membership.role,
         }}
         projectName={membership.name}
+        activeProjectId={membership.project_id}
+        projects={projects}
       />
 
       {/* Main content area — offset by sidebar width */}

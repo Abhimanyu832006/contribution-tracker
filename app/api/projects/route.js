@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
@@ -48,6 +49,13 @@ export async function POST(request) {
       );
 
       await client.query("COMMIT");
+
+      const cookieStore = await cookies();
+      cookieStore.set("active_project_id", String(project.id), {
+        path: "/",
+        maxAge: 2592000,
+        sameSite: "lax",
+      });
 
       return NextResponse.json(
         {
