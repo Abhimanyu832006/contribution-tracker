@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSession, getActiveMembership } from "@/lib/auth";
 import LandingContent from "./LandingContent";
 
 export const metadata = {
@@ -13,7 +13,8 @@ export default async function LandingPage() {
 
   // If already signed in, redirect to dashboard or onboarding
   if (session?.user) {
-    if (session.user.projectId) {
+    const membership = await getActiveMembership(session.user.dbId);
+    if (membership) {
       redirect("/dashboard");
     } else {
       redirect("/onboarding");

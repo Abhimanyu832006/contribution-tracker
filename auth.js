@@ -44,13 +44,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const dbId = userRows[0].id;
         const { rows: memberRows } = await pool.query(
-          `SELECT project_id, role FROM project_members WHERE user_id = $1 ORDER BY joined_at ASC LIMIT 1`,
+          `SELECT project_id, role FROM project_members WHERE user_id = $1 ORDER BY joined_at DESC LIMIT 1`,
           [dbId]
         );
 
         user.dbId = dbId;
         user.projectId = memberRows[0]?.project_id || null;
         user.role = memberRows[0]?.role || null;
+        user.hasProjects = memberRows.length > 0;
         user.githubUsername = profile.login;
         user.avatarUrl = profile.avatar_url;
       } catch (err) {

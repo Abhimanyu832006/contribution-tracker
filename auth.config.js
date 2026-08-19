@@ -28,8 +28,8 @@ export const authConfig = {
       // Protected routes require user to be logged in
       if (!isLoggedIn) return false;
 
-      // Authenticated user with no project_id: redirect to /onboarding for all app routes except /onboarding
-      const hasProject = !!auth?.user?.projectId;
+      // Authenticated user with no project memberships: redirect to /onboarding for all app routes except /onboarding
+      const hasProject = !!auth?.user?.hasProjects || !!auth?.user?.projectId;
       const isOnboarding = pathname === "/onboarding";
       const isApi = pathname.startsWith("/api");
 
@@ -44,6 +44,7 @@ export const authConfig = {
         token.dbId = user.dbId;
         token.projectId = user.projectId;
         token.role = user.role;
+        token.hasProjects = user.hasProjects;
         token.githubUsername = user.githubUsername;
         token.avatarUrl = user.avatarUrl;
       }
@@ -51,6 +52,7 @@ export const authConfig = {
       if (trigger === "update" && session) {
         token.projectId = session.projectId ?? token.projectId;
         token.role = session.role ?? token.role;
+        if (session.projectId) token.hasProjects = true;
       }
 
       return token;
@@ -59,6 +61,7 @@ export const authConfig = {
       session.user.dbId = token.dbId;
       session.user.projectId = token.projectId;
       session.user.role = token.role;
+      session.user.hasProjects = token.hasProjects;
       session.user.githubUsername = token.githubUsername;
       session.user.avatarUrl = token.avatarUrl;
       return session;

@@ -1,22 +1,14 @@
-import { requireAuth } from "@/lib/auth";
-import pool from "@/lib/db";
+import { requireAuth, getActiveMembership } from "@/lib/auth";
 import Sidebar from "@/components/Sidebar";
 
 export default async function AppLayout({ children }) {
   const session = await requireAuth();
+  const membership = await getActiveMembership(session.user.dbId);
 
-  // If user has no project, render children directly without the app shell sidebar (e.g. for /onboarding)
-  if (!session.user.projectId) {
+  // If user has no active project membership (e.g. on /onboarding), render children directly without sidebar
+  if (!membership) {
     return <>{children}</>;
   }
-
-  // Fetch project name if user has a project
-  let projectName = null;
-  const { rows } = await pool.query(
-    "SELECT name FROM projects WHERE id = $1",
-    [session.user.projectId]
-  );
-  if (rows.length > 0) projectName = rows[0].name;
 
   return (
     <div className="flex min-h-screen bg-[#fafafa]">
@@ -24,9 +16,9 @@ export default async function AppLayout({ children }) {
         user={{
           githubUsername: session.user.githubUsername,
           avatarUrl: session.user.avatarUrl,
-          role: session.user.role,
+          role: membership.role,
         }}
-        projectName={projectName}
+        projectName={membership.name}
       />
 
       {/* Main content area — offset by sidebar width */}

@@ -1,8 +1,9 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
+import { getActiveMembership } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-// GET /api/contributions — scoped to the logged-in user's project
+// GET /api/contributions — scoped to the active project
 export async function GET() {
   try {
     const session = await auth();
@@ -10,7 +11,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!session.user.projectId) {
+    const membership = await getActiveMembership(session.user.dbId);
+    if (!membership) {
       return NextResponse.json(
         { error: "Forbidden: You must belong to a project to view contributions." },
         { status: 403 }
@@ -32,7 +34,7 @@ export async function GET() {
        JOIN users u ON u.id = c.user_id
        WHERE c.project_id = $1
        ORDER BY c.created_at DESC`,
-      [session.user.projectId]
+      [membership.project_id]
     );
 
     return NextResponse.json(rows);
@@ -45,7 +47,7 @@ export async function GET() {
   }
 }
 
-// POST /api/contributions — project_id & user_id come from session, not request body
+// POST /api/contributions — project_id & user_id come from active membership, not request body
 export async function POST(request) {
   try {
     const session = await auth();
@@ -53,8 +55,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Explicitly verify session.user.projectId exists before insert
-    if (!session.user.projectId) {
+    const membership = await getActiveMembership(session.user.dbId);
+    if (!membership) {
       return NextResponse.json(
         { error: "Forbidden: You must belong to a project to log contributions." },
         { status: 403 }
@@ -75,7 +77,7 @@ export async function POST(request) {
       `INSERT INTO contributions (project_id, user_id, category, description, time_estimate)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [session.user.projectId, session.user.dbId, category, description, time_estimate]
+      [membership.project_id, session.user.dbId, category, description, time_estimate]
     );
 
     return NextResponse.json(rows[0], { status: 201 });
