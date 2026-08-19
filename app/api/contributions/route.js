@@ -1,40 +1,72 @@
-import pool from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { auth } from "@/auth";
+import pool from "@/lib/db";
+import { NextResponse } from "next/server";
 
-// GET /api/contributions – all contributions joined with user name
+// GET /api/contributions — scoped to the logged-in user's project
 export async function GET() {
   try {
-    const { rows } = await pool.query(`
-      SELECT
-        c.id,
-        u.name        AS user_name,
-        c.category,
-        c.description,
-        c.time_estimate,
-        c.status,
-        c.source,
-        c.created_at
-      FROM contributions c
-      JOIN users u ON u.id = c.user_id
-      ORDER BY c.created_at DESC
-    `);
+    const session = await auth();
+    if (!session?.user?.dbId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!session.user.projectId) {
+      return NextResponse.json(
+        { error: "Forbidden: You must belong to a project to view contributions." },
+        { status: 403 }
+      );
+    }
+
+    const { rows } = await pool.query(
+      `SELECT
+         c.id,
+         u.github_username,
+         u.avatar_url,
+         c.category,
+         c.description,
+         c.time_estimate,
+         c.status,
+         c.source,
+         c.created_at
+       FROM contributions c
+       JOIN users u ON u.id = c.user_id
+       WHERE u.project_id = $1
+       ORDER BY c.created_at DESC`,
+      [session.user.projectId]
+    );
+
     return NextResponse.json(rows);
   } catch (err) {
-    console.error('GET /api/contributions error:', err);
-    return NextResponse.json({ error: 'Failed to fetch contributions' }, { status: 500 });
+    console.error("GET /api/contributions error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch contributions" },
+      { status: 500 }
+    );
   }
 }
 
-// POST /api/contributions – insert a new contribution
+// POST /api/contributions — user_id comes from session, not request body
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { user_id, category, description, time_estimate } = body;
+    const session = await auth();
+    if (!session?.user?.dbId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    // Validate required fields
-    if (!user_id || !category || !description || time_estimate == null) {
+    // Explicitly verify session.user.projectId exists before insert
+    if (!session.user.projectId) {
       return NextResponse.json(
-        { error: 'user_id, category, description, and time_estimate are required.' },
+        { error: "Forbidden: You must belong to a project to log contributions." },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { category, description, time_estimate } = body;
+
+    if (!category || !description || time_estimate == null) {
+      return NextResponse.json(
+        { error: "category, description, and time_estimate are required." },
         { status: 400 }
       );
     }
@@ -43,12 +75,15 @@ export async function POST(request) {
       `INSERT INTO contributions (user_id, category, description, time_estimate)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [user_id, category, description, time_estimate]
+      [session.user.dbId, category, description, time_estimate]
     );
 
     return NextResponse.json(rows[0], { status: 201 });
   } catch (err) {
-    console.error('POST /api/contributions error:', err);
-    return NextResponse.json({ error: 'Failed to create contribution' }, { status: 500 });
+    console.error("POST /api/contributions error:", err);
+    return NextResponse.json(
+      { error: "Failed to create contribution" },
+      { status: 500 }
+    );
   }
 }

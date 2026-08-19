@@ -1,0 +1,51 @@
+import Image from "next/image";
+
+/**
+ * Avatar — circular image with fallback initials.
+ * Sizes: sm (32px), md (40px), lg (56px), xl (72px)
+ */
+export default function Avatar({
+  src,
+  alt = "",
+  name = "",
+  size = "md",
+  className = "",
+}) {
+  const sizes = {
+    sm: "w-8 h-8 text-xs",
+    md: "w-10 h-10 text-sm",
+    lg: "w-14 h-14 text-lg",
+    xl: "w-[72px] h-[72px] text-xl",
+  };
+
+  const pxSizes = { sm: 32, md: 40, lg: 56, xl: 72 };
+
+  const initials = name
+    ? name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "?";
+
+  if (src) {
+    return (
+      <Image
+        src={src}
+        alt={alt || name}
+        width={pxSizes[size]}
+        height={pxSizes[size]}
+        className={`rounded-full object-cover ring-2 ring-white shadow-sm ${sizes[size]} ${className}`}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`rounded-full bg-indigo-100 text-indigo-600 font-semibold flex items-center justify-center ring-2 ring-white shadow-sm ${sizes[size]} ${className}`}
+    >
+      {initials}
+    </div>
+  );
+}
