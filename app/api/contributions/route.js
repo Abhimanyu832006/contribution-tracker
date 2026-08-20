@@ -3,8 +3,9 @@ import pool from "@/lib/db";
 import { getActiveMembership } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-// GET /api/contributions — scoped to the active project
-export async function GET() {
+// GET /api/contributions — scoped to the active project.
+// Add ?mine=1 to get only the current user's contributions (used by Contributions page "Mine" tab).
+export async function GET(request) {
   try {
     const session = await auth();
     if (!session?.user?.dbId) {
@@ -18,6 +19,9 @@ export async function GET() {
         { status: 403 }
       );
     }
+
+    const { searchParams } = new URL(request.url);
+    const mineOnly = searchParams.get("mine") === "1";
 
     const { rows } = await pool.query(
       `SELECT
@@ -33,8 +37,11 @@ export async function GET() {
        FROM contributions c
        JOIN users u ON u.id = c.user_id
        WHERE c.project_id = $1
+         ${mineOnly ? "AND c.user_id = $2" : ""}
        ORDER BY c.created_at DESC`,
-      [membership.project_id]
+      mineOnly
+        ? [membership.project_id, session.user.dbId]
+        : [membership.project_id]
     );
 
     return NextResponse.json(rows);

@@ -28,6 +28,8 @@ CREATE TABLE projects (
   name        TEXT NOT NULL,
   invite_code TEXT UNIQUE NOT NULL,
   leader_id   INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  repo_owner  TEXT,
+  repo_name   TEXT,
   created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -51,8 +53,13 @@ CREATE TABLE contributions (
   description   TEXT    NOT NULL,
   time_estimate REAL    NOT NULL,
   status        TEXT    NOT NULL DEFAULT 'pending',
+  commit_sha    TEXT,
+  commit_url    TEXT,
   created_at    TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- Unique index to prevent duplicate commit syncs for a project
+CREATE UNIQUE INDEX uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
 
 -- ============================================================
 -- SECTION B: In-Place Migration Script (v2 -> v3)
@@ -96,3 +103,21 @@ ALTER TABLE contributions ALTER COLUMN project_id SET NOT NULL;
 ALTER TABLE users DROP COLUMN IF EXISTS project_id;
 ALTER TABLE users DROP COLUMN IF EXISTS role;
 */
+
+-- ============================================================
+-- SECTION C: In-Place Migration Script (v3 -> v4: GitHub Integration)
+-- Run these statements manually on your local Postgres database
+-- to add support for the GitHub integration schema changes.
+-- ============================================================
+
+-- 1. Add repository tracking columns to projects table
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS repo_owner TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS repo_name TEXT;
+
+-- 2. Add commit tracking columns to contributions table
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS commit_sha TEXT;
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS commit_url TEXT;
+
+-- 3. Create unique index to prevent duplicate commit logs per project
+CREATE UNIQUE INDEX IF NOT EXISTS uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
+

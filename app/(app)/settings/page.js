@@ -1,9 +1,13 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
+import InviteCodeCard from "@/components/InviteCodeCard";
+import TeamMemberCard from "@/components/TeamMemberCard";
 
 export const metadata = {
-  title: "Settings — Contribution Tracker",
+  title: "Project Settings — Contribution Tracker",
 };
 
 export default async function SettingsPage() {
@@ -17,31 +21,118 @@ export default async function SettingsPage() {
   );
   const project = projects[0];
 
-  // Fetch member count
-  const { rows: memberCountRows } = await pool.query(
-    "SELECT COUNT(*) AS count FROM project_members WHERE project_id = $1",
+  // Fetch team members with hours (same query as Team page)
+  const { rows: members } = await pool.query(
+    `SELECT
+       u.id,
+       u.github_username,
+       u.avatar_url,
+       pm.role,
+       COALESCE(SUM(c.time_estimate), 0) AS total_hours
+     FROM project_members pm
+     JOIN users u ON u.id = pm.user_id
+     LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
+     WHERE pm.project_id = $1
+     GROUP BY u.id, pm.role
+     ORDER BY pm.role DESC, total_hours DESC`,
     [projectId]
   );
-  const memberCount = Number(memberCountRows[0]?.count || 1);
+
+  const memberCount = members.length;
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-10 animate-fade-in">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Project Settings</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Manage workspace details and lifecycle for {project?.name}
+          Manage workspace details, team membership, and integrations for{" "}
+          {project?.name}
         </p>
       </div>
 
-      {project && (
-        <ProjectSettingsCard
-          project={project}
-          role={session.user.role}
-          memberCount={memberCount}
-        />
-      )}
+      {/* ── GitHub Integration (placeholder) ───────────────────────── */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            GitHub Integration
+          </h2>
+          <Badge variant="yellow">Coming soon</Badge>
+        </div>
+
+        <Card className="space-y-4">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Repository
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Link your GitHub repository to automatically pull commits and
+              pull requests as contributions.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label
+              htmlFor="github-repo"
+              className="text-xs font-medium text-gray-700"
+            >
+              GitHub Repository URL
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                id="github-repo"
+                type="text"
+                disabled
+                placeholder="https://github.com/your-org/your-repo"
+                className="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-400 placeholder:text-gray-300 cursor-not-allowed focus:outline-none"
+              />
+              <Badge variant="yellow">Not yet available</Badge>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* ── Team Management ─────────────────────────────────────────── */}
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Team Management
+        </h2>
+
+        {/* Invite code */}
+        <InviteCodeCard inviteCode={project?.invite_code} />
+
+        {/* Member roster */}
+        <div>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            Members ({memberCount})
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
+            {members.map((m) => (
+              <TeamMemberCard
+                key={m.id}
+                member={m}
+                isLeader={session.user.role === "leader"}
+                currentUserId={session.user.dbId}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Project lifecycle (leave / delete) ──────────────────────── */}
+      <section className="space-y-4">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Project Lifecycle
+        </h2>
+
+        {project && (
+          <ProjectSettingsCard
+            project={project}
+            role={session.user.role}
+            memberCount={memberCount}
+          />
+        )}
+      </section>
     </div>
   );
 }
-
