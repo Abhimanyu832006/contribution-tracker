@@ -57,3 +57,44 @@ export async function POST(request) {
     );
   }
 }
+
+// GET /api/projects/active — get active project details (including repo linking status)
+export async function GET() {
+  try {
+    const session = await auth();
+    if (!session?.user?.dbId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { getActiveMembership } = await import("@/lib/auth");
+    const membership = await getActiveMembership(session.user.dbId);
+    if (!membership) {
+      return NextResponse.json({ activeProject: null });
+    }
+
+    // Fetch projects table details
+    const { rows } = await pool.query(
+      "SELECT repo_owner, repo_name FROM projects WHERE id = $1",
+      [membership.project_id]
+    );
+    const details = rows[0] || {};
+
+    return NextResponse.json({
+      activeProject: {
+        id: membership.project_id,
+        name: membership.name,
+        inviteCode: membership.invite_code,
+        role: membership.role,
+        repoOwner: details.repo_owner,
+        repoName: details.repo_name,
+      }
+    });
+  } catch (err) {
+    console.error("GET /api/projects/active error:", err);
+    return NextResponse.json(
+      { error: "Failed to get active project details" },
+      { status: 500 }
+    );
+  }
+}
+

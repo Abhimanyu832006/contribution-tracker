@@ -1,7 +1,5 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
-import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import InviteCodeCard from "@/components/InviteCodeCard";
 import TeamMemberCard from "@/components/TeamMemberCard";
