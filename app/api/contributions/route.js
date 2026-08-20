@@ -33,6 +33,7 @@ export async function GET(request) {
          c.time_estimate,
          c.status,
          c.source,
+         c.commit_url,
          c.created_at
        FROM contributions c
        JOIN users u ON u.id = c.user_id

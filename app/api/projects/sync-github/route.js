@@ -162,7 +162,7 @@ export async function POST() {
           "github",
           "Code",
           description.substring(0, 255),
-          0.5, // 0.5 hours default per commit
+          0.0, // 0.0 hours default per commit (no time taken)
           "approved", // Auto-approved for verified git source
           commit.sha,
           commitUrl,
