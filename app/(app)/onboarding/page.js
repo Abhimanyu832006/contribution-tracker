@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -231,6 +231,15 @@ export default function OnboardingPage() {
             </div>
           </Card>
         )}
+
+        <div className="mt-8 text-center animate-fade-in">
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors"
+          >
+            Sign out of GitHub / Reconnect account
+          </button>
+        </div>
       </div>
     </div>
   );

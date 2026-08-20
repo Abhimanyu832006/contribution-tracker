@@ -5,6 +5,7 @@ import Badge from "@/components/ui/Badge";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import InviteCodeCard from "@/components/InviteCodeCard";
 import TeamMemberCard from "@/components/TeamMemberCard";
+import GitHubRepoForm from "@/components/GitHubRepoForm";
 
 export const metadata = {
   title: "Project Settings — Contribution Tracker",
@@ -16,7 +17,7 @@ export default async function SettingsPage() {
 
   // Fetch project details
   const { rows: projects } = await pool.query(
-    "SELECT id, name, invite_code, created_at FROM projects WHERE id = $1",
+    "SELECT id, name, invite_code, repo_owner, repo_name, created_at FROM projects WHERE id = $1",
     [projectId]
   );
   const project = projects[0];
@@ -51,46 +52,11 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      {/* ── GitHub Integration (placeholder) ───────────────────────── */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            GitHub Integration
-          </h2>
-          <Badge variant="yellow">Coming soon</Badge>
-        </div>
-
-        <Card className="space-y-4">
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900">
-              Repository
-            </h3>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Link your GitHub repository to automatically pull commits and
-              pull requests as contributions.
-            </p>
-          </div>
-
-          <div className="space-y-1.5">
-            <label
-              htmlFor="github-repo"
-              className="text-xs font-medium text-gray-700"
-            >
-              GitHub Repository URL
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                id="github-repo"
-                type="text"
-                disabled
-                placeholder="https://github.com/your-org/your-repo"
-                className="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-400 placeholder:text-gray-300 cursor-not-allowed focus:outline-none"
-              />
-              <Badge variant="yellow">Not yet available</Badge>
-            </div>
-          </div>
-        </Card>
-      </section>
+      {/* ── GitHub Integration ────────────────────────────────────── */}
+      <GitHubRepoForm
+        initialRepo={project?.repo_owner && project?.repo_name ? `${project.repo_owner}/${project.repo_name}` : ""}
+        isLeader={session.user.role === "leader"}
+      />
 
       {/* ── Team Management ─────────────────────────────────────────── */}
       <section className="space-y-4">

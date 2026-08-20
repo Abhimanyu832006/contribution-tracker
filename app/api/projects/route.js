@@ -132,3 +132,113 @@ export async function DELETE() {
     );
   }
 }
+
+// PATCH /api/projects — update active project settings (leader only)
+export async function PATCH(request) {
+  try {
+    const session = await auth();
+    if (!session?.user?.dbId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const membership = await getActiveMembership(session.user.dbId);
+    if (!membership) {
+      return NextResponse.json(
+        { error: "No active project found." },
+        { status: 404 }
+      );
+    }
+
+    if (membership.role !== "leader") {
+      return NextResponse.json(
+        { error: "Forbidden: Only the project leader can modify settings." },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { repo } = body; // expect "owner/name" or empty/null
+
+    let repoOwner = null;
+    let repoName = null;
+
+    if (repo && repo.trim() !== "") {
+      const trimmed = repo.trim();
+      const match = trimmed.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
+      if (!match) {
+        return NextResponse.json(
+          { error: "Invalid repository format. Please use 'owner/name' (e.g. 'torvalds/linux')." },
+          { status: 400 }
+        );
+      }
+      repoOwner = match[1];
+      repoName = match[2];
+
+      // Fetch the leader's github_access_token
+      const { rows: userRows } = await pool.query(
+        "SELECT github_access_token FROM users WHERE id = $1",
+        [session.user.dbId]
+      );
+      const token = userRows[0]?.github_access_token;
+      if (!token) {
+        return NextResponse.json(
+          { error: "Your GitHub account does not have a valid access token. Please sign in again." },
+          { status: 400 }
+        );
+      }
+
+      // Call GitHub API to validate the repo exists and is accessible
+      try {
+        const ghRes = await fetch(
+          `https://api.github.com/repos/${repoOwner}/${repoName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/vnd.github+json",
+              "User-Agent": "Nextjs-Contribution-Tracker",
+            },
+          }
+        );
+
+        if (!ghRes.ok) {
+          if (ghRes.status === 404) {
+            return NextResponse.json(
+              { error: `Repository '${trimmed}' not found or not accessible under your GitHub account.` },
+              { status: 404 }
+            );
+          }
+          const ghErr = await ghRes.json().catch(() => ({}));
+          return NextResponse.json(
+            { error: ghErr.message || `GitHub returned error status ${ghRes.status}` },
+            { status: 400 }
+          );
+        }
+      } catch (err) {
+        console.error("GitHub verification request failed:", err);
+        return NextResponse.json(
+          { error: "Failed to connect to GitHub. Please check your internet connection and try again." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Update the database
+    await pool.query(
+      "UPDATE projects SET repo_owner = $1, repo_name = $2 WHERE id = $3",
+      [repoOwner, repoName, membership.project_id]
+    );
+
+    return NextResponse.json({
+      success: true,
+      repo_owner: repoOwner,
+      repo_name: repoName,
+    });
+  } catch (err) {
+    console.error("PATCH /api/projects error:", err);
+    return NextResponse.json(
+      { error: "Failed to update project settings" },
+      { status: 500 }
+    );
+  }
+}
+
