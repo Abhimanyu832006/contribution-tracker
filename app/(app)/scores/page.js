@@ -47,10 +47,12 @@ export default async function ScoresPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rule-strong-b pb-5">
-        <p className="label-mono mb-2">REPORTS</p>
-        <h1 className="font-serif text-4xl sm:text-5xl leading-none">{projectName}</h1>
-        <p className="text-sm text-[#55503f] mt-3 max-w-xl">
+      <div>
+        <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-2">Reports</p>
+        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
+          {projectName}
+        </h1>
+        <p className="text-sm text-[#55503f] mt-4 max-w-xl">
           Per-member breakdown computed directly from recorded contributions and peer
           verification — export as CSV to share or archive.
         </p>
@@ -58,7 +60,7 @@ export default async function ScoresPage() {
 
       {members.length === 0 || teamTotalContributions === 0 ? (
         <Card className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm text-[#96907a]">
+          <p className="text-sm text-[#928c78]">
             No contributions recorded yet — reports will populate automatically once your
             team starts logging work.
           </p>

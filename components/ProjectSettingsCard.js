@@ -90,7 +90,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
+        <div className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-3">
           {error}
         </div>
       )}
@@ -163,9 +163,9 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
       )}
 
       {isLeader && (
-        <Card className="border-[#9c1f1f] space-y-4">
+        <Card accent="flagged" className="space-y-4">
           <div>
-            <p className="label-mono !text-[#9c1f1f]">DANGER ZONE</p>
+            <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#e11d2e]">Danger zone</p>
             <p className="text-xs text-[#55503f] mt-1.5">
               Permanently delete this project along with all logged contributions and team memberships. This action cannot be undone.
             </p>
@@ -182,10 +182,10 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
 
       {/* Delete Project Confirmation Modal */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1a15]/50 p-4">
-          <div className="w-full max-w-md rounded-none bg-[#faf7f0] border border-[#9c1f1f] p-6">
-            <p className="label-mono !text-[#9c1f1f] mb-2">DELETE PROJECT</p>
-            <h3 className="font-serif text-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0e0d0b]/60 p-4">
+          <div className="w-full max-w-md rounded-[3px] bg-white border-2 border-[#e11d2e] shadow-[6px_6px_0_0_rgba(225,29,46,0.4)] p-6 animate-scale-in">
+            <p className="font-mono text-xs font-semibold uppercase tracking-wider text-[#e11d2e] mb-2">Delete project</p>
+            <h3 className="font-[family-name:var(--font-poster)] text-2xl">
               &quot;{project.name}&quot;?
             </h3>
             <p className="mt-2 text-sm text-[#55503f]">
@@ -196,7 +196,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
                 type="button"
                 onClick={() => setDeleteModalOpen(false)}
                 disabled={loading}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#1c1a15]"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#0e0d0b]"
               >
                 Cancel
               </button>
@@ -215,10 +215,10 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
 
       {/* Leave Project Confirmation Modal */}
       {leaveModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1a15]/50 p-4">
-          <div className="w-full max-w-md rounded-none bg-[#faf7f0] border border-[#1c1a15] p-6">
-            <p className="label-mono mb-2">LEAVE PROJECT</p>
-            <h3 className="font-serif text-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0e0d0b]/60 p-4">
+          <div className="w-full max-w-md rounded-[3px] bg-white border-2 border-[#0e0d0b] shadow-[6px_6px_0_0_rgba(14,13,11,0.9)] p-6 animate-scale-in">
+            <p className="label-mono mb-2">Leave project</p>
+            <h3 className="font-[family-name:var(--font-poster)] text-2xl">
               &quot;{project.name}&quot;?
             </h3>
             <p className="mt-2 text-sm text-[#55503f]">
@@ -229,7 +229,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
                 type="button"
                 onClick={() => setLeaveModalOpen(false)}
                 disabled={loading}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#1c1a15]"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#0e0d0b]"
               >
                 Cancel
               </button>

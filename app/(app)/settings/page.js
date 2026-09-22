@@ -42,9 +42,9 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-10">
       {/* Page header */}
-      <div className="rule-strong-b pb-5">
-        <p className="label-mono mb-2">PROJECT SETTINGS</p>
-        <h1 className="font-serif text-4xl sm:text-5xl leading-none">
+      <div>
+        <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-2">Project settings</p>
+        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
           {project?.name}
         </h1>
       </div>

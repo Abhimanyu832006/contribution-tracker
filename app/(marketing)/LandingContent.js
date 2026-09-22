@@ -2,132 +2,155 @@
 
 import { signIn } from "next-auth/react";
 
-const CONTRIBUTION_TYPES = [
-  { n: "01", label: "Code", detail: "GitHub commits, synced automatically" },
-  { n: "02", label: "Documentation", detail: "Guides, specs, API references" },
-  { n: "03", label: "Research", detail: "Findings, analysis, requirements" },
-  { n: "04", label: "UI/UX", detail: "Design work, prototypes, flows" },
-  { n: "05", label: "Testing", detail: "QA passes, bug reports" },
-  { n: "06", label: "Planning", detail: "Coordination, presentations, reports" },
+const TYPES = [
+  { label: "Code", color: "#1a3fd6" },
+  { label: "Docs", color: "#ff4713" },
+  { label: "Research", color: "#ff4713" },
+  { label: "UI/UX", color: "#ff4713" },
+  { label: "Testing", color: "#ff4713" },
+  { label: "Planning", color: "#ff4713" },
 ];
 
 export default function LandingContent() {
   return (
-    <main className="min-h-screen bg-[#f2ede3] text-[#1c1a15] flex flex-col">
-      {/* ── Nav — thin rule strip, no floating pill nav ─────────── */}
-      <nav className="border-b border-[#1c1a15] sticky top-0 z-50 bg-[#f2ede3]">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="font-serif text-xl">Contribution Tracker</span>
+    <main className="min-h-screen bg-[#f4f2ec] text-[#0e0d0b] flex flex-col">
+      {/* ── Nav ───────────────────────────────────────────────── */}
+      <nav className="border-b-2 border-[#0e0d0b] sticky top-0 z-50 bg-[#f4f2ec]">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-[#1a3fd6]" />
+            <span className="w-3 h-3 bg-[#ff4713] -ml-1" />
+            <span className="font-[family-name:var(--font-poster)] text-lg ml-2">
+              CONTRIBUTION TRACKER
+            </span>
+          </div>
           <button
             onClick={() => signIn("github")}
-            className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
+            className="font-semibold text-sm px-5 py-2.5 bg-[#0e0d0b] text-[#f4f2ec] rounded-[3px] hover:bg-[#ff4713] transition-colors"
           >
             Sign in with GitHub
           </button>
         </div>
       </nav>
 
-      {/* ── Masthead ──────────────────────────────────────────── */}
-      <section className="border-b border-[#1c1a15]">
-        <div className="max-w-5xl mx-auto px-6 py-16 sm:py-24">
-          <p className="label-mono mb-4">CONTRIBUTION TRACKER — ISSUE NO. 001</p>
-          <h1 className="font-serif text-5xl sm:text-7xl leading-[0.95] max-w-3xl">
-            Who actually did the work?
-          </h1>
-          <p className="mt-6 text-base sm:text-lg text-[#55503f] max-w-xl leading-relaxed">
-            A record of every contribution a team makes — code and otherwise.
-            GitHub commits are one kind of evidence. Documentation, research,
-            design, and testing are others. Contribution Tracker records both,
-            side by side, and lets the team verify each other&apos;s work.
+      {/* ── Hero — huge poster type, overlapping color blocks ───── */}
+      <section className="relative overflow-hidden border-b-2 border-[#0e0d0b]">
+        <div className="max-w-6xl mx-auto px-6 pt-16 pb-20 sm:pt-24 sm:pb-28 relative">
+          {/* Floating color blocks — layered behind the type */}
+          <div className="absolute top-8 right-4 sm:right-12 w-24 h-24 sm:w-40 sm:h-40 bg-[#1a3fd6] rounded-[4px] rotate-6 opacity-90 hidden sm:block" />
+          <div className="absolute top-24 right-24 sm:right-52 w-16 h-16 sm:w-24 sm:h-24 bg-[#eab308] rounded-full opacity-90 hidden sm:block" />
+
+          <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-4">
+            Two sources. One record.
           </p>
-          <div className="mt-10 flex items-center gap-6">
-            <button
-              onClick={() => signIn("github")}
-              className="font-mono uppercase tracking-wider text-sm px-6 py-3.5 bg-[#1c1a15] text-[#f2ede3] hover:bg-[#a4451f] transition-colors"
-            >
-              Get Started with GitHub →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Core distinction — editorial two-column, not feature cards ── */}
-      <section className="border-b border-[#1c1a15]">
-        <div className="max-w-5xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
-          <div>
-            <p className="label-mono mb-3">GITHUB EVIDENCE</p>
-            <p className="font-serif text-3xl leading-tight">
-              Commits sync automatically and verify themselves.
-            </p>
-            <p className="mt-4 text-sm text-[#55503f] leading-relaxed">
-              Link a repository once. Every commit by a team member becomes a
-              contribution entry — author, message, SHA, and link — with no
-              manual entry required.
-            </p>
-          </div>
-          <div className="md:border-l border-[#1c1a15] md:pl-16">
-            <p className="label-mono mb-3">MANUAL EVIDENCE</p>
-            <p className="font-serif text-3xl leading-tight">
-              Everything else is recorded, then verified by peers.
-            </p>
-            <p className="mt-4 text-sm text-[#55503f] leading-relaxed">
-              Documentation, research, design, testing, planning — logged with
-              a category, description, and time estimate. Teammates review and
-              vote to approve or flag, so self-reported work isn&apos;t taken
-              on faith.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Contribution types — numbered editorial list, not icon cards ── */}
-      <section className="border-b border-[#1c1a15]">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <p className="label-mono mb-8">WHAT COUNTS AS A CONTRIBUTION</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-            {CONTRIBUTION_TYPES.map((t) => (
-              <div key={t.n} className="rule-t border-r border-transparent md:border-r-[rgba(28,26,21,0.14)] py-5 pr-6">
-                <p className="label-mono">{t.n}</p>
-                <p className="font-serif text-xl mt-2">{t.label}</p>
-                <p className="text-xs text-[#55503f] mt-1">{t.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How it works — vertical rule timeline ──────────────── */}
-      <section className="border-b border-[#1c1a15]">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <p className="label-mono mb-8">HOW IT WORKS</p>
-          <div className="space-y-0">
-            {[
-              ["Create or join a project", "Start a workspace and invite your team with a code — no email setup."],
-              ["Link a GitHub repository", "Optional. Commits by team members sync in as verifiable contributions."],
-              ["Log the rest manually", "Documentation, research, design, testing — whatever isn't a commit."],
-              ["Peers verify the work", "Teammates approve or flag each entry. Nothing is self-verified."],
-            ].map(([title, desc], i) => (
-              <div key={title} className="flex gap-6 rule-t py-5">
-                <span className="label-mono w-8 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <p className="font-medium">{title}</p>
-                  <p className="text-sm text-[#55503f] mt-1">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Closing CTA ───────────────────────────────────────── */}
-      <section className="flex-1 flex items-center">
-        <div className="max-w-5xl mx-auto px-6 py-16 w-full">
-          <p className="font-serif text-3xl sm:text-4xl max-w-lg leading-tight">
-            Every contribution, on the record.
+          <h1 className="font-[family-name:var(--font-poster)] text-6xl sm:text-8xl leading-[0.82] tracking-tight max-w-4xl">
+            WHO DID
+            <br />
+            <span className="relative inline-block">
+              <span className="relative z-10">THE WORK</span>
+              <span className="absolute inset-x-0 bottom-1 sm:bottom-3 h-4 sm:h-7 bg-[#ff4713] -z-0" />
+            </span>
+            ?
+          </h1>
+          <p className="mt-8 text-lg text-[#3a362a] max-w-xl leading-relaxed">
+            GitHub commits are one kind of evidence. Documentation, research,
+            design, and testing are others. Contribution Tracker records both
+            — and lets the team verify each other&apos;s work.
           </p>
           <button
             onClick={() => signIn("github")}
-            className="mt-8 font-mono uppercase tracking-wider text-sm px-6 py-3.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
+            className="mt-9 inline-flex items-center gap-2 font-semibold text-base px-7 py-4 bg-[#0e0d0b] text-[#f4f2ec] rounded-[3px] hover:bg-[#ff4713] transition-colors shadow-[4px_4px_0_0_rgba(14,13,11,0.3)]"
+          >
+            Get started with GitHub →
+          </button>
+        </div>
+      </section>
+
+      {/* ── Signal vs Work — two solid color panels, side by side ── */}
+      <section className="border-b-2 border-[#0e0d0b] grid grid-cols-1 md:grid-cols-2">
+        <div className="p-10 sm:p-14 bg-[#1a3fd6] text-[#f4f2ec] border-b-2 md:border-b-0 md:border-r-2 border-[#0e0d0b]">
+          <p className="font-mono text-xs uppercase tracking-wider opacity-70 mb-3">Signal</p>
+          <p className="font-[family-name:var(--font-poster)] text-4xl sm:text-5xl leading-[0.9] mb-5">
+            GITHUB
+          </p>
+          <p className="text-base leading-relaxed opacity-90 max-w-sm">
+            Link a repository once. Every commit by a team member becomes a
+            contribution — author, message, SHA, and link — synced
+            automatically, no manual entry.
+          </p>
+        </div>
+        <div className="p-10 sm:p-14 bg-[#ff4713] text-[#0e0d0b]">
+          <p className="font-mono text-xs uppercase tracking-wider opacity-60 mb-3">Work</p>
+          <p className="font-[family-name:var(--font-poster)] text-4xl sm:text-5xl leading-[0.9] mb-5">
+            MANUAL
+          </p>
+          <p className="text-base leading-relaxed opacity-90 max-w-sm">
+            Documentation, research, design, testing, planning — logged with
+            a category, description, and time. Peers review and verify it,
+            so self-reported work isn&apos;t taken on faith.
+          </p>
+        </div>
+      </section>
+
+      {/* ── What counts — dense chip cloud, not a feature grid ──── */}
+      <section className="border-b-2 border-[#0e0d0b] py-14 sm:py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-6">
+            What counts as a contribution
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {TYPES.map((t) => (
+              <span
+                key={t.label}
+                className="font-[family-name:var(--font-poster)] text-xl sm:text-2xl px-5 py-2.5 rounded-[3px] border-2 border-[#0e0d0b]"
+                style={{ backgroundColor: t.color, color: t.color === "#eab308" ? "#0e0d0b" : "#f4f2ec" }}
+              >
+                {t.label}
+              </span>
+            ))}
+            <span className="font-[family-name:var(--font-poster)] text-xl sm:text-2xl px-5 py-2.5 rounded-[3px] border-2 border-dashed border-[#928c78] text-[#928c78]">
+              + more
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── How it works — numbered, poster-scale numerals ──────── */}
+      <section className="border-b-2 border-[#0e0d0b] py-14 sm:py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-8">
+            How it works
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              ["01", "Create or join", "Start a workspace, invite your team with a code."],
+              ["02", "Link GitHub", "Optional — commits sync in as verifiable entries."],
+              ["03", "Log the rest", "Documentation, research, design — whatever isn't a commit."],
+              ["04", "Peers verify", "Teammates approve or flag. Nothing self-verifies."],
+            ].map(([n, title, desc]) => (
+              <div key={n}>
+                <span className="stat-num text-5xl text-[#e8e5db]" style={{ WebkitTextStroke: "2px #0e0d0b" }}>
+                  {n}
+                </span>
+                <p className="text-base font-semibold mt-2">{title}</p>
+                <p className="text-sm text-[#55503f] mt-1">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Closing CTA — a full color block ────────────────────── */}
+      <section className="bg-[#0e0d0b] text-[#f4f2ec] flex-1 flex items-center">
+        <div className="max-w-6xl mx-auto px-6 py-16 sm:py-24 w-full flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+          <p className="font-[family-name:var(--font-poster)] text-4xl sm:text-6xl leading-[0.9] max-w-xl">
+            EVERY CONTRIBUTION.
+            <br />
+            ON THE RECORD.
+          </p>
+          <button
+            onClick={() => signIn("github")}
+            className="shrink-0 font-semibold text-base px-7 py-4 bg-[#ff4713] text-[#0e0d0b] rounded-[3px] hover:bg-[#f4f2ec] transition-colors"
           >
             Sign in with GitHub
           </button>
@@ -135,10 +158,10 @@ export default function LandingContent() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="border-t border-[#1c1a15]">
-        <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between label-mono">
-          <span>© {new Date().getFullYear()} CONTRIBUTION TRACKER</span>
-          <span>BUILT FOR PROJECT TEAMS</span>
+      <footer className="bg-[#0e0d0b] text-[#928c78] border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between font-mono text-xs uppercase tracking-wider">
+          <span>© {new Date().getFullYear()} Contribution Tracker</span>
+          <span>Built for project teams</span>
         </div>
       </footer>
     </main>

@@ -72,15 +72,15 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f2ede3] px-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#f4f2ec] px-6 py-12">
       <div className="w-full max-w-lg">
         {/* Header */}
-        <div className="mb-10 rule-strong-b pb-6">
-          <p className="label-mono mb-2">GETTING STARTED</p>
-          <h1 className="font-serif text-4xl leading-none">
-            Welcome, {session?.user?.githubUsername || "there"}
+        <div className="mb-10">
+          <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-2">Getting started</p>
+          <h1 className="font-[family-name:var(--font-poster)] text-5xl leading-[0.85] tracking-tight">
+            WELCOME, {(session?.user?.githubUsername || "THERE").toUpperCase()}
           </h1>
-          <p className="text-sm text-[#55503f] mt-3">
+          <p className="text-sm text-[#55503f] mt-4">
             Create a new project or join an existing one to begin.
           </p>
         </div>
@@ -90,11 +90,12 @@ export default function OnboardingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card
               hover
+              accent="signal"
               className="cursor-pointer"
               onClick={() => setMode("create")}
             >
-              <p className="label-mono">01</p>
-              <p className="text-base font-medium mt-3">
+              <p className="stat-num text-3xl text-[#1a3fd6]">01</p>
+              <p className="text-base font-semibold mt-3">
                 Create a Project
               </p>
               <p className="text-xs text-[#55503f] mt-1">
@@ -104,11 +105,12 @@ export default function OnboardingPage() {
 
             <Card
               hover
+              accent="work"
               className="cursor-pointer"
               onClick={() => setMode("join")}
             >
-              <p className="label-mono">02</p>
-              <p className="text-base font-medium mt-3">
+              <p className="stat-num text-3xl text-[#ff4713]">02</p>
+              <p className="text-base font-semibold mt-3">
                 Join a Project
               </p>
               <p className="text-xs text-[#55503f] mt-1">
@@ -120,10 +122,10 @@ export default function OnboardingPage() {
 
         {/* Create form */}
         {mode === "create" && (
-          <Card>
-            <p className="label-mono rule-b pb-2 mb-4">CREATE A PROJECT</p>
+          <Card accent="signal">
+            <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-4">Create a project</p>
             {error && (
-              <p className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-2.5 mb-4">
+              <p className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -154,10 +156,10 @@ export default function OnboardingPage() {
 
         {/* Join form */}
         {mode === "join" && (
-          <Card>
-            <p className="label-mono rule-b pb-2 mb-4">JOIN A PROJECT</p>
+          <Card accent="work">
+            <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-4">Join a project</p>
             {error && (
-              <p className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-2.5 mb-4">
+              <p className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -189,9 +191,9 @@ export default function OnboardingPage() {
         <div className="mt-8 text-center">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="label-mono hover:text-[#1c1a15] hover:underline"
+            className="font-mono text-xs uppercase tracking-wider text-[#928c78] hover:text-[#0e0d0b] hover:underline"
           >
-            SIGN OUT / RECONNECT ACCOUNT
+            Sign out / reconnect account
           </button>
         </div>
       </div>

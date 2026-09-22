@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Card from "@/components/ui/Card";
 
 export default function InviteCodeCard({ inviteCode }) {
   const [copied, setCopied] = useState(false);
@@ -25,22 +24,21 @@ export default function InviteCodeCard({ inviteCode }) {
   }
 
   return (
-    <Card className="flex items-center justify-between">
+    <div className="flex items-center justify-between rounded-[3px] border-2 border-[#0e0d0b] bg-[#eab308] px-6 py-5">
       <div>
-        <p className="label-mono">INVITE CODE</p>
-        <p className="stat-num text-3xl mt-1 tracking-widest">
-          {inviteCode}
+        <p className="font-mono text-xs uppercase tracking-wider text-[#0e0d0b]/60">
+          Invite code
         </p>
-        <p className="text-xs text-[#55503f] mt-1">
-          Share this code with your teammates so they can join the project
+        <p className="stat-num text-4xl mt-1 tracking-widest text-[#0e0d0b]">
+          {inviteCode}
         </p>
       </div>
       <button
         onClick={handleCopy}
-        className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
+        className="font-semibold text-sm px-4 py-2.5 rounded-[3px] bg-[#0e0d0b] text-[#f4f2ec] hover:bg-white hover:text-[#0e0d0b] transition-colors shrink-0"
       >
-        {copied ? "Copied ✓" : "Copy Code"}
+        {copied ? "Copied ✓" : "Copy code"}
       </button>
-    </Card>
+    </div>
   );
 }

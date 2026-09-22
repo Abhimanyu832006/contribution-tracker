@@ -1,9 +1,8 @@
 /**
- * Badge — a quiet tag. Category badges deliberately carry no color; the
- * logbook's two real color axes are SOURCE and VERIFICATION, applied
- * directly where those appear rather than through this component.
- * "indigo" here means "role emphasis" (e.g. project leader) — a human
- * distinction, so it takes the human/terracotta ink.
+ * Badge — a small solid chip. Category still carries no color (that
+ * meaning is spent on SOURCE and VERIFICATION instead) but now reads as
+ * an actual black-outlined chip rather than a whisper-thin underline.
+ * "indigo" = role emphasis (project leader), painted in work-orange.
  */
 export default function Badge({
   children,
@@ -11,14 +10,14 @@ export default function Badge({
   className = "",
 }) {
   const base =
-    "inline-flex items-center font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 border-b-2 rounded-none";
+    "inline-flex items-center font-mono text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-[2px] border";
 
   const variants = {
-    default: "text-[#55503f] border-[#96907a]",
-    indigo:  "text-[#a4451f] border-[#a4451f]",
-    green:   "text-[#2f5c3f] border-[#2f5c3f]",
-    yellow:  "text-[#8a6a1f] border-[#8a6a1f]",
-    red:     "text-[#9c1f1f] border-[#9c1f1f]",
+    default: "text-[#0e0d0b] border-[#0e0d0b] bg-transparent",
+    indigo:  "text-[#f4f2ec] border-[#ff4713] bg-[#ff4713]",
+    green:   "text-[#f4f2ec] border-[#16a34a] bg-[#16a34a]",
+    yellow:  "text-[#0e0d0b] border-[#eab308] bg-[#eab308]",
+    red:     "text-[#f4f2ec] border-[#e11d2e] bg-[#e11d2e]",
   };
 
   return (

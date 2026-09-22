@@ -57,7 +57,7 @@ export default function TeamMemberCard({
               {role === "leader" ? "Leader" : "Member"}
             </Badge>
           </div>
-          <p className="font-mono text-xs text-[#96907a] mt-1">
+          <p className="font-mono text-xs text-[#928c78] mt-1">
             @{github_username}
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function TeamMemberCard({
           {canRemove && (
             <button
               onClick={() => setConfirmOpen(true)}
-              className="p-1.5 text-[#96907a] hover:text-[#9c1f1f] transition-colors"
+              className="p-1.5 text-[#928c78] hover:text-[#e11d2e] transition-colors"
               title={`Remove ${github_username} from project`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -86,17 +86,17 @@ export default function TeamMemberCard({
 
       {/* Confirmation Dialog */}
       {confirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1a15]/50 p-4">
-          <div className="w-full max-w-sm rounded-none bg-[#faf7f0] border border-[#1c1a15] p-6">
-            <p className="label-mono mb-2">REMOVE MEMBER</p>
-            <h3 className="font-serif text-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0e0d0b]/60 p-4">
+          <div className="w-full max-w-sm rounded-[3px] bg-white border-2 border-[#0e0d0b] shadow-[6px_6px_0_0_rgba(14,13,11,0.9)] p-6 animate-scale-in">
+            <p className="label-mono mb-2">Remove member</p>
+            <h3 className="font-[family-name:var(--font-poster)] text-2xl">
               @{github_username}?
             </h3>
             <p className="mt-2 text-sm text-[#55503f]">
               Their logged contributions will remain in the project history.
             </p>
             {error && (
-              <div className="mt-4 text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
+              <div className="mt-4 text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-3">
                 {error}
               </div>
             )}
@@ -105,7 +105,7 @@ export default function TeamMemberCard({
                 type="button"
                 onClick={() => setConfirmOpen(false)}
                 disabled={removing}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-transparent text-[#55503f] hover:text-[#1c1a15]"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#0e0d0b]"
               >
                 Cancel
               </button>
@@ -113,7 +113,7 @@ export default function TeamMemberCard({
                 type="button"
                 onClick={handleRemove}
                 disabled={removing}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#9c1f1f] text-[#9c1f1f] hover:bg-[#9c1f1f] hover:text-[#f2ede3] transition-colors disabled:opacity-50"
+                className="font-semibold text-sm px-4 py-2.5 rounded-[3px] bg-[#e11d2e] text-[#f4f2ec] hover:bg-[#b8172a] transition-colors disabled:opacity-50"
               >
                 {removing ? "Removing…" : "Remove Member"}
               </button>

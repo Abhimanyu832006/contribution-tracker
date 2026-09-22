@@ -24,63 +24,70 @@ function timeAgo(iso) {
   return formatDate(iso);
 }
 
-const STATUS_COLOR = {
-  verified: "#2f5c3f",
-  approved: "#2f5c3f",
-  flagged: "#9c1f1f",
-  pending: "#8a6a1f",
-};
-
 export default function ContributionList({ contributions = [] }) {
   if (contributions.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(28,26,21,0.3)] py-16 text-center">
-        <p className="text-sm text-[#96907a]">No contributions yet</p>
+      <div className="border-2 border-dashed border-[#928c78] rounded-[3px] py-16 text-center">
+        <p className="text-sm text-[#928c78]">No contributions yet</p>
         <p className="label-mono mt-1">LOG THE FIRST ONE TO GET STARTED</p>
       </div>
     );
   }
 
   return (
-    <div className="border-t border-[rgba(28,26,21,0.14)]">
-      {contributions.map((c) => {
+    <div className="space-y-3">
+      {contributions.map((c, i) => {
         const isGithub = c.source === "github";
-        const statusColor = STATUS_COLOR[c.status] || "#96907a";
+        const spineColor = isGithub ? "#1a3fd6" : "#ff4713";
+        const stamp =
+          c.status === "flagged"
+            ? { bg: "#e11d2e", fg: "#f4f2ec", label: "flagged" }
+            : c.status === "verified" || c.status === "approved"
+            ? { bg: "#16a34a", fg: "#f4f2ec", label: "verified" }
+            : null;
 
-        // Row itself is a plain container — never an <a>/<Link>, since it may
-        // contain the attachment link below and nested anchors are invalid HTML.
-        // Navigation is instead offered via the explicit link at the end of the row.
         return (
           <div
             key={c.id}
-            className={`flex items-center gap-4 py-3.5 pl-4 pr-1 border-b border-[rgba(28,26,21,0.14)] border-l-2 transition-colors hover:bg-[#faf7f0] ${
-              isGithub ? "border-l-[#1f6f66]" : "border-l-[#a4451f]"
-            }`}
+            className="flex rounded-[3px] border-2 border-[#0e0d0b] overflow-hidden bg-white transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_rgba(14,13,11,0.9)]"
           >
-            {/* Source tag — the primary visual distinction, colored by voice */}
-            <span
-              className="font-mono text-[10px] uppercase tracking-wider w-14 shrink-0"
-              style={{ color: isGithub ? "#1f6f66" : "#a4451f" }}
+            {/* Solid color spine — the source signal, unmissable */}
+            <div className="w-2 sm:w-3 shrink-0" style={{ backgroundColor: spineColor }} />
+
+            {/* Index number — poster voice, event-numbered */}
+            <div
+              className="hidden sm:flex flex-col items-center justify-center w-16 shrink-0 border-r-2 border-[#0e0d0b]"
+              style={{ backgroundColor: isGithub ? "#e3e9ff" : "#ffe9df" }}
             >
-              {isGithub ? "GH" : "MANUAL"}
-            </span>
+              <span className="stat-num text-2xl" style={{ color: spineColor }}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </div>
 
-            {/* Avatar */}
-            <Avatar
-              src={c.avatar_url}
-              name={c.github_username || c.user_name}
-              size="sm"
-            />
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 sm:px-5 py-4 min-w-0">
+              <Avatar
+                src={c.avatar_url}
+                name={c.github_username || c.user_name}
+                size="sm"
+                className="shrink-0"
+              />
 
-            {/* Category badge */}
-            <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"} className="shrink-0">
-              {c.category}
-            </Badge>
-
-            {/* Content — GitHub reads as a log line, manual reads as a written sentence */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className={`text-sm truncate ${isGithub ? "font-mono text-[13px]" : "font-serif text-[15px]"}`}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-semibold">
+                    {c.github_username || c.user_name}
+                  </span>
+                  <span
+                    className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+                    style={{ color: spineColor }}
+                  >
+                    {isGithub ? "GITHUB" : "MANUAL"}
+                  </span>
+                  <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
+                    {c.category}
+                  </Badge>
+                </div>
+                <p className={`mt-0.5 truncate ${isGithub ? "font-mono text-[13px] text-[#55503f]" : "font-serif text-[15px]"}`}>
                   {c.description}
                 </p>
                 {c.attachment_url && (
@@ -89,64 +96,54 @@ export default function ContributionList({ contributions = [] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     download={c.attachment_name || true}
-                    className="font-mono text-[10px] uppercase tracking-wider text-[#55503f] hover:text-[#1c1a15] underline decoration-[rgba(28,26,21,0.3)] shrink-0"
+                    className="inline-flex items-center gap-1 mt-1 font-mono text-[10px] uppercase tracking-wider text-[#55503f] hover:text-[#0e0d0b] underline decoration-[rgba(14,13,11,0.3)]"
                     title={`Download ${c.attachment_name || "document"}`}
                   >
                     ⌷ {c.attachment_name || "Attachment"}
                   </a>
                 )}
               </div>
-              <div className="flex items-center gap-2 mt-0.5">
-                <p className="font-mono text-xs text-[#96907a]">
-                  {c.github_username || c.user_name}
-                </p>
-                {c.status && (
-                  <span
-                    className="font-mono text-[10px] uppercase tracking-wider"
-                    style={{ color: statusColor }}
-                  >
-                    {c.status === "approved" ? "verified" : c.status}
+
+              <div className="flex items-center gap-3 shrink-0 sm:flex-col sm:items-end sm:gap-1">
+                {!isGithub && (
+                  <span className="stat-num text-xl">{Number(c.time_estimate).toFixed(1)}h</span>
+                )}
+                {stamp ? (
+                  <span className="stamp-solid" style={{ backgroundColor: stamp.bg, color: stamp.fg }}>
+                    {stamp.label}
+                  </span>
+                ) : (
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#eab308]">
+                    pending
                   </span>
                 )}
+                <span className="font-mono text-[10px] text-[#928c78]">{timeAgo(c.created_at)}</span>
               </div>
-            </div>
 
-            {/* Hours + time */}
-            <div className="text-right shrink-0 font-mono text-xs">
-              {!isGithub && (
-                <p className="text-sm text-[#1c1a15]">
-                  {Number(c.time_estimate).toFixed(1)}h
-                </p>
+              {isGithub && c.commit_url ? (
+                <a
+                  href={c.commit_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 text-[#928c78] hover:text-[#1a3fd6] transition-colors"
+                  title="View commit on GitHub"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ) : (
+                <Link
+                  href={`/contributions/${c.id}`}
+                  className="shrink-0 text-[#928c78] hover:text-[#0e0d0b] transition-colors"
+                  title="View details"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </Link>
               )}
-              <p className="text-[#96907a] mt-0.5">
-                {timeAgo(c.created_at)}
-              </p>
             </div>
-
-            {/* Navigation */}
-            {isGithub && c.commit_url ? (
-              <a
-                href={c.commit_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 text-[#96907a] hover:text-[#1f6f66] transition-colors"
-                title="View commit on GitHub"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            ) : (
-              <Link
-                href={`/contributions/${c.id}`}
-                className="shrink-0 text-[#96907a] hover:text-[#1c1a15] transition-colors"
-                title="View details"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-              </Link>
-            )}
           </div>
         );
       })}

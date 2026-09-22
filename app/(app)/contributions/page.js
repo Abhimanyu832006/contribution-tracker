@@ -113,17 +113,16 @@ export default function ContributionsPage() {
   return (
     <div className="space-y-8">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 rule-strong-b pb-5">
-        <div>
-          <p className="label-mono mb-2">CONTRIBUTIONS</p>
-          <h1 className="font-serif text-4xl sm:text-5xl leading-none">Contributions</h1>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
+          CONTRIBUTIONS
+        </h1>
         {activeProject?.repoOwner && activeProject?.repoName && (
           <Button
             id="sync-github-commits"
             onClick={handleSync}
             loading={syncing}
-            variant="secondary"
+            variant="signal"
             size="sm"
           >
             ⟲ Sync GitHub
@@ -132,21 +131,21 @@ export default function ContributionsPage() {
       </div>
 
       {syncError && (
-        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
+        <div className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-3">
           {syncError}
         </div>
       )}
 
       {syncResult && (
-        <div className="flex items-center justify-between gap-3 text-sm border border-[#2f5c3f] text-[#2f5c3f] px-4 py-3">
+        <div className="flex items-center justify-between gap-3 text-sm font-medium text-[#f4f2ec] bg-[#16a34a] rounded-[3px] px-4 py-3">
           <span className="font-mono">
             SYNC COMPLETE — {syncResult.added} added / {syncResult.skipped} skipped / {syncResult.unmatched} unmatched
           </span>
           <button
             onClick={() => setSyncResult(null)}
-            className="label-mono hover:underline shrink-0"
+            className="font-mono text-xs uppercase tracking-wider hover:underline shrink-0"
           >
-            DISMISS
+            Dismiss
           </button>
         </div>
       )}
@@ -154,19 +153,19 @@ export default function ContributionsPage() {
       {/* Log new contribution — only shown on "Mine" tab */}
       {filter === "mine" && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between rule-b pb-2">
-            <p className="label-mono">LOG NEW CONTRIBUTION</p>
+          <div className="flex items-center justify-between">
+            <p className="label-mono">Log new contribution</p>
             <button
               type="button"
               onClick={() => setShowForm((p) => !p)}
-              className="label-mono hover:underline"
+              className="font-mono text-xs uppercase tracking-wider text-[#1a3fd6] hover:underline"
             >
-              {showForm ? "HIDE" : "SHOW"}
+              {showForm ? "Hide" : "Show"}
             </button>
           </div>
 
           {showForm && (
-            <Card>
+            <Card accent="work">
               <ContributionForm
                 onSuccess={() => {
                   fetchContributions();
@@ -179,36 +178,36 @@ export default function ContributionsPage() {
 
       {/* Filter toggle */}
       <div className="space-y-4">
-        <div className="flex items-baseline gap-6 rule-b pb-2">
+        <div className="flex items-baseline gap-1 border-b-2 border-[#0e0d0b]">
           <button
             type="button"
             onClick={() => setFilter("mine")}
-            className={`label-mono !text-xs pb-1 ${
+            className={`px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
               filter === "mine"
-                ? "text-[#1c1a15] border-b-2 border-[#a4451f] -mb-[9px]"
-                : "hover:text-[#1c1a15]"
+                ? "bg-[#0e0d0b] text-[#f4f2ec]"
+                : "text-[#55503f] hover:text-[#0e0d0b]"
             }`}
           >
-            MINE
+            Mine
           </button>
           <button
             type="button"
             onClick={() => setFilter("everyone")}
-            className={`label-mono !text-xs pb-1 ${
+            className={`px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
               filter === "everyone"
-                ? "text-[#1c1a15] border-b-2 border-[#a4451f] -mb-[9px]"
-                : "hover:text-[#1c1a15]"
+                ? "bg-[#0e0d0b] text-[#f4f2ec]"
+                : "text-[#55503f] hover:text-[#0e0d0b]"
             }`}
           >
-            EVERYONE&apos;S
+            Everyone&apos;s
           </button>
           {!loading && (
-            <span className="label-mono ml-auto">
+            <span className="font-mono text-xs text-[#928c78] ml-auto pb-2">
               {filteredContributions.length}
               {filteredContributions.length !== contributions.length
                 ? ` / ${contributions.length}`
                 : ""}{" "}
-              ENTRIES
+              entries
             </span>
           )}
         </div>
@@ -220,7 +219,7 @@ export default function ContributionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search description or contributor…"
-            className="flex-1 rounded-none border border-[rgba(28,26,21,0.2)] bg-[#faf7f0] px-3.5 py-2.5 text-sm text-[#1c1a15] placeholder-[#96907a] transition-colors duration-150 focus:outline-none focus:border-[#1c1a15]"
+            className="flex-1 rounded-[3px] border-2 border-[#0e0d0b] bg-white px-3.5 py-2.5 text-sm text-[#0e0d0b] placeholder-[#928c78] transition-colors duration-150 focus:outline-none focus:border-[#ff4713]"
           />
           <Select
             id="category-filter"
@@ -249,8 +248,8 @@ export default function ContributionsPage() {
 
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-4 h-4 mx-auto border-2 border-[#1c1a15] border-t-transparent animate-spin" />
-            <p className="label-mono mt-3">LOADING…</p>
+            <div className="w-5 h-5 mx-auto border-2 border-[#0e0d0b] border-t-transparent rounded-full animate-spin" />
+            <p className="label-mono mt-3">Loading…</p>
           </div>
         ) : (
           <ContributionList contributions={filteredContributions} />

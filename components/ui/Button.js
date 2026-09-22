@@ -1,11 +1,8 @@
 /**
- * Button component with variant support.
- * Variants: primary (default), secondary, ghost, danger
+ * Button — solid, high-contrast, a little heavy. Variants: primary
+ * (ink, flips to work-orange on hover), signal (cobalt, for GitHub
+ * actions), secondary (outline), ghost, danger (flagged red).
  * Sizes: sm, md (default), lg
- *
- * Human voice, not system voice — buttons are actions someone takes, so they
- * read in the same sans as the rest of the UI. Uppercase-mono-everything was
- * its own formula to avoid; that's reserved for actual system metadata now.
  */
 export default function Button({
   children,
@@ -16,23 +13,25 @@ export default function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center font-medium rounded-none border transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-[#1c1a15] disabled:opacity-40 disabled:pointer-events-none";
+    "inline-flex items-center justify-center font-semibold rounded-[3px] border-2 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0e0d0b] disabled:opacity-40 disabled:pointer-events-none active:scale-[0.97]";
 
   const variants = {
     primary:
-      "bg-[#1c1a15] text-[#f2ede3] border-[#1c1a15] hover:bg-[#a4451f] hover:border-[#a4451f]",
+      "bg-[#0e0d0b] text-[#f4f2ec] border-[#0e0d0b] hover:bg-[#ff4713] hover:border-[#ff4713]",
+    signal:
+      "bg-[#1a3fd6] text-[#f4f2ec] border-[#1a3fd6] hover:bg-[#0e2590] hover:border-[#0e2590]",
     secondary:
-      "bg-transparent text-[#1c1a15] border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3]",
+      "bg-transparent text-[#0e0d0b] border-[#0e0d0b] hover:bg-[#0e0d0b] hover:text-[#f4f2ec]",
     ghost:
-      "bg-transparent text-[#55503f] border-transparent hover:text-[#1c1a15] hover:border-[#1c1a15]",
+      "bg-transparent text-[#55503f] border-transparent hover:text-[#0e0d0b] hover:border-[#0e0d0b]",
     danger:
-      "bg-transparent text-[#9c1f1f] border-[#9c1f1f] hover:bg-[#9c1f1f] hover:text-[#f2ede3]",
+      "bg-[#e11d2e] text-[#f4f2ec] border-[#e11d2e] hover:bg-[#b8172a] hover:border-[#b8172a]",
   };
 
   const sizes = {
     sm: "text-[13px] px-3 py-1.5 gap-1.5",
     md: "text-sm px-4 py-2.5 gap-2",
-    lg: "text-base px-6 py-3 gap-2.5",
+    lg: "text-base px-6 py-3.5 gap-2.5",
   };
 
   return (
