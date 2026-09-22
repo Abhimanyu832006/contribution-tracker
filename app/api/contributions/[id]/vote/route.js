@@ -96,13 +96,24 @@ export async function POST(request, context) {
       [newStatus, contributionId]
     );
 
+    // Fetch the full, updated verification history for this contribution
+    const { rows: voteRows } = await pool.query(
+      `SELECT v.vote, v.comment, v.created_at, u.github_username AS username, u.avatar_url
+       FROM contribution_votes v
+       JOIN users u ON u.id = v.user_id
+       WHERE v.contribution_id = $1
+       ORDER BY v.created_at DESC`,
+      [contributionId]
+    );
+
     return NextResponse.json({
       success: true,
       contributionId,
       status: newStatus,
       approves_count: approves,
       flags_count: flags,
-      my_vote: vote
+      my_vote: vote,
+      votes: voteRows,
     });
   } catch (err) {
     console.error("POST /api/contributions/[id]/vote error:", err);

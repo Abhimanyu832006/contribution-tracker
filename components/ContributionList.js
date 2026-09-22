@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import Badge, { CATEGORY_BADGE_MAP } from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 
@@ -40,18 +43,14 @@ export default function ContributionList({ contributions = [] }) {
     <div className="space-y-3 stagger-children">
       {contributions.map((c) => {
         const isGithub = c.source === "github";
-        const Wrapper = isGithub && c.commit_url ? "a" : "div";
-        const wrapperProps = isGithub && c.commit_url
-          ? { href: c.commit_url, target: "_blank", rel: "noopener noreferrer" }
-          : {};
 
+        // Row itself is a plain container — never an <a>/<Link>, since it may
+        // contain the attachment link below and nested anchors are invalid HTML.
+        // Navigation is instead offered via the explicit link at the end of the row.
         return (
-          <Wrapper
+          <div
             key={c.id}
-            {...wrapperProps}
-            className={`bg-white rounded-xl border border-gray-200/60 shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:shadow-md hover:-translate-y-px ${
-              isGithub ? "hover:border-indigo-300" : ""
-            }`}
+            className="bg-white rounded-xl border border-gray-200/60 shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:shadow-md"
           >
             {/* Avatar */}
             <Avatar
@@ -128,7 +127,32 @@ export default function ContributionList({ contributions = [] }) {
                 {timeAgo(c.created_at)}
               </p>
             </div>
-          </Wrapper>
+
+            {/* Navigation */}
+            {isGithub && c.commit_url ? (
+              <a
+                href={c.commit_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-gray-300 hover:text-indigo-500 transition-colors"
+                title="View commit on GitHub"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            ) : (
+              <Link
+                href={`/contributions/${c.id}`}
+                className="shrink-0 text-gray-300 hover:text-indigo-500 transition-colors"
+                title="View details"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </Link>
+            )}
+          </div>
         );
       })}
     </div>

@@ -14,11 +14,13 @@ export default function TeamMemberCard({
   const router = useRouter();
   const [removing, setRemoving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [error, setError] = useState("");
   const { id, github_username, avatar_url, role, total_hours } = member;
 
   const canRemove = isLeader && id !== currentUserId && role !== "leader";
 
   async function handleRemove() {
+    setError("");
     setRemoving(true);
     try {
       const res = await fetch("/api/projects/members", {
@@ -32,10 +34,11 @@ export default function TeamMemberCard({
         router.refresh();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to remove member.");
+        setError(data.error || "Failed to remove member.");
       }
     } catch (err) {
       console.error("Error removing member:", err);
+      setError("Failed to remove member. Please try again.");
     } finally {
       setRemoving(false);
     }
@@ -93,6 +96,14 @@ export default function TeamMemberCard({
               <span className="font-semibold text-gray-900">@{github_username}</span>{" "}
               from this project? Their logged contributions will remain in the project history.
             </p>
+            {error && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200">
+                <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+                </svg>
+                {error}
+              </div>
+            )}
             <div className="mt-6 flex items-center justify-end gap-3">
               <button
                 type="button"

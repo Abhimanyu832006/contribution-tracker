@@ -25,9 +25,9 @@ export default async function AppLayout({ children }) {
         projects={projects}
       />
 
-      {/* Main content area — offset by sidebar width */}
-      <main className="flex-1 ml-64">
-        <div className="max-w-5xl mx-auto px-8 py-8">
+      {/* Main content area — offset by sidebar width on large screens, top bar height on mobile */}
+      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0">
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
           {children}
         </div>
       </main>

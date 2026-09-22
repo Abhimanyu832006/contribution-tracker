@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import Select from "@/components/ui/Select";
 import ContributionForm from "@/components/ContributionForm";
 import ContributionList from "@/components/ContributionList";
+import { CATEGORY_NAMES } from "@/lib/constants";
 
 export default function ContributionsPage() {
   const [filter, setFilter] = useState("mine"); // "mine" | "everyone"
@@ -16,6 +18,9 @@ export default function ContributionsPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
   const [syncError, setSyncError] = useState("");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [sourceFilter, setSourceFilter] = useState(""); // "" | "github" | "manual"
 
   useEffect(() => {
     async function loadActiveProject() {
@@ -92,6 +97,19 @@ export default function ContributionsPage() {
       ignore = true;
     };
   }, [filter]);
+
+  const filteredContributions = useMemo(() => {
+    return contributions.filter((c) => {
+      if (categoryFilter && c.category !== categoryFilter) return false;
+      if (sourceFilter && c.source !== sourceFilter) return false;
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        const haystack = `${c.description || ""} ${c.github_username || ""} ${c.category || ""}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [contributions, categoryFilter, sourceFilter, search]);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -221,11 +239,51 @@ export default function ContributionsPage() {
             {filter === "mine" ? "Your Contributions" : "All Team Contributions"}
           </h2>
           {!loading && (
-            <Badge variant="default">{contributions.length} entries</Badge>
+            <Badge variant="default">
+              {filteredContributions.length}
+              {filteredContributions.length !== contributions.length
+                ? ` of ${contributions.length}`
+                : ""}{" "}
+              entries
+            </Badge>
           )}
           {filter === "everyone" && (
             <Badge variant="indigo">GitHub Integration Connected</Badge>
           )}
+        </div>
+
+        {/* Search + filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search description or contributor…"
+            className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 hover:border-gray-300"
+          />
+          <Select
+            id="category-filter"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="sm:w-48"
+          >
+            <option value="">All categories</option>
+            {CATEGORY_NAMES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </Select>
+          <Select
+            id="source-filter"
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="sm:w-40"
+          >
+            <option value="">All sources</option>
+            <option value="github">GitHub</option>
+            <option value="manual">Manual</option>
+          </Select>
         </div>
 
         {loading ? (
@@ -234,7 +292,7 @@ export default function ContributionsPage() {
             <p className="text-sm text-gray-400 mt-3">Loading…</p>
           </div>
         ) : (
-          <ContributionList contributions={contributions} />
+          <ContributionList contributions={filteredContributions} />
         )}
       </div>
     </div>

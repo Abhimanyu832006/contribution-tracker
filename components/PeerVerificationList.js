@@ -1,10 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
+import { CATEGORY_BADGE_MAP } from "@/lib/constants";
+
+const STATUS_TABS = [
+  { value: "", label: "All" },
+  { value: "pending", label: "Pending" },
+  { value: "verified", label: "Verified" },
+  { value: "flagged", label: "Flagged" },
+];
 
 function timeAgo(iso) {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -30,21 +39,30 @@ function formatBytes(bytes) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-const CATEGORY_BADGE_MAP = {
-  Code: "indigo",
-  Design: "purple",
-  Documentation: "yellow",
-  Testing: "green",
-  Research: "blue",
-  "Project Management": "orange",
-  Meeting: "default",
-  Other: "default",
-};
-
 export default function PeerVerificationList({ initialContributions = [], currentUserId }) {
   const [contributions, setContributions] = useState(initialContributions);
   const [votingId, setVotingId] = useState(null);
   const [error, setError] = useState("");
+  const [historyOpenId, setHistoryOpenId] = useState(null);
+  const [commentDraft, setCommentDraft] = useState({});
+  const [statusFilter, setStatusFilter] = useState("");
+  const [search, setSearch] = useState("");
+
+  const filteredContributions = useMemo(() => {
+    return contributions.filter((c) => {
+      if (statusFilter) {
+        const status = c.status || "pending";
+        const matchesVerified = statusFilter === "verified" && (status === "verified" || status === "approved");
+        if (!matchesVerified && status !== statusFilter) return false;
+      }
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        const haystack = `${c.description || ""} ${c.github_username || ""} ${c.category || ""}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [contributions, statusFilter, search]);
 
   async function handleVote(contributionId, voteType) {
     setVotingId(contributionId);
@@ -54,7 +72,10 @@ export default function PeerVerificationList({ initialContributions = [], curren
       const res = await fetch(`/api/contributions/${contributionId}/vote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vote: voteType }),
+        body: JSON.stringify({
+          vote: voteType,
+          comment: commentDraft[contributionId]?.trim() || undefined,
+        }),
       });
 
       const data = await res.json();
@@ -71,11 +92,13 @@ export default function PeerVerificationList({ initialContributions = [], curren
               approves_count: data.approves_count,
               flags_count: data.flags_count,
               my_vote: data.my_vote,
+              votes: data.votes ?? c.votes,
             };
           }
           return c;
         })
       );
+      setCommentDraft((prev) => ({ ...prev, [contributionId]: "" }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -108,8 +131,41 @@ export default function PeerVerificationList({ initialContributions = [], curren
         </div>
       )}
 
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl w-fit">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setStatusFilter(tab.value)}
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                statusFilter === tab.value
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search description or contributor…"
+          className="sm:w-72 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 hover:border-gray-300"
+        />
+      </div>
+
+      {filteredContributions.length === 0 && (
+        <div className="rounded-xl border border-dashed border-gray-300 py-16 text-center">
+          <p className="text-sm text-gray-400">No contributions match these filters</p>
+        </div>
+      )}
+
       <div className="space-y-3 stagger-children">
-        {contributions.map((c) => {
+        {filteredContributions.map((c) => {
           const isOwnContribution = c.user_id === currentUserId;
           const isVotingThis = votingId === c.id;
           const hasVotedApprove = c.my_vote === "approve";
@@ -132,6 +188,12 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
                       {c.category}
                     </Badge>
+                    <Link
+                      href={`/contributions/${c.id}`}
+                      className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                    >
+                      View details
+                    </Link>
                     <span className="text-xs text-gray-400">
                       {timeAgo(c.created_at)}
                     </span>
@@ -145,6 +207,58 @@ export default function PeerVerificationList({ initialContributions = [], curren
                   <p className="text-sm text-gray-800 font-medium break-words">
                     {c.description}
                   </p>
+
+                  {/* Verification history toggle */}
+                  {(c.votes?.length || 0) > 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setHistoryOpenId((prev) => (prev === c.id ? null : c.id))
+                      }
+                      className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors inline-flex items-center gap-1"
+                    >
+                      <svg
+                        className={`w-3 h-3 transition-transform ${historyOpenId === c.id ? "rotate-90" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                      </svg>
+                      {historyOpenId === c.id ? "Hide" : "Show"} verification history ({c.votes.length})
+                    </button>
+                  )}
+
+                  {historyOpenId === c.id && (c.votes?.length || 0) > 0 && (
+                    <div className="space-y-2 pt-1 pl-1 border-l-2 border-gray-100 animate-scale-in">
+                      {c.votes.map((v, i) => (
+                        <div key={i} className="flex items-start gap-2 pl-3">
+                          <Avatar src={v.avatar_url} name={v.username} size="xs" />
+                          <div className="min-w-0">
+                            <p className="text-xs text-gray-700">
+                              <span className="font-semibold">{v.username}</span>{" "}
+                              <span
+                                className={
+                                  v.vote === "approve"
+                                    ? "text-emerald-600 font-medium"
+                                    : "text-red-600 font-medium"
+                                }
+                              >
+                                {v.vote === "approve" ? "approved" : "flagged"}
+                              </span>{" "}
+                              this contribution
+                            </p>
+                            {v.comment && (
+                              <p className="text-xs text-gray-500 italic mt-0.5">
+                                &ldquo;{v.comment}&rdquo;
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Supporting Document Pill */}
                   {c.attachment_url && (
@@ -216,13 +330,24 @@ export default function PeerVerificationList({ initialContributions = [], curren
                 </div>
 
                 {/* Vote Action Buttons */}
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-end gap-2">
                   {isOwnContribution ? (
                     <span className="text-xs text-gray-400 italic px-2 py-1 bg-gray-50 rounded-lg">
                       Your contribution
                     </span>
                   ) : (
                     <>
+                      <input
+                        type="text"
+                        value={commentDraft[c.id] || ""}
+                        onChange={(e) =>
+                          setCommentDraft((prev) => ({ ...prev, [c.id]: e.target.value }))
+                        }
+                        placeholder="Optional comment (visible to the team)…"
+                        maxLength={280}
+                        className="w-full sm:w-56 text-xs rounded-lg border border-gray-200 px-2.5 py-1.5 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400"
+                      />
+                      <div className="flex items-center gap-2">
                       <Button
                         id={`approve-${c.id}`}
                         type="button"
@@ -260,6 +385,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         </svg>
                         {hasVotedFlag ? "Flagged" : "Flag"}
                       </Button>
+                      </div>
                     </>
                   )}
                 </div>

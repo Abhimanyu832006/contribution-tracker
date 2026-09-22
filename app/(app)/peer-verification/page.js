@@ -31,10 +31,23 @@ export default async function PeerVerificationPage() {
        u.avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
-       MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote
+       MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote,
+       COALESCE(
+         json_agg(
+           jsonb_build_object(
+             'username', vu.github_username,
+             'avatar_url', vu.avatar_url,
+             'vote', v.vote,
+             'comment', v.comment,
+             'created_at', v.created_at
+           ) ORDER BY v.created_at DESC
+         ) FILTER (WHERE v.id IS NOT NULL),
+         '[]'
+       ) AS votes
      FROM contributions c
      JOIN users u ON u.id = c.user_id
      LEFT JOIN contribution_votes v ON v.contribution_id = c.id
+     LEFT JOIN users vu ON vu.id = v.user_id
      WHERE c.project_id = $1
      GROUP BY c.id, u.github_username, u.avatar_url
      ORDER BY c.created_at DESC`,

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 /**
  * Avatar — circular image with fallback initials.
- * Sizes: sm (32px), md (40px), lg (56px), xl (72px)
+ * Sizes: xs (20px), sm (32px), md (40px), lg (56px), xl (72px)
  */
 export default function Avatar({
   src,
@@ -12,13 +12,14 @@ export default function Avatar({
   className = "",
 }) {
   const sizes = {
+    xs: "w-5 h-5 text-[9px]",
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
     lg: "w-14 h-14 text-lg",
     xl: "w-[72px] h-[72px] text-xl",
   };
 
-  const pxSizes = { sm: 32, md: 40, lg: 56, xl: 72 };
+  const pxSizes = { xs: 20, sm: 32, md: 40, lg: 56, xl: 72 };
 
   const initials = name
     ? name

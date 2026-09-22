@@ -58,7 +58,10 @@ export async function POST(request) {
     const uniqueSuffix = `${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
     const safeFilename = `${rawBase || "file"}_${uniqueSuffix}${ext}`;
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    // Stored outside `public/` so files are never reachable by a bare URL
+    // guess — they're only served via the authenticated, project-scoped
+    // /api/uploads/[filename] route (see app/api/uploads/[filename]/route.js).
+    const uploadsDir = path.join(process.cwd(), "private-uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
     const filePath = path.join(uploadsDir, safeFilename);
@@ -66,7 +69,7 @@ export async function POST(request) {
     await fs.writeFile(filePath, buffer);
 
     return NextResponse.json({
-      url: `/uploads/${safeFilename}`,
+      url: `/api/uploads/${safeFilename}`,
       name: originalName,
       size: file.size,
       type: file.type || ext.replace(".", "")

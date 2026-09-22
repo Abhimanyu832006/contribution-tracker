@@ -63,6 +63,38 @@ export async function POST() {
 
       if (!ghRes.ok) {
         const ghErr = await ghRes.json().catch(() => ({}));
+        const rateLimitRemaining = ghRes.headers.get("x-ratelimit-remaining");
+
+        if (ghRes.status === 403 && rateLimitRemaining === "0") {
+          const resetAt = ghRes.headers.get("x-ratelimit-reset");
+          const resetTime = resetAt
+            ? new Date(Number(resetAt) * 1000).toLocaleTimeString()
+            : "shortly";
+          return NextResponse.json(
+            { error: `GitHub API rate limit exceeded. Please try syncing again after ${resetTime}.` },
+            { status: 429 }
+          );
+        }
+
+        if (ghRes.status === 401) {
+          return NextResponse.json(
+            { error: "GitHub authentication expired or invalid. Please ask the project leader to sign out and back in to reconnect." },
+            { status: 401 }
+          );
+        }
+
+        if (ghRes.status === 404) {
+          return NextResponse.json(
+            { error: "Repository not found or no longer accessible with the leader's GitHub account." },
+            { status: 404 }
+          );
+        }
+
+        if (ghRes.status === 409) {
+          // Empty repository (no commits/branches yet) — not an error condition
+          return NextResponse.json({ success: true, added: 0, skipped: 0, unmatched: 0 });
+        }
+
         return NextResponse.json(
           { error: ghErr.message || `GitHub returned error status ${ghRes.status}` },
           { status: 400 }
