@@ -2,6 +2,8 @@
  * Button component with variant support.
  * Variants: primary (default), secondary, ghost, danger
  * Sizes: sm, md (default), lg
+ *
+ * Editorial system: sharp corners, ink/paper/accent — no rounded pill buttons.
  */
 export default function Button({
   children,
@@ -12,23 +14,23 @@ export default function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+    "inline-flex items-center justify-center font-mono uppercase tracking-wider rounded-none border transition-colors duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-[#141311] disabled:opacity-40 disabled:pointer-events-none";
 
   const variants = {
     primary:
-      "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-sm hover:shadow-md",
+      "bg-[#141311] text-[#f3f1ea] border-[#141311] hover:bg-[#ff4b12] hover:border-[#ff4b12]",
     secondary:
-      "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus:ring-indigo-500 shadow-sm",
+      "bg-transparent text-[#141311] border-[#141311] hover:bg-[#141311] hover:text-[#f3f1ea]",
     ghost:
-      "text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-400",
+      "bg-transparent text-[#4a473f] border-transparent hover:text-[#141311] hover:border-[#141311]",
     danger:
-      "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm",
+      "bg-transparent text-[#b3271e] border-[#b3271e] hover:bg-[#b3271e] hover:text-[#f3f1ea]",
   };
 
   const sizes = {
-    sm: "text-xs px-3 py-1.5 gap-1.5",
-    md: "text-sm px-4 py-2.5 gap-2",
-    lg: "text-base px-6 py-3 gap-2.5",
+    sm: "text-[11px] px-3 py-1.5 gap-1.5",
+    md: "text-xs px-4 py-2.5 gap-2",
+    lg: "text-sm px-6 py-3 gap-2.5",
   };
 
   return (

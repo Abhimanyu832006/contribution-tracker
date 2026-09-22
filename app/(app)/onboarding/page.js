@@ -72,88 +72,46 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fafafa] px-6">
-      <div className="w-full max-w-lg animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-[#f3f1ea] px-6">
+      <div className="w-full max-w-lg">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 mb-5">
-            <svg
-              className="w-7 h-7 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome, {session?.user?.githubUsername || "there"}!
+        <div className="mb-10 rule-strong-b pb-6">
+          <p className="label-mono mb-2">GETTING STARTED</p>
+          <h1 className="font-serif text-4xl leading-none">
+            Welcome, {session?.user?.githubUsername || "there"}
           </h1>
-          <p className="text-sm text-gray-500 mt-2">
-            Get started by creating a new project or joining an existing one.
+          <p className="text-sm text-[#4a473f] mt-3">
+            Create a new project or join an existing one to begin.
           </p>
         </div>
 
         {/* Choice cards */}
         {!mode && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card
               hover
-              className="cursor-pointer text-center group"
+              className="cursor-pointer"
               onClick={() => setMode("create")}
             >
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
-                <svg
-                  className="w-6 h-6 text-indigo-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              <p className="label-mono">01</p>
+              <p className="text-base font-medium mt-3">
                 Create a Project
-              </h3>
-              <p className="text-xs text-gray-500">
+              </p>
+              <p className="text-xs text-[#4a473f] mt-1">
                 Start a new project and invite your team
               </p>
             </Card>
 
             <Card
               hover
-              className="cursor-pointer text-center group"
+              className="cursor-pointer"
               onClick={() => setMode("join")}
             >
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors">
-                <svg
-                  className="w-6 h-6 text-emerald-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.054a4.5 4.5 0 00-6.364-6.364L6.26 6.464a4.5 4.5 0 001.242 7.244"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              <p className="label-mono">02</p>
+              <p className="text-base font-medium mt-3">
                 Join a Project
-              </h3>
-              <p className="text-xs text-gray-500">
+              </p>
+              <p className="text-xs text-[#4a473f] mt-1">
                 Enter an invite code from your team leader
               </p>
             </Card>
@@ -162,12 +120,10 @@ export default function OnboardingPage() {
 
         {/* Create form */}
         {mode === "create" && (
-          <Card className="animate-scale-in">
-            <h3 className="text-base font-semibold text-gray-900 mb-4">
-              Create a Project
-            </h3>
+          <Card>
+            <p className="label-mono rule-b pb-2 mb-4">CREATE A PROJECT</p>
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
+              <p className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -198,12 +154,10 @@ export default function OnboardingPage() {
 
         {/* Join form */}
         {mode === "join" && (
-          <Card className="animate-scale-in">
-            <h3 className="text-base font-semibold text-gray-900 mb-4">
-              Join a Project
-            </h3>
+          <Card>
+            <p className="label-mono rule-b pb-2 mb-4">JOIN A PROJECT</p>
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
+              <p className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -232,12 +186,12 @@ export default function OnboardingPage() {
           </Card>
         )}
 
-        <div className="mt-8 text-center animate-fade-in">
+        <div className="mt-8 text-center">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="text-xs text-gray-400 hover:text-gray-600 font-medium transition-colors"
+            className="label-mono hover:text-[#141311] hover:underline"
           >
-            Sign out of GitHub / Reconnect account
+            SIGN OUT / RECONNECT ACCOUNT
           </button>
         </div>
       </div>

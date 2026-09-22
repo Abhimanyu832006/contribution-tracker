@@ -1,6 +1,7 @@
 /**
- * Card component — rounded container with subtle border and shadow.
- * Supports hover lift effect via `hover` prop.
+ * Card component — ruled container, sharp corners, no shadow.
+ * Editorial system: a 1px border does the work a shadow used to.
+ * Supports a subtle hover rule-darkening via `hover` prop.
  */
 export default function Card({
   children,
@@ -9,9 +10,9 @@ export default function Card({
   padding = "p-6",
   ...props
 }) {
-  const base = "bg-white rounded-xl border border-gray-200/60 shadow-sm";
+  const base = "bg-[#faf9f5] rounded-none border border-[rgba(20,19,17,0.14)]";
   const hoverClass = hover
-    ? "transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+    ? "transition-colors duration-150 hover:border-[#141311]"
     : "";
 
   return (

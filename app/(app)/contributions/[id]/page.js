@@ -72,122 +72,102 @@ export default async function ContributionDetailPage({ params }) {
   if (!c || c.project_id !== projectId) notFound();
 
   const isGithub = c.source === "github";
-  const statusVariant =
+  const stampColor =
     c.status === "verified" || c.status === "approved"
-      ? "green"
+      ? "#2c4a2e"
       : c.status === "flagged"
-      ? "red"
-      : "yellow";
+      ? "#b3271e"
+      : "#7a5c00";
   const statusLabel =
     c.status === "approved" ? "verified" : c.status || "pending";
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-2xl">
+    <div className="space-y-6 max-w-2xl">
       <Link
         href="/contributions"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+        className="label-mono hover:text-[#141311] inline-flex items-center gap-1.5"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-        Back to Contributions
+        ← BACK TO CONTRIBUTIONS
       </Link>
 
       <Card className="space-y-6">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4 rule-b pb-5">
           <div className="flex items-start gap-3.5">
             <Avatar src={c.avatar_url} name={c.github_username} size="lg" />
             <div>
-              <p className="text-base font-semibold text-gray-900">{c.github_username}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{formatDate(c.created_at)}</p>
+              <p className="font-serif text-2xl leading-none">{c.github_username}</p>
+              <p className="font-mono text-xs text-[#8a8578] mt-1.5">{formatDate(c.created_at)}</p>
             </div>
           </div>
-          <Badge variant={statusVariant} className="uppercase font-bold shrink-0">
+          <span className="stamp shrink-0" style={{ color: stampColor }}>
             {statusLabel}
-          </Badge>
+          </span>
         </div>
 
         {/* Category + Source */}
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>{c.category}</Badge>
-          <Badge variant={isGithub ? "indigo" : "default"}>
-            {isGithub ? "GitHub" : "Manual"}
-          </Badge>
+          <span
+            className="label-mono"
+            style={{ color: isGithub ? "#c23600" : "#4a473f" }}
+          >
+            {isGithub ? "SOURCE: GITHUB" : "SOURCE: MANUAL"}
+          </span>
         </div>
 
         {/* Description */}
         <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-            Description
-          </p>
-          <p className="text-sm text-gray-800 leading-relaxed">{c.description}</p>
+          <p className="label-mono mb-1.5">DESCRIPTION</p>
+          <p className="text-sm leading-relaxed">{c.description}</p>
         </div>
 
         {isGithub ? (
           /* GitHub-specific fields */
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rule-t pt-4">
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                Commit SHA
-              </p>
-              <p className="text-sm font-mono text-gray-800">
+              <p className="label-mono mb-1">COMMIT SHA</p>
+              <p className="text-sm font-mono">
                 {c.commit_sha ? c.commit_sha.slice(0, 10) : "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                Commit Link
-              </p>
+              <p className="label-mono mb-1">COMMIT LINK</p>
               {c.commit_url ? (
                 <a
                   href={c.commit_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium inline-flex items-center gap-1"
+                  className="text-sm text-[#c23600] hover:underline font-medium"
                 >
-                  View on GitHub
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  View on GitHub ↗
                 </a>
               ) : (
-                <p className="text-sm text-gray-400">—</p>
+                <p className="text-sm text-[#8a8578]">—</p>
               )}
             </div>
           </div>
         ) : (
           /* Manual-specific fields */
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 rule-t pt-4">
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                Time Estimate
-              </p>
-              <p className="text-sm font-semibold text-indigo-600">
-                {Number(c.time_estimate).toFixed(1)} hrs
+              <p className="label-mono mb-1">TIME ESTIMATE</p>
+              <p className="stat-num text-2xl">
+                {Number(c.time_estimate).toFixed(1)}h
               </p>
             </div>
             {c.attachment_url && (
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Supporting Evidence
-                </p>
+                <p className="label-mono mb-1">SUPPORTING EVIDENCE</p>
                 <a
                   href={c.attachment_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   download={c.attachment_name || true}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50/80 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
+                  className="inline-flex items-center gap-2 font-mono text-xs text-[#4a473f] hover:text-[#141311] underline decoration-[rgba(20,19,17,0.3)]"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                  </svg>
-                  {c.attachment_name || "Download"}
-                  {c.attachment_size && (
-                    <span className="text-indigo-500 font-normal">
-                      ({formatBytes(c.attachment_size)})
-                    </span>
-                  )}
+                  ⌷ {c.attachment_name || "Download"}
+                  {c.attachment_size && ` (${formatBytes(c.attachment_size)})`}
                 </a>
               </div>
             )}
@@ -195,34 +175,31 @@ export default async function ContributionDetailPage({ params }) {
         )}
 
         {/* Verification history */}
-        <div className="pt-2 border-t border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-            Verification ({c.approves_count} approve{c.approves_count === 1 ? "" : "s"}
-            {c.flags_count > 0 ? `, ${c.flags_count} flagged` : ""})
+        <div className="rule-t pt-4">
+          <p className="label-mono mb-3">
+            VERIFICATION — {c.approves_count} APPROVE{c.approves_count === 1 ? "" : "S"}
+            {c.flags_count > 0 ? `, ${c.flags_count} FLAGGED` : ""}
           </p>
           {c.votes.length === 0 ? (
-            <p className="text-sm text-gray-400">No teammates have reviewed this yet.</p>
+            <p className="text-sm text-[#8a8578]">No teammates have reviewed this yet.</p>
           ) : (
             <div className="space-y-3">
               {c.votes.map((v, i) => (
                 <div key={i} className="flex items-start gap-2.5">
                   <Avatar src={v.avatar_url} name={v.username} size="sm" />
                   <div className="min-w-0">
-                    <p className="text-sm text-gray-700">
-                      <span className="font-semibold">{v.username}</span>{" "}
+                    <p className="text-sm">
+                      <span className="font-medium">{v.username}</span>{" "}
                       <span
-                        className={
-                          v.vote === "approve"
-                            ? "text-emerald-600 font-medium"
-                            : "text-red-600 font-medium"
-                        }
+                        className="font-mono uppercase tracking-wide"
+                        style={{ color: v.vote === "approve" ? "#2c4a2e" : "#b3271e" }}
                       >
                         {v.vote === "approve" ? "approved" : "flagged"}
                       </span>{" "}
-                      <span className="text-gray-400 text-xs">{formatDate(v.created_at)}</span>
+                      <span className="font-mono text-xs text-[#8a8578]">{formatDate(v.created_at)}</span>
                     </p>
                     {v.comment && (
-                      <p className="text-sm text-gray-500 italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
+                      <p className="text-sm text-[#4a473f] italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
                     )}
                   </div>
                 </div>

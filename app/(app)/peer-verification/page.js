@@ -55,39 +55,22 @@ export default async function PeerVerificationPage() {
   );
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8">
       {/* Page header */}
-      <div>
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Peer Verification &amp; Document Review
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Review teammates&apos; work, inspect uploaded Word / research documents, and vote to verify or flag contributions
-            </p>
-          </div>
-        </div>
+      <div className="rule-strong-b pb-5">
+        <p className="label-mono mb-2">PEER VERIFICATION</p>
+        <h1 className="font-serif text-4xl sm:text-5xl leading-none">
+          Verification &amp; Review
+        </h1>
+        <p className="text-sm text-[#4a473f] mt-3 max-w-xl">
+          Review teammates&apos; work, inspect supporting documents, and vote to verify or flag contributions.
+        </p>
 
-        {/* Info guide card */}
-        <div className="mt-4 flex items-start gap-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
-          <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg shrink-0 mt-0.5">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div className="text-xs text-gray-600 space-y-1">
-            <p className="font-semibold text-gray-800 text-sm">How Peer Review Works</p>
-            <p>
-              • Click on any attached <strong>Word document (.docx)</strong>, <strong>PDF</strong>, or <strong>Research dataset</strong> to download and inspect it.
-            </p>
-            <p>
-              • Vote <strong>Approve</strong> if the hours and deliverables are accurate. When <strong>2+ teammates approve</strong> with 0 flags, the work is marked as <strong>Verified</strong>.
-            </p>
-            <p>
-              • Vote <strong>Flag</strong> if work is inflated, missing, or inaccurate. Flagged contributions will require team resolution.
-            </p>
-          </div>
+        {/* Rule guide — how peer review works */}
+        <div className="mt-4 text-xs text-[#4a473f] space-y-1 font-mono">
+          <p>→ Open any attached document to inspect it before voting.</p>
+          <p>→ 2+ approvals with 0 flags marks a contribution VERIFIED.</p>
+          <p>→ Any flag marks it FLAGGED, pending team resolution.</p>
         </div>
       </div>
 

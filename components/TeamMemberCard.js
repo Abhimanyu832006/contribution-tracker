@@ -46,34 +46,34 @@ export default function TeamMemberCard({
 
   return (
     <>
-      <Card hover className="flex items-center gap-4 group relative">
+      <Card hover className="flex items-center gap-4 group relative" padding="p-4">
         <Avatar src={avatar_url} name={github_username} size="lg" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-gray-900 truncate">
+            <p className="text-sm font-medium truncate">
               {github_username}
             </p>
             <Badge variant={role === "leader" ? "indigo" : "default"}>
               {role === "leader" ? "Leader" : "Member"}
             </Badge>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="font-mono text-xs text-[#8a8578] mt-1">
             @{github_username}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="text-right shrink-0">
-            <p className="text-2xl font-bold text-indigo-600">
+            <p className="stat-num text-2xl">
               {Number(total_hours || 0).toFixed(1)}
             </p>
-            <p className="text-xs text-gray-500">hours</p>
+            <p className="label-mono">HRS</p>
           </div>
 
           {canRemove && (
             <button
               onClick={() => setConfirmOpen(true)}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+              className="p-1.5 text-[#8a8578] hover:text-[#b3271e] transition-colors"
               title={`Remove ${github_username} from project`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -86,30 +86,26 @@ export default function TeamMemberCard({
 
       {/* Confirmation Dialog */}
       {confirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-gray-100 animate-scale-in">
-            <h3 className="text-base font-semibold text-gray-900">
-              Remove Team Member?
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141311]/50 p-4">
+          <div className="w-full max-w-sm rounded-none bg-[#faf9f5] border border-[#141311] p-6">
+            <p className="label-mono mb-2">REMOVE MEMBER</p>
+            <h3 className="font-serif text-xl">
+              @{github_username}?
             </h3>
-            <p className="mt-2 text-sm text-gray-500">
-              Are you sure you want to remove{" "}
-              <span className="font-semibold text-gray-900">@{github_username}</span>{" "}
-              from this project? Their logged contributions will remain in the project history.
+            <p className="mt-2 text-sm text-[#4a473f]">
+              Their logged contributions will remain in the project history.
             </p>
             {error && (
-              <div className="mt-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200">
-                <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                </svg>
+              <div className="mt-4 text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
                 {error}
               </div>
             )}
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className="mt-6 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setConfirmOpen(false)}
                 disabled={removing}
-                className="rounded-xl px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-transparent text-[#4a473f] hover:text-[#141311]"
               >
                 Cancel
               </button>
@@ -117,7 +113,7 @@ export default function TeamMemberCard({
                 type="button"
                 onClick={handleRemove}
                 disabled={removing}
-                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#b3271e] text-[#b3271e] hover:bg-[#b3271e] hover:text-[#f3f1ea] transition-colors disabled:opacity-50"
               >
                 {removing ? "Removing…" : "Remove Member"}
               </button>

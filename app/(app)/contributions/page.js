@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ContributionForm from "@/components/ContributionForm";
@@ -112,69 +111,42 @@ export default function ContributionsPage() {
   }, [contributions, categoryFilter, sourceFilter, search]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 rule-strong-b pb-5">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Contributions</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Log your work and browse everything the team has recorded
-          </p>
+          <p className="label-mono mb-2">CONTRIBUTIONS</p>
+          <h1 className="font-serif text-4xl sm:text-5xl leading-none">Contributions</h1>
         </div>
         {activeProject?.repoOwner && activeProject?.repoName && (
-          <div className="shrink-0">
-            <Button
-              id="sync-github-commits"
-              onClick={handleSync}
-              loading={syncing}
-              variant="secondary"
-              size="sm"
-            >
-              <svg
-                className="w-4 h-4 text-gray-500 mr-1.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
-              </svg>
-              Sync GitHub
-            </Button>
-          </div>
+          <Button
+            id="sync-github-commits"
+            onClick={handleSync}
+            loading={syncing}
+            variant="secondary"
+            size="sm"
+          >
+            ⟲ Sync GitHub
+          </Button>
         )}
       </div>
 
       {syncError && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200 animate-scale-in">
-          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-          </svg>
+        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
           {syncError}
         </div>
       )}
 
       {syncResult && (
-        <div className="flex items-center justify-between gap-3 text-sm text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 border border-emerald-200 animate-scale-in">
-          <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-            </svg>
-            <span>
-              Sync complete: <strong>{syncResult.added}</strong> new commits added,{" "}
-              <strong>{syncResult.skipped}</strong> skipped (already synced), and{" "}
-              <strong>{syncResult.unmatched}</strong> unmatched (not by team members).
-            </span>
-          </div>
+        <div className="flex items-center justify-between gap-3 text-sm border border-[#2c4a2e] text-[#2c4a2e] px-4 py-3">
+          <span className="font-mono">
+            SYNC COMPLETE — {syncResult.added} added / {syncResult.skipped} skipped / {syncResult.unmatched} unmatched
+          </span>
           <button
             onClick={() => setSyncResult(null)}
-            className="text-xs font-semibold text-emerald-600 hover:text-emerald-800"
+            className="label-mono hover:underline shrink-0"
           >
-            Dismiss
+            DISMISS
           </button>
         </div>
       )}
@@ -182,16 +154,14 @@ export default function ContributionsPage() {
       {/* Log new contribution — only shown on "Mine" tab */}
       {filter === "mine" && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Log New Contribution
-            </h2>
+          <div className="flex items-center justify-between rule-b pb-2">
+            <p className="label-mono">LOG NEW CONTRIBUTION</p>
             <button
               type="button"
               onClick={() => setShowForm((p) => !p)}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="label-mono hover:underline"
             >
-              {showForm ? "Hide form" : "Show form"}
+              {showForm ? "HIDE" : "SHOW"}
             </button>
           </div>
 
@@ -209,46 +179,37 @@ export default function ContributionsPage() {
 
       {/* Filter toggle */}
       <div className="space-y-4">
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl w-fit">
+        <div className="flex items-baseline gap-6 rule-b pb-2">
           <button
             type="button"
             onClick={() => setFilter("mine")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`label-mono !text-xs pb-1 ${
               filter === "mine"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-[#141311] border-b-2 border-[#ff4b12] -mb-[9px]"
+                : "hover:text-[#141311]"
             }`}
           >
-            Mine
+            MINE
           </button>
           <button
             type="button"
             onClick={() => setFilter("everyone")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`label-mono !text-xs pb-1 ${
               filter === "everyone"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-[#141311] border-b-2 border-[#ff4b12] -mb-[9px]"
+                : "hover:text-[#141311]"
             }`}
           >
-            Everyone&apos;s
+            EVERYONE&apos;S
           </button>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            {filter === "mine" ? "Your Contributions" : "All Team Contributions"}
-          </h2>
           {!loading && (
-            <Badge variant="default">
+            <span className="label-mono ml-auto">
               {filteredContributions.length}
               {filteredContributions.length !== contributions.length
-                ? ` of ${contributions.length}`
+                ? ` / ${contributions.length}`
                 : ""}{" "}
-              entries
-            </Badge>
-          )}
-          {filter === "everyone" && (
-            <Badge variant="indigo">GitHub Integration Connected</Badge>
+              ENTRIES
+            </span>
           )}
         </div>
 
@@ -259,7 +220,7 @@ export default function ContributionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search description or contributor…"
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 hover:border-gray-300"
+            className="flex-1 rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141311] placeholder-[#8a8578] transition-colors duration-150 focus:outline-none focus:border-[#141311]"
           />
           <Select
             id="category-filter"
@@ -288,8 +249,8 @@ export default function ContributionsPage() {
 
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-6 h-6 mx-auto border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-400 mt-3">Loading…</p>
+            <div className="w-4 h-4 mx-auto border-2 border-[#141311] border-t-transparent animate-spin" />
+            <p className="label-mono mt-3">LOADING…</p>
           </div>
         ) : (
           <ContributionList contributions={filteredContributions} />

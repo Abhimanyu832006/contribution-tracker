@@ -1,6 +1,5 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
-import Card from "@/components/ui/Card";
 import TeamMemberCard from "@/components/TeamMemberCard";
 import ContributionList from "@/components/ContributionList";
 
@@ -8,9 +7,19 @@ export const metadata = {
   title: "Dashboard — Contribution Tracker",
 };
 
+function pad(n) {
+  return String(n).padStart(3, "0");
+}
+
 export default async function DashboardPage() {
   const session = await requireProject();
   const projectId = session.user.projectId;
+
+  const { rows: projectRows } = await pool.query(
+    "SELECT name, repo_owner, repo_name FROM projects WHERE id = $1",
+    [projectId]
+  );
+  const project = projectRows[0];
 
   // Fetch team members with hours
   const { rows: members } = await pool.query(
@@ -107,142 +116,92 @@ export default async function DashboardPage() {
   const flaggedCount = statusBreakdown.find((s) => s.status === "flagged")?.count || 0;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Overview of your team&apos;s project activity
-        </p>
+    <div className="space-y-12">
+      {/* Page header — editorial masthead, not a generic page title */}
+      <div className="rule-strong-b pb-5">
+        <p className="label-mono mb-2">DASHBOARD / {project?.name?.toUpperCase()}</p>
+        <h1 className="font-serif text-4xl sm:text-5xl leading-none">
+          {project?.name}
+        </h1>
+        {project?.repo_owner && project?.repo_name ? (
+          <p className="font-mono text-xs text-[#4a473f] mt-3">
+            {project.repo_owner}/{project.repo_name}
+          </p>
+        ) : (
+          <p className="label-mono mt-3">NO REPOSITORY LINKED</p>
+        )}
       </div>
 
-      {/* Summary stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children">
-        <Card>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Team Size
-          </p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {members.length}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">members</p>
-        </Card>
-        <Card>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Total Hours
-          </p>
-          <p className="text-3xl font-bold text-indigo-600 mt-2">
-            {totalHours.toFixed(1)}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">hours logged</p>
-        </Card>
-        <Card>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Contributions
-          </p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">
-            {totalContributions}
-          </p>
-          <p className="text-xs text-gray-400 mt-1">entries total</p>
-        </Card>
+      {/* Primary figures — large serif numerals, vertical rules, no cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4">
+        {[
+          { label: "TEAM", value: pad(members.length) },
+          { label: "HOURS LOGGED", value: totalHours.toFixed(1) },
+          { label: "CONTRIBUTIONS", value: pad(totalContributions) },
+          { label: "VERIFIED", value: pad(verifiedCount) },
+        ].map((stat, i) => (
+          <div
+            key={stat.label}
+            className={`py-4 ${i > 0 ? "sm:rule-l sm:pl-6" : ""} ${
+              i % 2 === 1 ? "rule-l pl-6 sm:pl-6" : ""
+            } rule-t`}
+          >
+            <p className="stat-num text-5xl sm:text-6xl">{stat.value}</p>
+            <p className="label-mono mt-2">{stat.label}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Contribution breakdowns */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
-        {/* Source breakdown */}
-        <Card>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-            By Source
-          </p>
-          <div className="space-y-3">
-            <div>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="font-medium text-gray-700">GitHub</span>
-                <span className="text-gray-500">{githubCount}</span>
-              </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-indigo-500 rounded-full"
-                  style={{
-                    width: `${totalContributions ? (githubCount / totalContributions) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="font-medium text-gray-700">Manual</span>
-                <span className="text-gray-500">{manualCount}</span>
-              </div>
-              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full"
-                  style={{
-                    width: `${totalContributions ? (manualCount / totalContributions) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-            </div>
+      {/* Source / status breakdowns — horizontal rule bars, not progress pills */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+        <section>
+          <p className="label-mono rule-b pb-2 mb-3">CONTRIBUTION SOURCE</p>
+          <div className="space-y-2.5">
+            <BreakdownRow label="GitHub" count={githubCount} total={totalContributions} />
+            <BreakdownRow label="Manual" count={manualCount} total={totalContributions} />
           </div>
-        </Card>
+        </section>
 
-        {/* Verification status breakdown */}
-        <Card>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-            Verification Status
-          </p>
-          <div className="grid grid-cols-3 gap-3 text-center">
+        <section>
+          <p className="label-mono rule-b pb-2 mb-3">VERIFICATION STATUS</p>
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Pending</p>
+              <p className="stat-num text-3xl text-[#7a5c00]">{pad(pendingCount)}</p>
+              <p className="label-mono mt-1">PENDING</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-emerald-600">{verifiedCount}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Verified</p>
+              <p className="stat-num text-3xl text-[#2c4a2e]">{pad(verifiedCount)}</p>
+              <p className="label-mono mt-1">VERIFIED</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-red-600">{flaggedCount}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Flagged</p>
+              <p className="stat-num text-3xl text-[#b3271e]">{pad(flaggedCount)}</p>
+              <p className="label-mono mt-1">FLAGGED</p>
             </div>
           </div>
-        </Card>
-      </section>
+        </section>
+      </div>
 
       {/* Category breakdown */}
       {categoryBreakdown.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-            Contributions by Category
-          </h2>
-          <Card>
-            <div className="space-y-3">
-              {categoryBreakdown.map((cat) => (
-                <div key={cat.category}>
-                  <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="font-medium text-gray-700">{cat.category}</span>
-                    <span className="text-gray-500">{cat.count}</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-violet-500 rounded-full"
-                      style={{
-                        width: `${totalContributions ? (cat.count / totalContributions) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
+          <p className="label-mono rule-b pb-2 mb-3">CONTRIBUTIONS BY CATEGORY</p>
+          <div className="space-y-2.5">
+            {categoryBreakdown.map((cat) => (
+              <BreakdownRow
+                key={cat.category}
+                label={cat.category}
+                count={cat.count}
+                total={totalContributions}
+              />
+            ))}
+          </div>
         </section>
       )}
 
-      {/* Team members */}
+      {/* Team roster */}
       <section>
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-          Team Members
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+        <p className="label-mono rule-b pb-2 mb-4">TEAM ROSTER</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m) => (
             <TeamMemberCard key={m.id} member={m} />
           ))}
@@ -251,11 +210,30 @@ export default async function DashboardPage() {
 
       {/* Recent activity */}
       <section>
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-          Recent Activity
-        </h2>
+        <p className="label-mono rule-b pb-2 mb-4">RECENT ACTIVITY</p>
         <ContributionList contributions={contributions} />
       </section>
+    </div>
+  );
+}
+
+/** Editorial horizontal-rule breakdown row — replaces colored progress pills. */
+function BreakdownRow({ label, count, total }) {
+  const pct = total ? (count / total) * 100 : 0;
+  return (
+    <div>
+      <div className="flex items-baseline justify-between text-sm mb-1">
+        <span>{label}</span>
+        <span className="font-mono text-xs text-[#4a473f]">
+          {count} · {pct.toFixed(0)}%
+        </span>
+      </div>
+      <div className="h-px w-full bg-[rgba(20,19,17,0.14)] relative">
+        <div
+          className="h-px bg-[#141311] absolute inset-y-0 left-0"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
     </div>
   );
 }

@@ -1,44 +1,94 @@
 @import "tailwindcss";
 
 /* ── Design tokens ─────────────────────────────────────────── */
+/* Editorial/industrial system: paper + ink + one accent. */
 :root {
-  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans-ui: "Archivo", system-ui, -apple-system, sans-serif;
+  --font-mono-ui: "IBM Plex Mono", "Courier New", monospace;
 
   /* Palette */
-  --color-accent: #6366f1;
-  --color-accent-hover: #4f46e5;
-  --color-accent-light: #eef2ff;
-  --color-accent-subtle: #e0e7ff;
+  --color-accent: #ff4b12;
+  --color-accent-ink: #c23600;
+  --color-accent-tint: #fff0ea;
 
-  --color-bg: #fafafa;
-  --color-surface: #ffffff;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-bg: #f3f1ea;
+  --color-surface: #faf9f5;
+  --color-ink: #141311;
+  --color-ink-soft: #4a473f;
+  --color-ink-faint: #8a8578;
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-rule: rgba(20, 19, 17, 0.14);
+  --color-rule-strong: rgba(20, 19, 17, 0.85);
 
-  --color-sidebar: #0f172a;
-  --color-sidebar-hover: #1e293b;
-  --color-sidebar-active: #334155;
+  --color-sidebar: #f3f1ea;
+  --color-sidebar-ink: #141311;
 
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  --color-verified: #2c4a2e;
+  --color-pending: #7a5c00;
+  --color-flagged: #b3271e;
+
+  /* Legacy aliases kept so any un-migrated component still renders sanely */
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-ink-soft);
+  --color-text-muted: var(--color-ink-faint);
+  --color-border: var(--color-rule);
+  --color-border-strong: var(--color-rule-strong);
+  --color-success: var(--color-verified);
+  --color-warning: var(--color-pending);
+  --color-danger: var(--color-flagged);
 }
 
 @theme inline {
   --color-background: var(--color-bg);
-  --color-foreground: var(--color-text-primary);
-  --font-sans: var(--font-inter);
+  --color-foreground: var(--color-ink);
+  --font-sans: var(--font-sans-ui);
+  --font-serif: var(--font-display);
+  --font-mono: var(--font-mono-ui);
 }
 
 /* ── Base ──────────────────────────────────────────────────── */
 body {
   background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-family: var(--font-inter);
+  color: var(--color-ink);
+  font-family: var(--font-sans-ui);
+}
+
+/* ── Editorial system utilities ───────────────────────────────
+   Reused across the app shell instead of ad-hoc card styling. */
+.rule-t { border-top: 1px solid var(--color-rule); }
+.rule-b { border-bottom: 1px solid var(--color-rule); }
+.rule-l { border-left: 1px solid var(--color-rule); }
+.rule-r { border-right: 1px solid var(--color-rule); }
+.rule-strong-b { border-bottom: 1.5px solid var(--color-rule-strong); }
+
+.label-mono {
+  font-family: var(--font-mono-ui);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-family: var(--font-mono-ui);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2em 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 0;
 }
 
 /* ── Animations ────────────────────────────────────────────── */

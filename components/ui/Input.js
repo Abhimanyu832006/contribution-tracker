@@ -1,5 +1,6 @@
 /**
  * Styled text / number input.
+ * Editorial system: mono uppercase label, sharp-cornered field, ink underline on focus.
  */
 export default function Input({
   label,
@@ -12,14 +13,14 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="text-sm font-medium text-gray-700"
+          className="font-mono text-[11px] uppercase tracking-wider text-[#4a473f]"
         >
           {label}
         </label>
       )}
       <input
         id={id}
-        className={`w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 hover:border-gray-300 ${className}`}
+        className={`w-full rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141311] placeholder-[#8a8578] transition-colors duration-150 focus:outline-none focus:border-[#141311] ${className}`}
         {...props}
       />
     </div>

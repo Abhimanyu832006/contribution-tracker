@@ -1,23 +1,27 @@
 /**
  * Badge component for category labels, roles, statuses.
  * Variants: default, indigo, green, yellow, orange, red, purple
+ *
+ * Editorial system: monospace label with a bottom rule in the variant's
+ * ink color, instead of a colored pill background — restrained, technical.
  */
 export default function Badge({
   children,
   variant = "default",
   className = "",
 }) {
-  const base = "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold";
+  const base =
+    "inline-flex items-center font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 border-b-2 rounded-none";
 
   const variants = {
-    default: "bg-gray-100 text-gray-700",
-    indigo:  "bg-indigo-50 text-indigo-700",
-    green:   "bg-emerald-50 text-emerald-700",
-    yellow:  "bg-amber-50 text-amber-700",
-    orange:  "bg-orange-50 text-orange-700",
-    red:     "bg-red-50 text-red-700",
-    purple:  "bg-purple-50 text-purple-700",
-    blue:    "bg-blue-50 text-blue-700",
+    default: "text-[#4a473f] border-[#8a8578]",
+    indigo:  "text-[#141311] border-[#ff4b12]",
+    green:   "text-[#2c4a2e] border-[#2c4a2e]",
+    yellow:  "text-[#7a5c00] border-[#7a5c00]",
+    orange:  "text-[#c23600] border-[#ff4b12]",
+    red:     "text-[#b3271e] border-[#b3271e]",
+    purple:  "text-[#141311] border-[#4a473f]",
+    blue:    "text-[#141311] border-[#4a473f]",
   };
 
   return (

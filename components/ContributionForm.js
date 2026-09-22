@@ -145,20 +145,19 @@ export default function ContributionForm({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="rule-b pb-2 flex items-center justify-between">
+        <p className="label-mono">MANUAL CONTRIBUTION</p>
+        <p className="label-mono !text-[#8a8578]">SOURCE: MANUAL</p>
+      </div>
+
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 animate-scale-in">
-          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-          </svg>
+        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 animate-scale-in">
-          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-          </svg>
+        <div className="text-sm text-[#2c4a2e] border border-[#2c4a2e] px-4 py-3">
           {success}
         </div>
       )}
@@ -205,25 +204,25 @@ export default function ContributionForm({ onSuccess }) {
       {/* Supporting Document Upload Section */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+          <label className="font-mono text-[11px] uppercase tracking-wider text-[#4a473f]">
             {isDoc
               ? "Attach Documentation File (.docx, .doc, .pdf)"
               : isResearch
               ? "Attach Research Material (PDF, DOCX, datasets, slides, zip)"
               : "Supporting Document (Optional)"}
           </label>
-          <span className="text-xs text-gray-400">Max 25 MB</span>
+          <span className="label-mono">MAX 25MB</span>
         </div>
 
         {selectedFile ? (
-          <div className="flex items-center justify-between p-3.5 bg-gray-50 border border-gray-200 rounded-xl animate-scale-in">
+          <div className="flex items-center justify-between p-3.5 bg-[#faf9f5] border border-[#141311]">
             <div className="flex items-center gap-3 min-w-0">
               {getFileIcon(selectedFile.name)}
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm truncate">
                   {selectedFile.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="font-mono text-xs text-[#8a8578]">
                   {formatBytes(selectedFile.size)}
                 </p>
               </div>
@@ -231,7 +230,7 @@ export default function ContributionForm({ onSuccess }) {
             <button
               type="button"
               onClick={removeFile}
-              className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors ml-2"
+              className="p-1.5 text-[#8a8578] hover:text-[#b3271e] transition-colors ml-2"
               title="Remove file"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -242,10 +241,10 @@ export default function ContributionForm({ onSuccess }) {
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${
+            className={`border border-dashed p-4 text-center cursor-pointer transition-colors ${
               isDoc || isResearch
-                ? "border-indigo-300 bg-indigo-50/40 hover:bg-indigo-50/70"
-                : "border-gray-200 bg-gray-50/50 hover:bg-gray-50 hover:border-gray-300"
+                ? "border-[#ff4b12] bg-[#fff0ea]/40 hover:bg-[#fff0ea]/70"
+                : "border-[rgba(20,19,17,0.3)] hover:bg-[#faf9f5]"
             }`}
           >
             <input
@@ -262,13 +261,10 @@ export default function ContributionForm({ onSuccess }) {
               }
             />
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-              </svg>
-              <p className="text-xs font-medium text-gray-700">
-                <span className="text-indigo-600 font-semibold hover:underline">Click to upload</span> or drag and drop
+              <p className="text-xs">
+                <span className="text-[#c23600] font-medium hover:underline">Click to upload</span> or drag and drop
               </p>
-              <p className="text-[11px] text-gray-400">
+              <p className="font-mono text-[11px] text-[#8a8578]">
                 {isDoc
                   ? "Word files (.docx, .doc), PDFs, or Markdown"
                   : isResearch

@@ -46,18 +46,19 @@ export default async function ScoresPage() {
   const teamTotalContributions = members.reduce((sum, m) => sum + m.contribution_count, 0);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Per-member contribution breakdown for {projectName}, computed directly from
-          recorded contributions and peer verification — export as CSV to share or archive.
+    <div className="space-y-8">
+      <div className="rule-strong-b pb-5">
+        <p className="label-mono mb-2">REPORTS</p>
+        <h1 className="font-serif text-4xl sm:text-5xl leading-none">{projectName}</h1>
+        <p className="text-sm text-[#4a473f] mt-3 max-w-xl">
+          Per-member breakdown computed directly from recorded contributions and peer
+          verification — export as CSV to share or archive.
         </p>
       </div>
 
       {members.length === 0 || teamTotalContributions === 0 ? (
         <Card className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-[#8a8578]">
             No contributions recorded yet — reports will populate automatically once your
             team starts logging work.
           </p>

@@ -37,14 +37,14 @@ export default function Avatar({
         alt={alt || name}
         width={pxSizes[size]}
         height={pxSizes[size]}
-        className={`rounded-full object-cover ring-2 ring-white shadow-sm ${sizes[size]} ${className}`}
+        className={`rounded-none object-cover border border-[#141311] ${sizes[size]} ${className}`}
       />
     );
   }
 
   return (
     <div
-      className={`rounded-full bg-indigo-100 text-indigo-600 font-semibold flex items-center justify-center ring-2 ring-white shadow-sm ${sizes[size]} ${className}`}
+      className={`rounded-none bg-[#141311] text-[#f3f1ea] font-mono font-medium flex items-center justify-center border border-[#141311] ${sizes[size]} ${className}`}
     >
       {initials}
     </div>
