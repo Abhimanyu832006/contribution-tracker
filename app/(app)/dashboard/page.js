@@ -39,6 +39,10 @@ export default async function DashboardPage() {
        c.time_estimate,
        c.status,
        c.source,
+       c.attachment_url,
+       c.attachment_name,
+       c.attachment_size,
+       c.attachment_type,
        c.created_at,
        u.github_username,
        u.avatar_url

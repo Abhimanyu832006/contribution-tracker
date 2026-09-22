@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import pool from "@/lib/db";
+import pool, { ensureSchema } from "@/lib/db";
 import { getActiveMembership } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
@@ -11,6 +11,8 @@ export async function GET(request) {
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await ensureSchema();
 
     const membership = await getActiveMembership(session.user.dbId);
     if (!membership) {
@@ -26,6 +28,7 @@ export async function GET(request) {
     const { rows } = await pool.query(
       `SELECT
          c.id,
+         u.id AS user_id,
          u.github_username,
          u.avatar_url,
          c.category,
@@ -34,15 +37,22 @@ export async function GET(request) {
          c.status,
          c.source,
          c.commit_url,
-         c.created_at
+         c.attachment_url,
+         c.attachment_name,
+         c.attachment_size,
+         c.attachment_type,
+         c.created_at,
+         COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
+         COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
+         MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote
        FROM contributions c
        JOIN users u ON u.id = c.user_id
+       LEFT JOIN contribution_votes v ON v.contribution_id = c.id
        WHERE c.project_id = $1
          ${mineOnly ? "AND c.user_id = $2" : ""}
+       GROUP BY c.id, u.id, u.github_username, u.avatar_url
        ORDER BY c.created_at DESC`,
-      mineOnly
-        ? [membership.project_id, session.user.dbId]
-        : [membership.project_id]
+      [membership.project_id, session.user.dbId]
     );
 
     return NextResponse.json(rows);
@@ -63,6 +73,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await ensureSchema();
+
     const membership = await getActiveMembership(session.user.dbId);
     if (!membership) {
       return NextResponse.json(
@@ -72,7 +84,15 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { category, description, time_estimate } = body;
+    const {
+      category,
+      description,
+      time_estimate,
+      attachment_url,
+      attachment_name,
+      attachment_size,
+      attachment_type,
+    } = body;
 
     if (!category || !description || time_estimate == null) {
       return NextResponse.json(
@@ -82,10 +102,23 @@ export async function POST(request) {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO contributions (project_id, user_id, category, description, time_estimate)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO contributions (
+         project_id, user_id, category, description, time_estimate,
+         attachment_url, attachment_name, attachment_size, attachment_type
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [membership.project_id, session.user.dbId, category, description, time_estimate]
+      [
+        membership.project_id,
+        session.user.dbId,
+        category,
+        description,
+        time_estimate,
+        attachment_url || null,
+        attachment_name || null,
+        attachment_size || null,
+        attachment_type || null,
+      ]
     );
 
     return NextResponse.json(rows[0], { status: 201 });
@@ -97,3 +130,4 @@ export async function POST(request) {
     );
   }
 }
+
