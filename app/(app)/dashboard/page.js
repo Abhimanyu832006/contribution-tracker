@@ -2,7 +2,9 @@ import Link from "next/link";
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
+import { CATEGORY_BADGE_MAP } from "@/lib/constants";
 
 export const metadata = {
   title: "Dashboard — Contribution Tracker",
@@ -34,8 +36,7 @@ export default async function DashboardPage() {
     `SELECT
        u.id, u.github_username, u.avatar_url, pm.role,
        COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
-       COUNT(c.id)::int AS contribution_count,
-       MAX(c.created_at) AS last_active
+       COUNT(c.id)::int AS contribution_count
      FROM project_members pm
      JOIN users u ON u.id = pm.user_id
      LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
@@ -64,8 +65,7 @@ export default async function DashboardPage() {
        COUNT(*) FILTER (WHERE source = 'manual')::int AS manual,
        COUNT(*) FILTER (WHERE status = 'pending')::int AS pending,
        COUNT(*) FILTER (WHERE status IN ('verified','approved'))::int AS verified,
-       COUNT(*) FILTER (WHERE status = 'flagged')::int AS flagged,
-       COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days')::int AS this_week
+       COUNT(*) FILTER (WHERE status = 'flagged')::int AS flagged
      FROM contributions WHERE project_id = $1`,
     [projectId]
   );
@@ -78,266 +78,194 @@ export default async function DashboardPage() {
   );
 
   const totalHours = members.reduce((sum, m) => sum + m.total_hours, 0);
-  const maxMemberHours = Math.max(...members.map((m) => m.total_hours), 1);
   const maxCategoryCount = Math.max(...categoryBreakdown.map((c) => c.count), 1);
-  const githubPct = counts.total ? (counts.github / counts.total) * 100 : 0;
+  const githubPct = counts.total ? Math.round((counts.github / counts.total) * 100) : 0;
 
   return (
-    <div className="space-y-14">
-      {/* ── Masthead ──────────────────────────────────────────── */}
-      <div className="flex items-end justify-between gap-4 flex-wrap">
-        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
-          {project?.name}
-        </h1>
-        {project?.repo_owner && project?.repo_name ? (
-          <a
-            href={`https://github.com/${project.repo_owner}/${project.repo_name}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 font-mono text-xs text-[#55503f] hover:text-[#0e0d0b] shrink-0 mb-1"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#16a34a] animate-pulse-block" />
-            {project.repo_owner}/{project.repo_name}
-          </a>
-        ) : (
-          <Link href="/settings" className="flex items-center gap-2 font-mono text-xs text-[#928c78] hover:text-[#0e0d0b] shrink-0 mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#928c78]" />
-            no repository linked
-          </Link>
-        )}
-      </div>
-
-      {/* ── Hero row: a solid color block hero number + stat column ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-5">
-        <div
-          className="rounded-[3px] border-2 border-[#0e0d0b] shadow-[6px_6px_0_0_rgba(14,13,11,0.9)] p-8 sm:p-10 flex flex-col justify-between min-h-[220px]"
-          style={{ backgroundColor: "#ff4713" }}
-        >
-          <p className="font-mono text-xs uppercase tracking-wider text-[#0e0d0b]/70">
-            This week
-          </p>
-          <p className="font-[family-name:var(--font-poster)] text-[6rem] sm:text-[7.5rem] leading-[0.8] text-[#0e0d0b] animate-count-in">
-            {counts.this_week}
-          </p>
-          <p className="text-sm text-[#0e0d0b]/80">
-            contribution{counts.this_week === 1 ? "" : "s"} logged
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-5">
-          <Card className="flex flex-col justify-between">
-            <p className="label-mono">Total</p>
-            <p className="stat-num text-5xl mt-2">{counts.total}</p>
-          </Card>
-          <Card className="flex flex-col justify-between">
-            <p className="label-mono">Hours</p>
-            <p className="stat-num text-5xl mt-2">{totalHours.toFixed(0)}</p>
-          </Card>
-          <Card className="flex flex-col justify-between">
-            <p className="label-mono">Team</p>
-            <p className="stat-num text-5xl mt-2">{members.length}</p>
-          </Card>
-          <Link href="/peer-verification">
-            <Card
-              hover
-              accent={counts.pending > 0 ? "pending" : "verified"}
-              className="flex flex-col justify-between h-full"
+    <div className="space-y-8 animate-fade-in">
+      {/* Page header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">{project?.name}</h1>
+          {project?.repo_owner && project?.repo_name ? (
+            <a
+              href={`https://github.com/${project.repo_owner}/${project.repo_name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-indigo-600 mt-1 transition-colors"
             >
-              <p className="label-mono">To review</p>
-              <p
-                className="stat-num text-5xl mt-2"
-                style={{ color: counts.pending > 0 ? "var(--color-pending)" : "var(--color-verified)" }}
-              >
-                {counts.pending}
-              </p>
-            </Card>
-          </Link>
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+              {project.repo_owner}/{project.repo_name}
+            </a>
+          ) : (
+            <Link href="/settings" className="text-sm text-slate-400 hover:text-indigo-600 mt-1 inline-block transition-colors">
+              No repository linked — connect one in Settings
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* ── GitHub / Manual split — a real bar, both segments solid color ── */}
-      {counts.total > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-2">
-            <p className="label-mono">Signal / Work split</p>
-            <p className="font-mono text-xs text-[#55503f]">
-              {counts.github} github · {counts.manual} manual
+      {/* Summary stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 stagger-children">
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Contributions</p>
+          <p className="text-3xl font-bold text-slate-900 mt-2">{counts.total}</p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Hours logged</p>
+          <p className="text-3xl font-bold text-indigo-600 mt-2">{totalHours.toFixed(1)}</p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Team</p>
+          <p className="text-3xl font-bold text-slate-900 mt-2">{members.length}</p>
+        </Card>
+        <Link href="/peer-verification">
+          <Card hover className="h-full">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">To review</p>
+            <p className={`text-3xl font-bold mt-2 ${counts.pending > 0 ? "text-amber-600" : "text-green-600"}`}>
+              {counts.pending}
             </p>
-          </div>
-          <div className="flex h-14 rounded-[3px] overflow-hidden border-2 border-[#0e0d0b]">
-            {counts.github > 0 && (
-              <div
-                className="flex items-center px-4 shrink-0"
-                style={{ width: `${githubPct}%`, backgroundColor: "#1a3fd6" }}
-              >
-                {githubPct > 12 && (
-                  <span className="font-mono text-sm font-semibold text-[#f4f2ec]">
-                    {Math.round(githubPct)}%
-                  </span>
-                )}
-              </div>
-            )}
-            {counts.manual > 0 && (
-              <div
-                className="flex items-center px-4 flex-1"
-                style={{ backgroundColor: "#ff4713" }}
-              >
-                {100 - githubPct > 12 && (
-                  <span className="font-mono text-sm font-semibold text-[#0e0d0b]">
-                    {Math.round(100 - githubPct)}%
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+          </Card>
+        </Link>
+      </div>
 
-      {/* ── Team activity — bold horizontal bars, real hours ─────── */}
-      {members.length > 0 && (
-        <section>
-          <p className="label-mono mb-3">Team activity</p>
-          <div className="space-y-2.5">
-            {members.map((m) => (
-              <div key={m.id} className="flex items-center gap-3">
-                <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
-                <span className="text-sm font-semibold w-28 sm:w-36 truncate shrink-0">
-                  {m.github_username}
+      {/* GitHub / Manual split + Verification snapshot */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Source</p>
+          {counts.total > 0 ? (
+            <>
+              <div className="flex h-3 rounded-full overflow-hidden bg-slate-100">
+                <div className="bg-blue-500" style={{ width: `${githubPct}%` }} />
+                <div className="bg-amber-500 flex-1" />
+              </div>
+              <div className="flex items-center justify-between mt-3 text-sm">
+                <span className="flex items-center gap-1.5 text-slate-600">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" /> GitHub · {counts.github}
                 </span>
-                <div className="flex-1 h-6 bg-[#e8e5db] rounded-[2px] relative overflow-hidden">
+                <span className="flex items-center gap-1.5 text-slate-600">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" /> Manual · {counts.manual}
+                </span>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-slate-400">No contributions yet</p>
+          )}
+        </Card>
+
+        <Card>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Verification</p>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div>
+              <p className="text-2xl font-bold text-amber-600">{counts.pending}</p>
+              <p className="text-xs text-slate-500 mt-0.5">Pending</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-green-600">{counts.verified}</p>
+              <p className="text-xs text-slate-500 mt-0.5">Verified</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-red-600">{counts.flagged}</p>
+              <p className="text-xs text-slate-500 mt-0.5">Flagged</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Category breakdown */}
+      {categoryBreakdown.length > 0 && (
+        <Card>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">By category</p>
+          <div className="space-y-3">
+            {categoryBreakdown.map((cat) => (
+              <div key={cat.category}>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="font-medium text-slate-700">{cat.category}</span>
+                  <span className="text-slate-500">{cat.count}</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-[2px] transition-all duration-500"
-                    style={{
-                      width: `${(m.total_hours / maxMemberHours) * 100}%`,
-                      backgroundColor: m.role === "leader" ? "#0e0d0b" : "#1a3fd6",
-                      minWidth: m.total_hours > 0 ? "6px" : "0",
-                    }}
+                    className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                    style={{ width: `${(cat.count / maxCategoryCount) * 100}%` }}
                   />
                 </div>
-                <span className="font-mono text-xs text-[#55503f] w-14 text-right shrink-0">
-                  {m.total_hours.toFixed(1)}h
-                </span>
-                <span className="font-mono text-[10px] text-[#928c78] w-16 text-right shrink-0 hidden sm:block">
-                  {m.contribution_count > 0 ? timeAgo(m.last_active) : "—"}
-                </span>
               </div>
             ))}
           </div>
-        </section>
+        </Card>
       )}
 
-      {/* ── Category breakdown — solid blocks sized by count ─────── */}
-      {categoryBreakdown.length > 0 && (
-        <section>
-          <p className="label-mono mb-3">By category</p>
-          <div className="flex flex-wrap gap-2">
-            {categoryBreakdown.map((cat, i) => (
-              <div
-                key={cat.category}
-                className="rounded-[3px] border-2 border-[#0e0d0b] px-4 py-3 flex items-end gap-2"
-                style={{
-                  backgroundColor: i === 0 ? "#0e0d0b" : "#ffffff",
-                  color: i === 0 ? "#f4f2ec" : "#0e0d0b",
-                  minWidth: `${80 + (cat.count / maxCategoryCount) * 100}px`,
-                }}
-              >
-                <span className="stat-num text-2xl">{cat.count}</span>
-                <span className="font-mono text-[10px] uppercase tracking-wider pb-0.5">
-                  {cat.category}
-                </span>
+      {/* Team members */}
+      <section>
+        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Team</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+          {members.map((m) => (
+            <Card key={m.id} hover className="flex items-center gap-3">
+              <Avatar src={m.avatar_url} name={m.github_username} size="md" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-slate-900 truncate">{m.github_username}</p>
+                  {m.role === "leader" && <Badge variant="indigo">Leader</Badge>}
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">{m.contribution_count} contributions</p>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+              <p className="text-lg font-bold text-slate-900 shrink-0">{m.total_hours.toFixed(1)}h</p>
+            </Card>
+          ))}
+        </div>
+      </section>
 
-      {/* ── Activity stream — recent events as split-block cards ─── */}
+      {/* Recent activity */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <p className="label-mono">Recent activity</p>
-          <Link href="/contributions" className="font-mono text-xs text-[#1a3fd6] hover:underline">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recent Activity</h2>
+          <Link href="/contributions" className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
             View all →
           </Link>
         </div>
 
         {entries.length === 0 ? (
-          <div className="border-2 border-dashed border-[#928c78] rounded-[3px] py-16 text-center">
-            <p className="text-sm text-[#928c78]">Nothing recorded yet.</p>
-          </div>
+          <Card className="text-center py-12">
+            <p className="text-sm text-slate-400">No contributions logged yet.</p>
+          </Card>
         ) : (
-          <div className="space-y-3 stagger-children">
-            {entries.map((e) => (
-              <ActivityRow key={e.id} entry={e} />
-            ))}
+          <div className="space-y-2.5 stagger-children">
+            {entries.map((e) => {
+              const isGithub = e.source === "github";
+              const href = isGithub && e.commit_url ? e.commit_url : `/contributions/${e.id}`;
+              const linkProps = isGithub && e.commit_url ? { target: "_blank", rel: "noopener noreferrer" } : {};
+              return (
+                <Link key={e.id} href={href} {...linkProps} className="block">
+                  <Card
+                    hover
+                    accent={isGithub ? "github" : "manual"}
+                    padding="p-3.5"
+                    className="flex items-center gap-3"
+                  >
+                    <Avatar src={e.avatar_url} name={e.github_username} size="sm" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold text-slate-900">{e.github_username}</span>
+                        <Badge variant={isGithub ? "blue" : "yellow"}>{isGithub ? "GitHub" : "Manual"}</Badge>
+                        <Badge variant={CATEGORY_BADGE_MAP[e.category] || "default"}>{e.category}</Badge>
+                      </div>
+                      <p className="text-sm text-slate-600 truncate mt-0.5">{e.description}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      {!isGithub && e.time_estimate > 0 && (
+                        <p className="text-sm font-semibold text-slate-900">{Number(e.time_estimate).toFixed(1)}h</p>
+                      )}
+                      <p className="text-xs text-slate-400 mt-0.5">{timeAgo(e.created_at)}</p>
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>
     </div>
-  );
-}
-
-/** One contribution as a split-block row: a solid color spine tags the
- * source (signal-blue = GitHub, work-orange = manual), fused to a plain
- * content panel. Verified/flagged get a solid stamp; pending gets nothing
- * loud — it hasn't been judged yet. */
-function ActivityRow({ entry }) {
-  const isGithub = entry.source === "github";
-  const spineColor = isGithub ? "#1a3fd6" : "#ff4713";
-  const stamp =
-    entry.status === "flagged"
-      ? { bg: "#e11d2e", fg: "#f4f2ec", label: "flagged" }
-      : entry.status === "verified" || entry.status === "approved"
-      ? { bg: "#16a34a", fg: "#f4f2ec", label: "verified" }
-      : null;
-
-  const href = isGithub && entry.commit_url ? entry.commit_url : `/contributions/${entry.id}`;
-  const linkProps = isGithub && entry.commit_url ? { target: "_blank", rel: "noopener noreferrer" } : {};
-
-  return (
-    <Link
-      href={href}
-      {...linkProps}
-      className="flex rounded-[3px] border-2 border-[#0e0d0b] overflow-hidden bg-white transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_rgba(14,13,11,0.9)]"
-    >
-      <div
-        className="w-2 sm:w-3 shrink-0"
-        style={{ backgroundColor: spineColor }}
-      />
-      <div className="flex-1 flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-3 min-w-0">
-        <Avatar src={entry.avatar_url} name={entry.github_username} size="sm" className="shrink-0" />
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-semibold">{entry.github_username}</span>
-            <span
-              className="font-mono text-[10px] uppercase tracking-wider"
-              style={{ color: spineColor }}
-            >
-              {isGithub ? "github" : entry.category}
-            </span>
-          </div>
-          <p className={`truncate ${isGithub ? "font-mono text-[13px] text-[#55503f]" : "font-serif text-[15px]"}`}>
-            {entry.description}
-          </p>
-        </div>
-
-        <div className="shrink-0 flex items-center gap-3">
-          {!isGithub && entry.time_estimate > 0 && (
-            <span className="font-mono text-sm hidden sm:inline">{Number(entry.time_estimate).toFixed(1)}h</span>
-          )}
-          {stamp && (
-            <span
-              className="stamp-solid"
-              style={{ backgroundColor: stamp.bg, color: stamp.fg }}
-            >
-              {stamp.label}
-            </span>
-          )}
-          <span className="font-mono text-[10px] text-[#928c78] hidden md:inline">
-            {timeAgo(entry.created_at)}
-          </span>
-        </div>
-      </div>
-    </Link>
   );
 }

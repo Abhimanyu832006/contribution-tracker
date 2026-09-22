@@ -1,23 +1,21 @@
 /**
- * Badge — a small solid chip. Category still carries no color (that
- * meaning is spent on SOURCE and VERIFICATION instead) but now reads as
- * an actual black-outlined chip rather than a whisper-thin underline.
- * "indigo" = role emphasis (project leader), painted in work-orange.
+ * Badge component for category labels, roles, statuses.
+ * Variants: default, indigo, green, yellow, red, blue
  */
 export default function Badge({
   children,
   variant = "default",
   className = "",
 }) {
-  const base =
-    "inline-flex items-center font-mono text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-[2px] border";
+  const base = "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium";
 
   const variants = {
-    default: "text-[#0e0d0b] border-[#0e0d0b] bg-transparent",
-    indigo:  "text-[#f4f2ec] border-[#ff4713] bg-[#ff4713]",
-    green:   "text-[#f4f2ec] border-[#16a34a] bg-[#16a34a]",
-    yellow:  "text-[#0e0d0b] border-[#eab308] bg-[#eab308]",
-    red:     "text-[#f4f2ec] border-[#e11d2e] bg-[#e11d2e]",
+    default: "bg-slate-100 text-slate-600",
+    indigo:  "bg-indigo-50 text-indigo-700",
+    green:   "bg-green-50 text-green-700",
+    yellow:  "bg-amber-50 text-amber-700",
+    red:     "bg-red-50 text-red-700",
+    blue:    "bg-blue-50 text-blue-700",
   };
 
   return (

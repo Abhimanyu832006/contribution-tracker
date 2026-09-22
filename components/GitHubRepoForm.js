@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Input from "@/components/ui/Input";
 
 export default function GitHubRepoForm({ initialRepo = "", isLeader = false }) {
   const [repo, setRepo] = useState(initialRepo);
@@ -42,47 +45,49 @@ export default function GitHubRepoForm({ initialRepo = "", isLeader = false }) {
   }
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-4 animate-fade-in">
       <div className="flex items-center gap-3">
-        <p className="font-mono text-xs uppercase tracking-wider text-[#55503f]">GitHub Integration</p>
-        <span
-          className="font-mono text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[2px]"
-          style={{
-            backgroundColor: hasRepoLinked ? "#16a34a" : "#e8e5db",
-            color: hasRepoLinked ? "#f4f2ec" : "#55503f",
-          }}
-        >
-          {hasRepoLinked ? "Connected" : "Not linked"}
-        </span>
+        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          GitHub Integration
+        </h2>
+        {hasRepoLinked ? (
+          <Badge variant="green">Connected</Badge>
+        ) : (
+          <Badge variant="default">Not Linked</Badge>
+        )}
       </div>
 
-      <div className="rounded-[3px] border-2 border-[#0e0d0b] shadow-[4px_4px_0_0_rgba(26,63,214,0.5)] bg-[#0e0d0b] text-[#f4f2ec] p-6 space-y-4">
+      <Card accent="github" className="space-y-4">
         <div>
-          <p className="font-mono text-xs text-[#1a3fd6]">$ repository --owner/name</p>
-          <p className="text-sm text-[#c9c5b8] mt-1.5">
-            Link a GitHub repository to automatically pull commits as verifiable contributions.
+          <h3 className="text-sm font-semibold text-slate-900">Repository</h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Link your GitHub repository to automatically pull commits and pull requests as contributions.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="text-sm text-[#ff6b6b] border border-[#ff6b6b] rounded-[3px] px-4 py-3 font-mono">
-              ✕ {error}
+            <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200 animate-scale-in">
+              <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+              </svg>
+              {error}
             </div>
           )}
 
           {success && (
-            <div className="text-sm text-[#4ade80] border border-[#4ade80] rounded-[3px] px-4 py-3 font-mono">
-              ✓ {success}
+            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 border border-emerald-200 animate-scale-in">
+              <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+              </svg>
+              {success}
             </div>
           )}
 
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <div className="flex-1">
-              <label htmlFor="github-repo" className="font-mono text-[11px] uppercase tracking-wider text-[#928c78]">
-                owner/name
-              </label>
-              <input
+              <Input
+                label="GitHub Repository (owner/name)"
                 id="github-repo"
                 name="repo"
                 type="text"
@@ -90,7 +95,7 @@ export default function GitHubRepoForm({ initialRepo = "", isLeader = false }) {
                 value={repo}
                 onChange={(e) => setRepo(e.target.value)}
                 placeholder="e.g. torvalds/linux"
-                className="w-full mt-1.5 rounded-[3px] border-2 border-[#2a2822] bg-[#181713] text-[#f4f2ec] placeholder-[#6b6860] px-3.5 py-2.5 font-mono text-sm focus:outline-none focus:border-[#1a3fd6] disabled:opacity-50 disabled:cursor-not-allowed"
+                className={!isLeader ? "bg-slate-50 text-slate-500 cursor-not-allowed" : ""}
               />
             </div>
 
@@ -98,22 +103,24 @@ export default function GitHubRepoForm({ initialRepo = "", isLeader = false }) {
               <Button
                 id="save-repo-settings"
                 type="submit"
-                variant="signal"
                 loading={saving}
                 className="w-full sm:w-auto shrink-0"
               >
-                Save
+                Save Repository
               </Button>
             )}
           </div>
 
           {!isLeader && (
-            <p className="font-mono text-xs text-[#928c78]">
-              # only the project leader can change repository settings
+            <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-center gap-2">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0v-3.5A.75.75 0 0010 5z" clipRule="evenodd" />
+              </svg>
+              Only the project leader can change repository settings.
             </p>
           )}
         </form>
-      </div>
+      </Card>
     </section>
   );
 }

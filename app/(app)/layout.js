@@ -13,7 +13,7 @@ export default async function AppLayout({ children }) {
   const projects = await getUserProjects(session.user.dbId);
 
   return (
-    <div className="flex min-h-screen bg-[#f4f2ec]">
+    <div className="flex min-h-screen bg-[#f8fafc]">
       <Sidebar
         user={{
           githubUsername: session.user.githubUsername,
@@ -26,8 +26,8 @@ export default async function AppLayout({ children }) {
       />
 
       {/* Main content area — offset by sidebar width on large screens, top bar height on mobile */}
-      <main className="flex-1 lg:ml-80 pt-16 lg:pt-0">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">
           {children}
         </div>
       </main>

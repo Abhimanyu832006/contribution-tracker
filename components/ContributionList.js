@@ -27,68 +27,56 @@ function timeAgo(iso) {
 export default function ContributionList({ contributions = [] }) {
   if (contributions.length === 0) {
     return (
-      <div className="border-2 border-dashed border-[#928c78] rounded-[3px] py-16 text-center">
-        <p className="text-sm text-[#928c78]">No contributions yet</p>
-        <p className="label-mono mt-1">LOG THE FIRST ONE TO GET STARTED</p>
+      <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center animate-fade-in">
+        <div className="text-slate-300 mb-3">
+          <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <p className="text-sm text-slate-400">No contributions yet</p>
+        <p className="text-xs text-slate-300 mt-1">Log your first one to get started</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {contributions.map((c, i) => {
+    <div className="space-y-3 stagger-children">
+      {contributions.map((c) => {
         const isGithub = c.source === "github";
-        const spineColor = isGithub ? "#1a3fd6" : "#ff4713";
-        const stamp =
-          c.status === "flagged"
-            ? { bg: "#e11d2e", fg: "#f4f2ec", label: "flagged" }
-            : c.status === "verified" || c.status === "approved"
-            ? { bg: "#16a34a", fg: "#f4f2ec", label: "verified" }
-            : null;
 
+        // Row itself is a plain container — never an <a>/<Link>, since it may
+        // contain the attachment link below and nested anchors are invalid HTML.
+        // Navigation is instead offered via the explicit link at the end of the row.
         return (
           <div
             key={c.id}
-            className="flex rounded-[3px] border-2 border-[#0e0d0b] overflow-hidden bg-white transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_rgba(14,13,11,0.9)]"
+            className={`bg-white rounded-xl border shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:shadow-md ${
+              isGithub ? "border-blue-100" : "border-amber-100"
+            }`}
+            style={{ borderLeft: `3px solid ${isGithub ? "#2563eb" : "#d97706"}` }}
           >
-            {/* Solid color spine — the source signal, unmissable */}
-            <div className="w-2 sm:w-3 shrink-0" style={{ backgroundColor: spineColor }} />
+            {/* Avatar */}
+            <Avatar
+              src={c.avatar_url}
+              name={c.github_username || c.user_name}
+              size="sm"
+            />
 
-            {/* Index number — poster voice, event-numbered */}
-            <div
-              className="hidden sm:flex flex-col items-center justify-center w-16 shrink-0 border-r-2 border-[#0e0d0b]"
-              style={{ backgroundColor: isGithub ? "#e3e9ff" : "#ffe9df" }}
-            >
-              <span className="stat-num text-2xl" style={{ color: spineColor }}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-            </div>
+            {/* Category badge */}
+            <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
+              {c.category}
+            </Badge>
 
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-4 sm:px-5 py-4 min-w-0">
-              <Avatar
-                src={c.avatar_url}
-                name={c.github_username || c.user_name}
-                size="sm"
-                className="shrink-0"
-              />
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold">
-                    {c.github_username || c.user_name}
-                  </span>
-                  <span
-                    className="font-mono text-[10px] font-semibold uppercase tracking-wider"
-                    style={{ color: spineColor }}
-                  >
-                    {isGithub ? "GITHUB" : "MANUAL"}
-                  </span>
-                  <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
-                    {c.category}
-                  </Badge>
-                </div>
-                <p className={`mt-0.5 truncate ${isGithub ? "font-mono text-[13px] text-[#55503f]" : "font-serif text-[15px]"}`}>
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm font-medium text-slate-900 truncate flex items-center gap-2">
                   {c.description}
+                  {isGithub && (
+                    <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  )}
                 </p>
                 {c.attachment_url && (
                   <a
@@ -96,54 +84,76 @@ export default function ContributionList({ contributions = [] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     download={c.attachment_name || true}
-                    className="inline-flex items-center gap-1 mt-1 font-mono text-[10px] uppercase tracking-wider text-[#55503f] hover:text-[#0e0d0b] underline decoration-[rgba(14,13,11,0.3)]"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors shrink-0"
                     title={`Download ${c.attachment_name || "document"}`}
                   >
-                    ⌷ {c.attachment_name || "Attachment"}
+                    <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.373L8.559 18.32a1.5 1.5 0 01-2.122-2.122l8.76-8.76" />
+                    </svg>
+                    <span className="truncate max-w-[120px]">{c.attachment_name || "Attachment"}</span>
                   </a>
                 )}
               </div>
-
-              <div className="flex items-center gap-3 shrink-0 sm:flex-col sm:items-end sm:gap-1">
-                {!isGithub && (
-                  <span className="stat-num text-xl">{Number(c.time_estimate).toFixed(1)}h</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs text-slate-500">
+                  {c.github_username || c.user_name}
+                </p>
+                <Badge variant={isGithub ? "blue" : "yellow"} className="!text-[10px] !px-1.5 !py-0">
+                  {isGithub ? "GitHub" : "Manual"}
+                </Badge>
+                {c.status && (
+                  <Badge
+                    variant={
+                      c.status === "verified" || c.status === "approved"
+                        ? "green"
+                        : c.status === "flagged"
+                        ? "red"
+                        : "yellow"
+                    }
+                    className="!text-[10px] !px-1.5 !py-0 capitalize"
+                  >
+                    {c.status === "approved" ? "verified" : c.status}
+                  </Badge>
                 )}
-                {stamp ? (
-                  <span className="stamp-solid" style={{ backgroundColor: stamp.bg, color: stamp.fg }}>
-                    {stamp.label}
-                  </span>
-                ) : (
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#eab308]">
-                    pending
-                  </span>
-                )}
-                <span className="font-mono text-[10px] text-[#928c78]">{timeAgo(c.created_at)}</span>
               </div>
-
-              {isGithub && c.commit_url ? (
-                <a
-                  href={c.commit_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 text-[#928c78] hover:text-[#1a3fd6] transition-colors"
-                  title="View commit on GitHub"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              ) : (
-                <Link
-                  href={`/contributions/${c.id}`}
-                  className="shrink-0 text-[#928c78] hover:text-[#0e0d0b] transition-colors"
-                  title="View details"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </Link>
-              )}
             </div>
+
+            {/* Hours + time */}
+            <div className="text-right shrink-0">
+              {!isGithub && (
+                <p className="text-sm font-semibold text-indigo-600">
+                  {Number(c.time_estimate).toFixed(1)} hrs
+                </p>
+              )}
+              <p className="text-xs text-slate-400 mt-0.5">
+                {timeAgo(c.created_at)}
+              </p>
+            </div>
+
+            {/* Navigation */}
+            {isGithub && c.commit_url ? (
+              <a
+                href={c.commit_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-slate-300 hover:text-indigo-500 transition-colors"
+                title="View commit on GitHub"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            ) : (
+              <Link
+                href={`/contributions/${c.id}`}
+                className="shrink-0 text-slate-300 hover:text-indigo-500 transition-colors"
+                title="View details"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </Link>
+            )}
           </div>
         );
       })}

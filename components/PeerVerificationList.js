@@ -15,13 +15,6 @@ const STATUS_TABS = [
   { value: "flagged", label: "Flagged" },
 ];
 
-const STAMP_STYLE = {
-  verified: { bg: "#16a34a", fg: "#f4f2ec", label: "verified", accent: "verified" },
-  approved: { bg: "#16a34a", fg: "#f4f2ec", label: "verified", accent: "verified" },
-  flagged: { bg: "#e11d2e", fg: "#f4f2ec", label: "flagged", accent: "flagged" },
-  pending: { bg: "#eab308", fg: "#0e0d0b", label: "pending", accent: "pending" },
-};
-
 function timeAgo(iso) {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (seconds < 60) return "just now";
@@ -117,25 +110,35 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
   if (contributions.length === 0) {
     return (
-      <div className="border-2 border-dashed border-[#928c78] rounded-[3px] py-16 text-center">
-        <p className="text-sm text-[#928c78]">No contributions to verify yet</p>
-        <p className="label-mono mt-1">LOG CONTRIBUTIONS TO BEGIN PEER REVIEW</p>
+      <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center">
+        <div className="text-slate-300 mb-3">
+          <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <p className="text-sm text-slate-400">No contributions to verify yet</p>
+        <p className="text-xs text-slate-300 mt-1">Log contributions with documentation or research first</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {error && (
-        <div className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 animate-scale-in">
+          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+          </svg>
           {error}
         </div>
       )}
 
       {pendingCount > 0 && (
-        <div className="flex items-center gap-3 bg-[#eab308] border-2 border-[#0e0d0b] rounded-[3px] px-4 py-3">
-          <span className="stat-num text-2xl text-[#0e0d0b]">{pendingCount}</span>
-          <span className="text-sm font-semibold text-[#0e0d0b]">
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 font-bold text-sm shrink-0">
+            {pendingCount}
+          </span>
+          <span className="text-sm font-medium text-amber-800">
             contribution{pendingCount === 1 ? "" : "s"} awaiting your review
           </span>
         </div>
@@ -143,16 +146,16 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div className="flex items-center gap-1 border-b-2 border-[#0e0d0b] flex-wrap">
+        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3.5 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 statusFilter === tab.value
-                  ? "bg-[#0e0d0b] text-[#f4f2ec]"
-                  : "text-[#55503f] hover:text-[#0e0d0b]"
+                  ? "bg-white text-slate-900 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
               }`}
             >
               {tab.label}
@@ -164,66 +167,63 @@ export default function PeerVerificationList({ initialContributions = [], curren
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search description or contributor…"
-          className="sm:w-72 rounded-[3px] border-2 border-[#0e0d0b] bg-white px-3.5 py-2 text-sm placeholder-[#928c78] focus:outline-none focus:border-[#ff4713]"
+          className="sm:w-72 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300"
         />
       </div>
 
       {filteredContributions.length === 0 && (
-        <div className="border-2 border-dashed border-[#928c78] rounded-[3px] py-16 text-center">
-          <p className="text-sm text-[#928c78]">No contributions match these filters</p>
+        <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center">
+          <p className="text-sm text-slate-400">No contributions match these filters</p>
         </div>
       )}
 
-      <div className="space-y-4 stagger-children">
+      <div className="space-y-3 stagger-children">
         {filteredContributions.map((c) => {
           const isOwnContribution = c.user_id === currentUserId;
           const isVotingThis = votingId === c.id;
           const hasVotedApprove = c.my_vote === "approve";
           const hasVotedFlag = c.my_vote === "flag";
-          const stamp = STAMP_STYLE[c.status] || STAMP_STYLE.pending;
-          const isGithub = c.source === "github";
-          const sourceColor = isGithub ? "#1a3fd6" : "#ff4713";
+          const isVerified = c.status === "verified" || c.status === "approved";
+          const isFlagged = c.status === "flagged";
 
           return (
             <Card
               key={c.id}
-              padding="p-5"
-              accent={stamp.accent}
-              className="flex flex-col md:flex-row md:items-start justify-between gap-4"
+              accent={isFlagged ? "danger" : isVerified ? "success" : "warning"}
+              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 hover:shadow-md"
             >
-              {/* Left: Author, Category, Description, History, Attachment */}
+              {/* Left Info: Author, Category, Description, Attached File */}
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
                 <Avatar src={c.avatar_url} name={c.github_username} size="md" />
 
-                <div className="min-w-0 flex-1 space-y-1.5">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="text-sm font-semibold">
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-semibold text-slate-900">
                       {c.github_username}
                     </span>
-                    <span
-                      className="font-mono text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ color: sourceColor }}
-                    >
-                      {isGithub ? "GITHUB" : "MANUAL"}
-                    </span>
+                    <Badge variant={c.source === "github" ? "blue" : "yellow"}>
+                      {c.source === "github" ? "GitHub" : "Manual"}
+                    </Badge>
                     <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
                       {c.category}
                     </Badge>
                     <Link
                       href={`/contributions/${c.id}`}
-                      className="font-mono text-[10px] uppercase tracking-wider text-[#1a3fd6] hover:underline"
+                      className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
                     >
-                      Details
+                      View details
                     </Link>
-                    <span className="font-mono text-xs text-[#928c78]">
+                    <span className="text-xs text-slate-400">
                       {timeAgo(c.created_at)}
                     </span>
                     {isOwnContribution && (
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#928c78]">you</span>
+                      <Badge variant="default" className="!text-[10px]">
+                        You
+                      </Badge>
                     )}
                   </div>
 
-                  <p className={`break-words ${isGithub ? "font-mono text-[13px]" : "font-serif text-[15px]"}`}>
+                  <p className="text-sm text-slate-800 font-medium break-words">
                     {c.description}
                   </p>
 
@@ -234,29 +234,42 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       onClick={() =>
                         setHistoryOpenId((prev) => (prev === c.id ? null : c.id))
                       }
-                      className="font-mono text-[10px] uppercase tracking-wider text-[#928c78] hover:text-[#0e0d0b] inline-flex items-center gap-1"
+                      className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors inline-flex items-center gap-1"
                     >
-                      {historyOpenId === c.id ? "▾" : "▸"} History ({c.votes.length})
+                      <svg
+                        className={`w-3 h-3 transition-transform ${historyOpenId === c.id ? "rotate-90" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                      </svg>
+                      {historyOpenId === c.id ? "Hide" : "Show"} verification history ({c.votes.length})
                     </button>
                   )}
 
                   {historyOpenId === c.id && (c.votes?.length || 0) > 0 && (
-                    <div className="space-y-2 pt-1 pl-3 border-l-2 border-[#e8e5db] animate-scale-in">
+                    <div className="space-y-2 pt-1 pl-1 border-l-2 border-slate-100 animate-scale-in">
                       {c.votes.map((v, i) => (
-                        <div key={i} className="flex items-start gap-2">
+                        <div key={i} className="flex items-start gap-2 pl-3">
                           <Avatar src={v.avatar_url} name={v.username} size="xs" />
                           <div className="min-w-0">
-                            <p className="text-xs">
+                            <p className="text-xs text-slate-700">
                               <span className="font-semibold">{v.username}</span>{" "}
                               <span
-                                className="font-mono uppercase tracking-wide"
-                                style={{ color: v.vote === "approve" ? "#16a34a" : "#e11d2e" }}
+                                className={
+                                  v.vote === "approve"
+                                    ? "text-emerald-600 font-medium"
+                                    : "text-red-600 font-medium"
+                                }
                               >
                                 {v.vote === "approve" ? "approved" : "flagged"}
-                              </span>
+                              </span>{" "}
+                              this contribution
                             </p>
                             {v.comment && (
-                              <p className="text-xs text-[#55503f] italic mt-0.5">
+                              <p className="text-xs text-slate-500 italic mt-0.5">
                                 &ldquo;{v.comment}&rdquo;
                               </p>
                             )}
@@ -266,45 +279,73 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     </div>
                   )}
 
-                  {/* Supporting Document */}
+                  {/* Supporting Document Pill */}
                   {c.attachment_url && (
-                    <a
-                      href={c.attachment_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={c.attachment_name || true}
-                      className="inline-flex items-center gap-2 font-mono text-xs text-[#55503f] hover:text-[#0e0d0b] underline decoration-[rgba(14,13,11,0.3)]"
-                      title="Download and inspect supporting document"
-                    >
-                      ⌷ {c.attachment_name || "Download Document"}
-                      {c.attachment_size && ` (${formatBytes(c.attachment_size)})`}
-                    </a>
+                    <div className="pt-1">
+                      <a
+                        href={c.attachment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={c.attachment_name || true}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50/80 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors shadow-xs group"
+                        title="Download and inspect supporting document"
+                      >
+                        <svg className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        <span className="font-semibold truncate max-w-[200px] sm:max-w-xs">
+                          {c.attachment_name || "Download Document"}
+                        </span>
+                        {c.attachment_size && (
+                          <span className="text-indigo-500 font-normal text-[11px]">
+                            ({formatBytes(c.attachment_size)})
+                          </span>
+                        )}
+                      </a>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Right: stamp, tallies, vote actions */}
-              <div className="flex items-start justify-between md:flex-col md:items-end gap-3 shrink-0 pt-3 md:pt-0 rule-t md:border-t-0">
-                <div className="md:text-right">
-                  <div className="flex items-center md:justify-end gap-2">
-                    <span className="stat-num text-lg">
-                      {Number(c.time_estimate).toFixed(1)}h
+              {/* Right Info: Time, Live Votes, & Voting Action Buttons */}
+              <div className="flex items-center justify-between md:justify-end gap-5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                {/* Time and verification status badge */}
+                <div className="text-left md:text-right">
+                  <div className="flex items-center md:justify-end gap-1.5">
+                    <span className="text-sm font-bold text-slate-900">
+                      {Number(c.time_estimate).toFixed(1)} hrs
                     </span>
-                    <span className="stamp-solid" style={{ backgroundColor: stamp.bg, color: stamp.fg }}>
-                      {stamp.label}
-                    </span>
+                    <Badge
+                      variant={isVerified ? "green" : isFlagged ? "red" : "yellow"}
+                      className="!text-[10px] uppercase font-bold"
+                    >
+                      {isVerified ? "verified" : c.status || "pending"}
+                    </Badge>
                   </div>
-                  <div className="flex items-center md:justify-end gap-3 font-mono text-xs text-[#928c78] mt-1.5">
-                    <span>{c.approves_count || 0} approve{c.approves_count === 1 ? "" : "s"}</span>
+
+                  {/* Votes count summary */}
+                  <div className="flex items-center md:justify-end gap-2 text-xs text-slate-500 mt-1">
+                    <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                      </svg>
+                      {c.approves_count || 0} approve{c.approves_count === 1 ? "" : "s"}
+                    </span>
                     {(c.flags_count || 0) > 0 && (
-                      <span className="text-[#e11d2e] font-semibold">{c.flags_count} flagged</span>
+                      <span className="flex items-center gap-1 text-red-600 font-medium">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v10a1 1 0 01-1 1H5.414l-2.707 2.707A1 1 0 011 16V4a1 1 0 011-1h1zm2 3a1 1 0 012 0v3a1 1 0 11-2 0V6zm1 7a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                        </svg>
+                        {c.flags_count} flagged
+                      </span>
                     )}
                   </div>
                 </div>
 
+                {/* Vote Action Buttons */}
                 <div className="flex flex-col items-end gap-2">
                   {isOwnContribution ? (
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-[#928c78]">
+                    <span className="text-xs text-slate-400 italic px-2 py-1 bg-slate-50 rounded-lg">
                       Your contribution
                     </span>
                   ) : (
@@ -317,7 +358,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         }
                         placeholder="Optional comment (visible to the team)…"
                         maxLength={280}
-                        className="w-full sm:w-56 text-xs rounded-[3px] border-2 border-[#0e0d0b] bg-white px-2.5 py-1.5 placeholder:text-[#928c78] focus:outline-none focus:border-[#ff4713]"
+                        className="w-full sm:w-56 text-xs rounded-lg border border-slate-200 px-2.5 py-1.5 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
                       />
                       <div className="flex items-center gap-2">
                         <Button
@@ -326,13 +367,16 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           size="sm"
                           disabled={isVotingThis}
                           onClick={() => handleVote(c.id, "approve")}
-                          className={
+                          className={`transition-all ${
                             hasVotedApprove
-                              ? "!bg-[#16a34a] !text-[#f4f2ec] !border-[#16a34a]"
-                              : "!text-[#16a34a] !border-[#16a34a] hover:!bg-[#16a34a] hover:!text-[#f4f2ec]"
-                          }
+                              ? "!bg-emerald-600 !text-white !border-emerald-600 shadow-sm"
+                              : "text-emerald-700 bg-white border border-emerald-300 hover:bg-emerald-50"
+                          }`}
                           title="Verify and approve teammate's work"
                         >
+                          <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
                           {hasVotedApprove ? "Approved" : "Approve"}
                         </Button>
 
@@ -342,10 +386,16 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           size="sm"
                           disabled={isVotingThis}
                           onClick={() => handleVote(c.id, "flag")}
-                          variant="danger"
-                          className={hasVotedFlag ? "!bg-[#e11d2e] !text-[#f4f2ec]" : "!bg-transparent"}
+                          className={`transition-all ${
+                            hasVotedFlag
+                              ? "!bg-red-600 !text-white !border-red-600 shadow-sm"
+                              : "text-red-600 bg-white border border-red-300 hover:bg-red-50"
+                          }`}
                           title="Flag contribution if work is inaccurate or suspicious"
                         >
+                          <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5" />
+                          </svg>
                           {hasVotedFlag ? "Flagged" : "Flag"}
                         </Button>
                       </div>

@@ -1,188 +1,130 @@
 @import "tailwindcss";
 
-/* ── Design tokens ─────────────────────────────────────────────
- * SIGNAL SYSTEM
- * Contribution Tracker runs on two kinds of evidence:
- *   — SIGNAL/BLUE: GitHub. Machine-generated, exact, technical.
- *   — WORK/ORANGE: Manual. Written by a person, descriptive, evidenced.
- * Both are solid, saturated, physical color blocks — not tints, not
- * text hints. Verification gets its own loud colors. The canvas is
- * off-white and near-black; the three accents are the only paint,
- * used at full strength so they read as a system, not decoration.
- * ──────────────────────────────────────────────────────────── */
+/* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --font-poster: "Archivo Black", "Arial Black", sans-serif;        /* huge — project identity, the one big number */
-  --font-editorial: "Fraunces", Georgia, serif;                     /* bold/italic serif — human-written text */
-  --font-mono-ui: "IBM Plex Mono", "Courier New", monospace;        /* GitHub / technical metadata */
-  --font-sans-ui: "Archivo", system-ui, -apple-system, sans-serif;  /* UI chrome — nav, buttons, controls */
+  --font-sans-ui: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono-ui: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
 
-  /* Canvas */
-  --color-bg: #f4f2ec;
+  /* Palette */
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
-  --color-ink: #0e0d0b;
-  --color-ink-soft: #55503f;
-  --color-ink-faint: #928c78;
-  --color-rule: rgba(14, 13, 11, 0.14);
-  --color-rule-strong: rgba(14, 13, 11, 0.9);
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
 
-  /* SIGNAL — GitHub / system, a solid cobalt block */
-  --color-signal: #1a3fd6;
-  --color-signal-ink: #0e2590;
-  --color-signal-tint: #e3e9ff;
-  --color-signal-on: #f4f2ec;   /* text/content sitting on a signal-blue block */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
 
-  /* WORK — manual / human, a solid hot orange-red block */
-  --color-work: #ff4713;
-  --color-work-ink: #b8330d;
-  --color-work-tint: #ffe9df;
-  --color-work-on: #0e0d0b;     /* text/content sitting on a work-orange block */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-light: #eef2ff;
 
-  /* Verification — loud, unmistakable */
-  --color-verified: #16a34a;
-  --color-verified-tint: #dcfce7;
-  --color-flagged: #e11d2e;
-  --color-flagged-tint: #fde2e2;
-  --color-pending: #eab308;
-  --color-pending-tint: #fef3c7;
-  --color-pending-ink: #0e0d0b; /* pending block is bright yellow — needs dark text */
+  --color-sidebar: #0f172a;
+  --color-sidebar-hover: #1e293b;
 
-  /* Legacy aliases so nothing un-migrated breaks */
-  --color-accent: var(--color-work);
-  --color-accent-ink: var(--color-work-ink);
-  --color-accent-tint: var(--color-work-tint);
-  --color-text-primary: var(--color-ink);
-  --color-text-secondary: var(--color-ink-soft);
-  --color-text-muted: var(--color-ink-faint);
-  --color-border: var(--color-rule);
-  --color-border-strong: var(--color-rule-strong);
-  --color-success: var(--color-verified);
-  --color-warning: var(--color-pending);
-  --color-danger: var(--color-flagged);
+  /* Source colors — used sparingly, as small tags/dots, not full blocks */
+  --color-github: #2563eb;
+  --color-github-light: #eff6ff;
+  --color-manual: #d97706;
+  --color-manual-light: #fffbeb;
+
+  /* Status */
+  --color-success: #16a34a;
+  --color-success-light: #f0fdf4;
+  --color-warning: #d97706;
+  --color-warning-light: #fffbeb;
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+
+  /* Legacy aliases */
+  --color-accent: var(--color-primary);
+  --color-accent-ink: var(--color-primary-hover);
+  --color-accent-tint: var(--color-primary-light);
+  --color-rule: var(--color-border);
+  --color-rule-strong: var(--color-border-strong);
 }
 
 @theme inline {
   --color-background: var(--color-bg);
-  --color-foreground: var(--color-ink);
+  --color-foreground: var(--color-text-primary);
   --font-sans: var(--font-sans-ui);
-  --font-serif: var(--font-editorial);
   --font-mono: var(--font-mono-ui);
 }
 
 /* ── Base ──────────────────────────────────────────────────── */
 body {
   background: var(--color-bg);
-  color: var(--color-ink);
+  color: var(--color-text-primary);
   font-family: var(--font-sans-ui);
 }
 
-/* ── System utilities ──────────────────────────────────────── */
-.rule-t { border-top: 1px solid var(--color-rule); }
-.rule-b { border-bottom: 1px solid var(--color-rule); }
-.rule-l { border-left: 1px solid var(--color-rule); }
-.rule-r { border-right: 1px solid var(--color-rule); }
-.rule-strong-b { border-bottom: 3px solid var(--color-ink); }
+/* ── Utilities ─────────────────────────────────────────────── */
+.rule-t { border-top: 1px solid var(--color-border); }
+.rule-b { border-bottom: 1px solid var(--color-border); }
+.rule-l { border-left: 1px solid var(--color-border); }
+.rule-r { border-right: 1px solid var(--color-border); }
+.rule-strong-b { border-bottom: 1px solid var(--color-border-strong); }
 
 .label-mono {
   font-family: var(--font-mono-ui);
   font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-ink-faint);
+  color: var(--color-text-muted);
 }
 
-/* Poster numerals — the display voice, used at real scale */
 .stat-num {
-  font-family: var(--font-poster);
-  font-weight: 400;
+  font-family: var(--font-sans-ui);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  line-height: 0.82;
-  letter-spacing: -0.01em;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
-/* A solid color block — the core visual unit of the system.
-   Give it a color via inline style (background) and it does the rest. */
-.block-panel {
-  border-radius: 2px;
-}
-
-.stamp {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  font-family: var(--font-mono-ui);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.2em 0.55em;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-}
-
-/* Solid status stamps — a block of color, not an outline. Used for a
-   contribution's resolved verification state (never for "pending"). */
+/* Small solid status chip — used only for resolved verification state */
 .stamp-solid {
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
-  font-family: var(--font-mono-ui);
-  font-weight: 600;
   font-size: 0.6875rem;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0.3em 0.65em;
-  border-radius: 2px;
-  transform: rotate(-1.5deg);
+  padding: 0.25em 0.65em;
+  border-radius: 9999px;
 }
 
 /* ── Animations ────────────────────────────────────────────── */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-16px); }
+  from { opacity: 0; transform: translateX(-10px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.94); }
+  from { opacity: 0; transform: scale(0.96); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-@keyframes count-in {
-  from { opacity: 0; transform: translateY(6px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes pulse-block {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.65; }
-}
-
 .animate-fade-in {
-  animation: fade-in 0.4s ease-out both;
+  animation: fade-in 0.35s ease-out both;
 }
 
 .animate-slide-in {
-  animation: slide-in-left 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: slide-in-left 0.3s ease-out both;
 }
 
 .animate-scale-in {
-  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.animate-count-in {
-  animation: count-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.animate-pulse-block {
-  animation: pulse-block 2s ease-in-out infinite;
+  animation: scale-in 0.25s ease-out both;
 }
 
 /* Staggered children animation */
 .stagger-children > * {
-  animation: slide-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in 0.35s ease-out both;
 }
 .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
 .stagger-children > *:nth-child(2) { animation-delay: 40ms; }
@@ -203,9 +145,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ink-faint);
-  border-radius: 0;
+  background: var(--color-border-strong);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ink);
+  background: var(--color-text-muted);
 }

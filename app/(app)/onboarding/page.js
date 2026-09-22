@@ -72,48 +72,88 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f4f2ec] px-6 py-12">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-6 py-12">
+      <div className="w-full max-w-lg animate-fade-in">
         {/* Header */}
-        <div className="mb-10">
-          <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-2">Getting started</p>
-          <h1 className="font-[family-name:var(--font-poster)] text-5xl leading-[0.85] tracking-tight">
-            WELCOME, {(session?.user?.githubUsername || "THERE").toUpperCase()}
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 mb-5">
+            <svg
+              className="w-7 h-7 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900">
+            Welcome, {session?.user?.githubUsername || "there"}!
           </h1>
-          <p className="text-sm text-[#55503f] mt-4">
-            Create a new project or join an existing one to begin.
+          <p className="text-sm text-slate-500 mt-2">
+            Get started by creating a new project or joining an existing one.
           </p>
         </div>
 
         {/* Choice cards */}
         {!mode && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
             <Card
               hover
-              accent="signal"
-              className="cursor-pointer"
+              className="cursor-pointer text-center group"
               onClick={() => setMode("create")}
             >
-              <p className="stat-num text-3xl text-[#1a3fd6]">01</p>
-              <p className="text-base font-semibold mt-3">
+              <div className="w-12 h-12 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                <svg
+                  className="w-6 h-6 text-indigo-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 mb-1">
                 Create a Project
-              </p>
-              <p className="text-xs text-[#55503f] mt-1">
+              </h3>
+              <p className="text-xs text-slate-500">
                 Start a new project and invite your team
               </p>
             </Card>
 
             <Card
               hover
-              accent="work"
-              className="cursor-pointer"
+              className="cursor-pointer text-center group"
               onClick={() => setMode("join")}
             >
-              <p className="stat-num text-3xl text-[#ff4713]">02</p>
-              <p className="text-base font-semibold mt-3">
+              <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors">
+                <svg
+                  className="w-6 h-6 text-emerald-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.054a4.5 4.5 0 00-6.364-6.364L6.26 6.464a4.5 4.5 0 001.242 7.244"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 mb-1">
                 Join a Project
-              </p>
-              <p className="text-xs text-[#55503f] mt-1">
+              </h3>
+              <p className="text-xs text-slate-500">
                 Enter an invite code from your team leader
               </p>
             </Card>
@@ -122,10 +162,12 @@ export default function OnboardingPage() {
 
         {/* Create form */}
         {mode === "create" && (
-          <Card accent="signal">
-            <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-4">Create a project</p>
+          <Card className="animate-scale-in">
+            <h3 className="text-base font-semibold text-slate-900 mb-4">
+              Create a Project
+            </h3>
             {error && (
-              <p className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-2.5 mb-4">
+              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -156,10 +198,12 @@ export default function OnboardingPage() {
 
         {/* Join form */}
         {mode === "join" && (
-          <Card accent="work">
-            <p className="font-mono text-xs uppercase tracking-wider text-[#55503f] mb-4">Join a project</p>
+          <Card className="animate-scale-in">
+            <h3 className="text-base font-semibold text-slate-900 mb-4">
+              Join a Project
+            </h3>
             {error && (
-              <p className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-2.5 mb-4">
+              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -188,12 +232,12 @@ export default function OnboardingPage() {
           </Card>
         )}
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center animate-fade-in">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="font-mono text-xs uppercase tracking-wider text-[#928c78] hover:text-[#0e0d0b] hover:underline"
+            className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors"
           >
-            Sign out / reconnect account
+            Sign out of GitHub / Reconnect account
           </button>
         </div>
       </div>

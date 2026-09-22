@@ -1,16 +1,14 @@
 /**
- * Card — a plain white block with a real border and a hard shadow-offset
- * (not a soft blur), so it feels like a physical card placed on the page
- * rather than a hovering SaaS panel. `accent` optionally paints a thick
- * top edge in one of the system colors (signal/work/verified/flagged/
- * pending) to tag what kind of thing the card represents.
+ * Card component — rounded container with subtle border and shadow.
+ * Supports hover lift effect via `hover` prop, and an optional colored
+ * left accent bar via `accent` (github | manual | success | warning | danger).
  */
 const ACCENTS = {
-  signal: "#1a3fd6",
-  work: "#ff4713",
-  verified: "#16a34a",
-  flagged: "#e11d2e",
-  pending: "#eab308",
+  github: "#2563eb",
+  manual: "#d97706",
+  success: "#16a34a",
+  warning: "#d97706",
+  danger: "#dc2626",
 };
 
 export default function Card({
@@ -21,18 +19,17 @@ export default function Card({
   padding = "p-6",
   ...props
 }) {
-  const base = "bg-white rounded-[3px] border-2 border-[#0e0d0b]";
-  const shadow = "shadow-[4px_4px_0_0_rgba(14,13,11,0.9)]";
+  const base = "bg-white rounded-xl border border-slate-200 shadow-sm";
   const hoverClass = hover
-    ? "transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_rgba(14,13,11,0.9)]"
+    ? "transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
     : "";
   const accentStyle = accent
-    ? { borderTop: `6px solid ${ACCENTS[accent] || accent}` }
+    ? { borderLeft: `3px solid ${ACCENTS[accent] || accent}` }
     : undefined;
 
   return (
     <div
-      className={`${base} ${shadow} ${hoverClass} ${padding} ${className}`}
+      className={`${base} ${hoverClass} ${padding} ${className}`}
       style={accentStyle}
       {...props}
     >

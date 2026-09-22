@@ -1,5 +1,5 @@
 /**
- * Styled text / number input — bold border, focus flips to work-orange.
+ * Styled text / number input.
  */
 export default function Input({
   label,
@@ -12,14 +12,14 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-[11px] font-medium uppercase tracking-wider text-[#55503f]"
+          className="text-sm font-medium text-slate-700"
         >
           {label}
         </label>
       )}
       <input
         id={id}
-        className={`w-full rounded-[3px] border-2 border-[#0e0d0b] bg-white px-3.5 py-2.5 text-sm text-[#0e0d0b] placeholder-[#928c78] transition-colors duration-150 focus:outline-none focus:border-[#ff4713] ${className}`}
+        className={`w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300 ${className}`}
         {...props}
       />
     </div>

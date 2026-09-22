@@ -55,24 +55,34 @@ export default async function PeerVerificationPage() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       {/* Page header */}
       <div>
-        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
-          VERIFICATION
+        <h1 className="text-2xl font-bold text-slate-900">
+          Peer Verification
         </h1>
-        <p className="text-sm text-[#55503f] mt-3 max-w-xl">
+        <p className="text-sm text-slate-500 mt-1 max-w-xl">
           Review teammates&apos; work, inspect supporting documents, and vote to verify or flag contributions.
         </p>
 
-        {/* How it works — three colored chips, not prose */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          <span className="font-mono text-[11px] text-[#55503f] bg-[#e8e5db] rounded-[3px] px-3 py-1.5">
-            2+ approvals, 0 flags → <span className="font-semibold text-[#16a34a]">VERIFIED</span>
-          </span>
-          <span className="font-mono text-[11px] text-[#55503f] bg-[#e8e5db] rounded-[3px] px-3 py-1.5">
-            any flag → <span className="font-semibold text-[#e11d2e]">FLAGGED</span>
-          </span>
+        {/* Info guide card */}
+        <div className="mt-4 flex items-start gap-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+          <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg shrink-0 mt-0.5">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="text-xs text-slate-600 space-y-1">
+            <p>
+              • Open any attached document to inspect it before voting.
+            </p>
+            <p>
+              • <strong>2+ approvals</strong> with 0 flags marks a contribution <strong className="text-emerald-700">Verified</strong>.
+            </p>
+            <p>
+              • Any flag marks it <strong className="text-red-600">Flagged</strong>, pending team resolution.
+            </p>
+          </div>
         </div>
       </div>
 

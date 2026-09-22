@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ContributionForm from "@/components/ContributionForm";
@@ -111,39 +112,65 @@ export default function ContributionsPage() {
   }, [contributions, categoryFilter, sourceFilter, search]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <h1 className="font-[family-name:var(--font-poster)] text-5xl sm:text-6xl leading-[0.85] tracking-tight">
-          CONTRIBUTIONS
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Contributions</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Log your work and browse everything the team has recorded
+          </p>
+        </div>
         {activeProject?.repoOwner && activeProject?.repoName && (
           <Button
             id="sync-github-commits"
             onClick={handleSync}
             loading={syncing}
-            variant="signal"
+            variant="secondary"
             size="sm"
           >
-            ⟲ Sync GitHub
+            <svg
+              className="w-4 h-4 text-slate-500 mr-1.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+              />
+            </svg>
+            Sync GitHub
           </Button>
         )}
       </div>
 
       {syncError && (
-        <div className="text-sm font-medium text-[#f4f2ec] bg-[#e11d2e] rounded-[3px] px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200 animate-scale-in">
+          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+          </svg>
           {syncError}
         </div>
       )}
 
       {syncResult && (
-        <div className="flex items-center justify-between gap-3 text-sm font-medium text-[#f4f2ec] bg-[#16a34a] rounded-[3px] px-4 py-3">
-          <span className="font-mono">
-            SYNC COMPLETE — {syncResult.added} added / {syncResult.skipped} skipped / {syncResult.unmatched} unmatched
-          </span>
+        <div className="flex items-center justify-between gap-3 text-sm text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 border border-emerald-200 animate-scale-in">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+            </svg>
+            <span>
+              Sync complete: <strong>{syncResult.added}</strong> new commits added,{" "}
+              <strong>{syncResult.skipped}</strong> skipped (already synced), and{" "}
+              <strong>{syncResult.unmatched}</strong> unmatched (not by team members).
+            </span>
+          </div>
           <button
             onClick={() => setSyncResult(null)}
-            className="font-mono text-xs uppercase tracking-wider hover:underline shrink-0"
+            className="text-xs font-semibold text-emerald-600 hover:text-emerald-800"
           >
             Dismiss
           </button>
@@ -154,18 +181,20 @@ export default function ContributionsPage() {
       {filter === "mine" && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="label-mono">Log new contribution</p>
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              Log New Contribution
+            </h2>
             <button
               type="button"
               onClick={() => setShowForm((p) => !p)}
-              className="font-mono text-xs uppercase tracking-wider text-[#1a3fd6] hover:underline"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
             >
-              {showForm ? "Hide" : "Show"}
+              {showForm ? "Hide form" : "Show form"}
             </button>
           </div>
 
           {showForm && (
-            <Card accent="work">
+            <Card accent="manual">
               <ContributionForm
                 onSuccess={() => {
                   fetchContributions();
@@ -178,14 +207,14 @@ export default function ContributionsPage() {
 
       {/* Filter toggle */}
       <div className="space-y-4">
-        <div className="flex items-baseline gap-1 border-b-2 border-[#0e0d0b]">
+        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
           <button
             type="button"
             onClick={() => setFilter("mine")}
-            className={`px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
               filter === "mine"
-                ? "bg-[#0e0d0b] text-[#f4f2ec]"
-                : "text-[#55503f] hover:text-[#0e0d0b]"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Mine
@@ -193,22 +222,28 @@ export default function ContributionsPage() {
           <button
             type="button"
             onClick={() => setFilter("everyone")}
-            className={`px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
               filter === "everyone"
-                ? "bg-[#0e0d0b] text-[#f4f2ec]"
-                : "text-[#55503f] hover:text-[#0e0d0b]"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Everyone&apos;s
           </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            {filter === "mine" ? "Your Contributions" : "All Team Contributions"}
+          </h2>
           {!loading && (
-            <span className="font-mono text-xs text-[#928c78] ml-auto pb-2">
+            <Badge variant="default">
               {filteredContributions.length}
               {filteredContributions.length !== contributions.length
-                ? ` / ${contributions.length}`
+                ? ` of ${contributions.length}`
                 : ""}{" "}
               entries
-            </span>
+            </Badge>
           )}
         </div>
 
@@ -219,7 +254,7 @@ export default function ContributionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search description or contributor…"
-            className="flex-1 rounded-[3px] border-2 border-[#0e0d0b] bg-white px-3.5 py-2.5 text-sm text-[#0e0d0b] placeholder-[#928c78] transition-colors duration-150 focus:outline-none focus:border-[#ff4713]"
+            className="flex-1 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300"
           />
           <Select
             id="category-filter"
@@ -248,8 +283,8 @@ export default function ContributionsPage() {
 
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-5 h-5 mx-auto border-2 border-[#0e0d0b] border-t-transparent rounded-full animate-spin" />
-            <p className="label-mono mt-3">Loading…</p>
+            <div className="w-6 h-6 mx-auto border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-slate-400 mt-3">Loading…</p>
           </div>
         ) : (
           <ContributionList contributions={filteredContributions} />

@@ -1,5 +1,6 @@
 "use client";
 
+import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
@@ -65,82 +66,112 @@ export default function ScoresReport({
   }
 
   return (
-    <div className="space-y-8">
-      {/* Team summary — three solid color blocks */}
+    <div className="space-y-6">
+      {/* Team summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: "Team hours", value: teamTotalHours.toFixed(1), bg: "#0e0d0b", fg: "#f4f2ec" },
-          { label: "Contributions", value: String(teamTotalContributions).padStart(3, "0"), bg: "#1a3fd6", fg: "#f4f2ec" },
-          { label: "Contributors", value: String(members.length).padStart(2, "0"), bg: "#ff4713", fg: "#0e0d0b" },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-[3px] border-2 border-[#0e0d0b] p-5"
-            style={{ backgroundColor: s.bg, color: s.fg }}
-          >
-            <p className="stat-num text-4xl sm:text-5xl">{s.value}</p>
-            <p className="font-mono text-xs uppercase tracking-wider mt-2 opacity-80">{s.label}</p>
-          </div>
-        ))}
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            Team Total Hours
+          </p>
+          <p className="text-3xl font-bold text-indigo-600 mt-2">
+            {teamTotalHours.toFixed(1)}
+          </p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            Total Contributions
+          </p>
+          <p className="text-3xl font-bold text-slate-900 mt-2">{teamTotalContributions}</p>
+        </Card>
+        <Card>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+            Contributors
+          </p>
+          <p className="text-3xl font-bold text-slate-900 mt-2">{members.length}</p>
+        </Card>
       </div>
 
       {/* Export action */}
       <div className="flex items-center justify-between">
-        <p className="font-mono text-xs uppercase tracking-wider text-[#55503f]">Per-member breakdown</p>
+        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          Per-Member Breakdown
+        </h2>
         <Button id="export-csv" variant="secondary" size="sm" onClick={handleExportCsv}>
+          <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
           Export CSV
         </Button>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-[3px] border-2 border-[#0e0d0b]">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-[#0e0d0b] text-[#f4f2ec]">
-              <th className="text-left font-mono text-xs uppercase tracking-wider px-4 py-3">Member</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">Hours</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">GitHub</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">Manual</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">Verified</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">Pending</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">Flagged</th>
-              <th className="text-right font-mono text-xs uppercase tracking-wider px-4 py-3">% Hours</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((m) => {
-              const pct = teamTotalHours ? (m.total_hours / teamTotalHours) * 100 : 0;
-              return (
-                <tr key={m.id} className="border-t-2 border-[#0e0d0b] bg-white hover:bg-[#f4f2ec] transition-colors">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-2.5">
-                      <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
-                      <div>
-                        <p className="font-semibold">{m.github_username}</p>
-                        <Badge variant={m.role === "leader" ? "indigo" : "default"} className="mt-0.5">
-                          {m.role === "leader" ? "Leader" : "Member"}
-                        </Badge>
+      <Card padding="p-0" className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/60">
+                <th className="text-left font-semibold text-slate-500 text-xs uppercase tracking-wider px-5 py-3">
+                  Member
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  Hours
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  GitHub
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  Manual
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  Verified
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  Pending
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                  Flagged
+                </th>
+                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-5 py-3">
+                  % of Hours
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {members.map((m) => {
+                const pct = teamTotalHours ? (m.total_hours / teamTotalHours) * 100 : 0;
+                return (
+                  <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
+                        <div>
+                          <p className="font-medium text-slate-900">{m.github_username}</p>
+                          <Badge variant={m.role === "leader" ? "indigo" : "default"} className="!text-[10px] mt-0.5">
+                            {m.role === "leader" ? "Leader" : "Member"}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="text-right px-4 py-3 font-mono font-semibold">
-                    {Number(m.total_hours).toFixed(1)}
-                  </td>
-                  <td className="text-right px-4 py-3 font-mono text-[#1a3fd6]">{m.github_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#ff4713]">{m.manual_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#16a34a]">{m.verified_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#a1750b]">{m.pending_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#e11d2e]">{m.flagged_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#928c78]">{pct.toFixed(1)}%</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                    </td>
+                    <td className="text-right px-4 py-3 font-semibold text-slate-900">
+                      {Number(m.total_hours).toFixed(1)}
+                    </td>
+                    <td className="text-right px-4 py-3 text-slate-600">{m.github_count}</td>
+                    <td className="text-right px-4 py-3 text-slate-600">{m.manual_count}</td>
+                    <td className="text-right px-4 py-3 text-emerald-600 font-medium">{m.verified_count}</td>
+                    <td className="text-right px-4 py-3 text-amber-600 font-medium">{m.pending_count}</td>
+                    <td className="text-right px-4 py-3 text-red-600 font-medium">{m.flagged_count}</td>
+                    <td className="text-right px-5 py-3 text-slate-500">{pct.toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-      <p className="font-mono text-[11px] text-[#928c78]">
-        Figures computed directly from logged contributions — no weighting or scoring formula applied.
+      <p className="text-xs text-slate-400">
+        Figures are computed directly from logged contributions and peer verification votes.
+        No weighting or scoring formula is applied.
       </p>
     </div>
   );
