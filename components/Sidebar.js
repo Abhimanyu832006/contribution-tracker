@@ -67,7 +67,7 @@ export default function Sidebar({
   return (
     <>
       {/* Mobile top strip */}
-      <div className="lg:hidden fixed top-0 inset-x-0 z-20 flex items-center justify-between h-14 px-4 bg-[#f3f1ea] text-[#141311] border-b border-[#141311]">
+      <div className="lg:hidden fixed top-0 inset-x-0 z-20 flex items-center justify-between h-14 px-4 bg-[#f2ede3] text-[#1c1a15] border-b border-[#1c1a15]">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="label-mono shrink-0">CT</span>
           <span className="font-serif text-base truncate">
@@ -76,7 +76,7 @@ export default function Sidebar({
         </div>
         <button
           onClick={() => setMobileOpen((p) => !p)}
-          className="p-2 text-[#141311]"
+          className="p-2 text-[#1c1a15]"
           aria-label="Toggle navigation menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -92,18 +92,18 @@ export default function Sidebar({
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-30 bg-[#141311]/50"
+          className="lg:hidden fixed inset-0 z-30 bg-[#1c1a15]/50"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-[#f3f1ea] text-[#141311] border-r border-[#141311] transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-[#f2ede3] text-[#1c1a15] border-r border-[#1c1a15] transition-transform duration-200 lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Brand & Project Switcher */}
-        <div className="relative px-5 pt-6 pb-5 border-b border-[#141311]" ref={dropdownRef}>
+        <div className="relative px-5 pt-6 pb-5 border-b border-[#1c1a15]" ref={dropdownRef}>
           <p className="label-mono mb-3">CONTRIBUTION TRACKER</p>
 
           {/* Project Selector Trigger */}
@@ -116,9 +116,9 @@ export default function Sidebar({
               <span className="font-serif text-2xl leading-none truncate">
                 {projectName || "Select Project"}
               </span>
-              <span className="shrink-0 mt-0.5 text-[#4a473f] group-hover:text-[#141311] transition-colors">
+              <span className="shrink-0 mt-0.5 text-[#55503f] group-hover:text-[#1c1a15] transition-colors">
                 {switching ? (
-                  <span className="block w-3.5 h-3.5 border-2 border-[#141311] border-t-transparent animate-spin" />
+                  <span className="block w-3.5 h-3.5 border-2 border-[#1c1a15] border-t-transparent animate-spin" />
                 ) : (
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
@@ -139,20 +139,20 @@ export default function Sidebar({
 
           {/* Project list (inline, ruled — not a floating card) */}
           {dropdownOpen && (
-            <div className="mt-3 border-t border-[#141311]">
+            <div className="mt-3 border-t border-[#1c1a15]">
               {projects.map((p) => {
                 const isActive = p.id === activeProjectId;
                 return (
                   <button
                     key={p.id}
                     onClick={() => handleSwitchProject(p.id)}
-                    className={`w-full flex items-center justify-between gap-2 px-1 py-2.5 border-b border-[rgba(20,19,17,0.14)] text-left transition-colors ${
-                      isActive ? "bg-[#141311] text-[#f3f1ea] px-2" : "hover:bg-[#eae7dd]"
+                    className={`w-full flex items-center justify-between gap-2 px-1 py-2.5 border-b border-[rgba(28,26,21,0.14)] text-left transition-colors ${
+                      isActive ? "bg-[#1c1a15] text-[#f2ede3] px-2" : "hover:bg-[#eae7dd]"
                     }`}
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{p.name}</p>
-                      <p className={`label-mono !text-[9px] ${isActive ? "!text-[#f3f1ea]/60" : ""}`}>
+                      <p className={`label-mono !text-[9px] ${isActive ? "!text-[#f2ede3]/60" : ""}`}>
                         {p.role}
                       </p>
                     </div>
@@ -170,7 +170,7 @@ export default function Sidebar({
                   setDropdownOpen(false);
                   setMobileOpen(false);
                 }}
-                className="flex items-center gap-2 py-2.5 text-[#c23600] label-mono hover:underline"
+                className="flex items-center gap-2 py-2.5 text-[#a4451f] label-mono hover:underline"
               >
                 + JOIN OR CREATE PROJECT
               </Link>
@@ -187,10 +187,10 @@ export default function Sidebar({
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-baseline gap-3 px-5 py-3 border-b border-[rgba(20,19,17,0.1)] text-sm transition-colors ${
+                className={`flex items-baseline gap-3 px-5 py-3 border-b border-[rgba(28,26,21,0.1)] text-sm transition-colors ${
                   isActive
-                    ? "border-l-2 border-l-[#ff4b12] bg-[#faf9f5] font-medium"
-                    : "border-l-2 border-l-transparent text-[#4a473f] hover:text-[#141311] hover:bg-[#faf9f5]/60"
+                    ? "border-l-2 border-l-[#a4451f] bg-[#faf7f0] font-medium"
+                    : "border-l-2 border-l-transparent text-[#55503f] hover:text-[#1c1a15] hover:bg-[#faf7f0]/60"
                 }`}
               >
                 <span className="label-mono !text-[10px] shrink-0">{item.index}</span>
@@ -201,7 +201,7 @@ export default function Sidebar({
         </nav>
 
         {/* User section at bottom */}
-        <div className="border-t border-[#141311] p-4">
+        <div className="border-t border-[#1c1a15] p-4">
           <div className="flex items-center gap-3">
             <Avatar
               src={user?.avatarUrl}
@@ -218,7 +218,7 @@ export default function Sidebar({
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="label-mono !text-[9px] shrink-0 hover:text-[#141311] hover:underline"
+              className="label-mono !text-[9px] shrink-0 hover:text-[#1c1a15] hover:underline"
               title="Sign out"
             >
               SIGN OUT

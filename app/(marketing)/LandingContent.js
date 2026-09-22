@@ -13,14 +13,14 @@ const CONTRIBUTION_TYPES = [
 
 export default function LandingContent() {
   return (
-    <main className="min-h-screen bg-[#f3f1ea] text-[#141311] flex flex-col">
+    <main className="min-h-screen bg-[#f2ede3] text-[#1c1a15] flex flex-col">
       {/* ── Nav — thin rule strip, no floating pill nav ─────────── */}
-      <nav className="border-b border-[#141311] sticky top-0 z-50 bg-[#f3f1ea]">
+      <nav className="border-b border-[#1c1a15] sticky top-0 z-50 bg-[#f2ede3]">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <span className="font-serif text-xl">Contribution Tracker</span>
           <button
             onClick={() => signIn("github")}
-            className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#141311] hover:bg-[#141311] hover:text-[#f3f1ea] transition-colors"
+            className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
           >
             Sign in with GitHub
           </button>
@@ -28,13 +28,13 @@ export default function LandingContent() {
       </nav>
 
       {/* ── Masthead ──────────────────────────────────────────── */}
-      <section className="border-b border-[#141311]">
+      <section className="border-b border-[#1c1a15]">
         <div className="max-w-5xl mx-auto px-6 py-16 sm:py-24">
           <p className="label-mono mb-4">CONTRIBUTION TRACKER — ISSUE NO. 001</p>
           <h1 className="font-serif text-5xl sm:text-7xl leading-[0.95] max-w-3xl">
             Who actually did the work?
           </h1>
-          <p className="mt-6 text-base sm:text-lg text-[#4a473f] max-w-xl leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg text-[#55503f] max-w-xl leading-relaxed">
             A record of every contribution a team makes — code and otherwise.
             GitHub commits are one kind of evidence. Documentation, research,
             design, and testing are others. Contribution Tracker records both,
@@ -43,7 +43,7 @@ export default function LandingContent() {
           <div className="mt-10 flex items-center gap-6">
             <button
               onClick={() => signIn("github")}
-              className="font-mono uppercase tracking-wider text-sm px-6 py-3.5 bg-[#141311] text-[#f3f1ea] hover:bg-[#ff4b12] transition-colors"
+              className="font-mono uppercase tracking-wider text-sm px-6 py-3.5 bg-[#1c1a15] text-[#f2ede3] hover:bg-[#a4451f] transition-colors"
             >
               Get Started with GitHub →
             </button>
@@ -52,25 +52,25 @@ export default function LandingContent() {
       </section>
 
       {/* ── Core distinction — editorial two-column, not feature cards ── */}
-      <section className="border-b border-[#141311]">
+      <section className="border-b border-[#1c1a15]">
         <div className="max-w-5xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
           <div>
             <p className="label-mono mb-3">GITHUB EVIDENCE</p>
             <p className="font-serif text-3xl leading-tight">
               Commits sync automatically and verify themselves.
             </p>
-            <p className="mt-4 text-sm text-[#4a473f] leading-relaxed">
+            <p className="mt-4 text-sm text-[#55503f] leading-relaxed">
               Link a repository once. Every commit by a team member becomes a
               contribution entry — author, message, SHA, and link — with no
               manual entry required.
             </p>
           </div>
-          <div className="md:border-l border-[#141311] md:pl-16">
+          <div className="md:border-l border-[#1c1a15] md:pl-16">
             <p className="label-mono mb-3">MANUAL EVIDENCE</p>
             <p className="font-serif text-3xl leading-tight">
               Everything else is recorded, then verified by peers.
             </p>
-            <p className="mt-4 text-sm text-[#4a473f] leading-relaxed">
+            <p className="mt-4 text-sm text-[#55503f] leading-relaxed">
               Documentation, research, design, testing, planning — logged with
               a category, description, and time estimate. Teammates review and
               vote to approve or flag, so self-reported work isn&apos;t taken
@@ -81,15 +81,15 @@ export default function LandingContent() {
       </section>
 
       {/* ── Contribution types — numbered editorial list, not icon cards ── */}
-      <section className="border-b border-[#141311]">
+      <section className="border-b border-[#1c1a15]">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <p className="label-mono mb-8">WHAT COUNTS AS A CONTRIBUTION</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {CONTRIBUTION_TYPES.map((t) => (
-              <div key={t.n} className="rule-t border-r border-transparent md:border-r-[rgba(20,19,17,0.14)] py-5 pr-6">
+              <div key={t.n} className="rule-t border-r border-transparent md:border-r-[rgba(28,26,21,0.14)] py-5 pr-6">
                 <p className="label-mono">{t.n}</p>
                 <p className="font-serif text-xl mt-2">{t.label}</p>
-                <p className="text-xs text-[#4a473f] mt-1">{t.detail}</p>
+                <p className="text-xs text-[#55503f] mt-1">{t.detail}</p>
               </div>
             ))}
           </div>
@@ -97,7 +97,7 @@ export default function LandingContent() {
       </section>
 
       {/* ── How it works — vertical rule timeline ──────────────── */}
-      <section className="border-b border-[#141311]">
+      <section className="border-b border-[#1c1a15]">
         <div className="max-w-5xl mx-auto px-6 py-16">
           <p className="label-mono mb-8">HOW IT WORKS</p>
           <div className="space-y-0">
@@ -111,7 +111,7 @@ export default function LandingContent() {
                 <span className="label-mono w-8 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <p className="font-medium">{title}</p>
-                  <p className="text-sm text-[#4a473f] mt-1">{desc}</p>
+                  <p className="text-sm text-[#55503f] mt-1">{desc}</p>
                 </div>
               </div>
             ))}
@@ -127,7 +127,7 @@ export default function LandingContent() {
           </p>
           <button
             onClick={() => signIn("github")}
-            className="mt-8 font-mono uppercase tracking-wider text-sm px-6 py-3.5 border border-[#141311] hover:bg-[#141311] hover:text-[#f3f1ea] transition-colors"
+            className="mt-8 font-mono uppercase tracking-wider text-sm px-6 py-3.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
           >
             Sign in with GitHub
           </button>
@@ -135,7 +135,7 @@ export default function LandingContent() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="border-t border-[#141311]">
+      <footer className="border-t border-[#1c1a15]">
         <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between label-mono">
           <span>© {new Date().getFullYear()} CONTRIBUTION TRACKER</span>
           <span>BUILT FOR PROJECT TEAMS</span>

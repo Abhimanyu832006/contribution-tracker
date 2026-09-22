@@ -90,7 +90,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
+        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
           {error}
         </div>
       )}
@@ -125,7 +125,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
               <button
                 type="button"
                 onClick={handleCopyInvite}
-                className="label-mono hover:text-[#141311] hover:underline"
+                className="label-mono hover:text-[#1c1a15] hover:underline"
               >
                 {copied ? "COPIED!" : "COPY"}
               </button>
@@ -148,7 +148,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
             <p className="text-sm font-medium">
               Leave Project
             </p>
-            <p className="text-xs text-[#4a473f] mt-0.5">
+            <p className="text-xs text-[#55503f] mt-0.5">
               Remove yourself from this project. You can rejoin later using the invite code.
             </p>
           </div>
@@ -163,10 +163,10 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
       )}
 
       {isLeader && (
-        <Card className="border-[#b3271e] space-y-4">
+        <Card className="border-[#9c1f1f] space-y-4">
           <div>
-            <p className="label-mono !text-[#b3271e]">DANGER ZONE</p>
-            <p className="text-xs text-[#4a473f] mt-1.5">
+            <p className="label-mono !text-[#9c1f1f]">DANGER ZONE</p>
+            <p className="text-xs text-[#55503f] mt-1.5">
               Permanently delete this project along with all logged contributions and team memberships. This action cannot be undone.
             </p>
           </div>
@@ -182,13 +182,13 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
 
       {/* Delete Project Confirmation Modal */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141311]/50 p-4">
-          <div className="w-full max-w-md rounded-none bg-[#faf9f5] border border-[#b3271e] p-6">
-            <p className="label-mono !text-[#b3271e] mb-2">DELETE PROJECT</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1a15]/50 p-4">
+          <div className="w-full max-w-md rounded-none bg-[#faf7f0] border border-[#9c1f1f] p-6">
+            <p className="label-mono !text-[#9c1f1f] mb-2">DELETE PROJECT</p>
             <h3 className="font-serif text-2xl">
               &quot;{project.name}&quot;?
             </h3>
-            <p className="mt-2 text-sm text-[#4a473f]">
+            <p className="mt-2 text-sm text-[#55503f]">
               This will permanently delete the project, all logged contributions, and remove all {memberCount} members.
             </p>
             <div className="mt-6 flex items-center justify-end gap-2">
@@ -196,7 +196,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
                 type="button"
                 onClick={() => setDeleteModalOpen(false)}
                 disabled={loading}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#4a473f] hover:text-[#141311]"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#1c1a15]"
               >
                 Cancel
               </button>
@@ -215,13 +215,13 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
 
       {/* Leave Project Confirmation Modal */}
       {leaveModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#141311]/50 p-4">
-          <div className="w-full max-w-md rounded-none bg-[#faf9f5] border border-[#141311] p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1a15]/50 p-4">
+          <div className="w-full max-w-md rounded-none bg-[#faf7f0] border border-[#1c1a15] p-6">
             <p className="label-mono mb-2">LEAVE PROJECT</p>
             <h3 className="font-serif text-2xl">
               &quot;{project.name}&quot;?
             </h3>
-            <p className="mt-2 text-sm text-[#4a473f]">
+            <p className="mt-2 text-sm text-[#55503f]">
               You will lose access to its dashboard and team views until you are re-invited.
             </p>
             <div className="mt-6 flex items-center justify-end gap-2">
@@ -229,7 +229,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
                 type="button"
                 onClick={() => setLeaveModalOpen(false)}
                 disabled={loading}
-                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#4a473f] hover:text-[#141311]"
+                className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 text-[#55503f] hover:text-[#1c1a15]"
               >
                 Cancel
               </button>

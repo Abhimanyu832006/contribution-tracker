@@ -10,9 +10,9 @@ export default function Card({
   padding = "p-6",
   ...props
 }) {
-  const base = "bg-[#faf9f5] rounded-none border border-[rgba(20,19,17,0.14)]";
+  const base = "bg-[#faf7f0] rounded-none border border-[rgba(28,26,21,0.14)]";
   const hoverClass = hover
-    ? "transition-colors duration-150 hover:border-[#141311]"
+    ? "transition-colors duration-150 hover:border-[#1c1a15]"
     : "";
 
   return (

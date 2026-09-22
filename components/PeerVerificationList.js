@@ -16,10 +16,10 @@ const STATUS_TABS = [
 ];
 
 const STAMP_STYLE = {
-  verified: { color: "#2c4a2e", label: "VERIFIED" },
-  approved: { color: "#2c4a2e", label: "VERIFIED" },
-  flagged: { color: "#b3271e", label: "FLAGGED" },
-  pending: { color: "#7a5c00", label: "PENDING" },
+  verified: { color: "#2f5c3f", label: "VERIFIED" },
+  approved: { color: "#2f5c3f", label: "VERIFIED" },
+  flagged: { color: "#9c1f1f", label: "FLAGGED" },
+  pending: { color: "#8a6a1f", label: "PENDING" },
 };
 
 function timeAgo(iso) {
@@ -115,8 +115,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
   if (contributions.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(20,19,17,0.3)] py-16 text-center">
-        <p className="text-sm text-[#8a8578]">No contributions to verify yet</p>
+      <div className="border border-dashed border-[rgba(28,26,21,0.3)] py-16 text-center">
+        <p className="text-sm text-[#96907a]">No contributions to verify yet</p>
         <p className="label-mono mt-1">LOG CONTRIBUTIONS TO BEGIN PEER REVIEW</p>
       </div>
     );
@@ -125,7 +125,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
   return (
     <div className="space-y-5">
       {error && (
-        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
+        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
           {error}
         </div>
       )}
@@ -140,8 +140,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
               onClick={() => setStatusFilter(tab.value)}
               className={`label-mono !text-xs pb-1 ${
                 statusFilter === tab.value
-                  ? "text-[#141311] border-b-2 border-[#ff4b12] -mb-[13px]"
-                  : "hover:text-[#141311]"
+                  ? "text-[#1c1a15] border-b-2 border-[#a4451f] -mb-[13px]"
+                  : "hover:text-[#1c1a15]"
               }`}
             >
               {tab.label}
@@ -153,13 +153,13 @@ export default function PeerVerificationList({ initialContributions = [], curren
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search description or contributor…"
-          className="sm:w-72 rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-3.5 py-2 text-sm placeholder-[#8a8578] focus:outline-none focus:border-[#141311]"
+          className="sm:w-72 rounded-none border border-[rgba(28,26,21,0.2)] bg-[#faf7f0] px-3.5 py-2 text-sm placeholder-[#96907a] focus:outline-none focus:border-[#1c1a15]"
         />
       </div>
 
       {filteredContributions.length === 0 && (
-        <div className="border border-dashed border-[rgba(20,19,17,0.3)] py-16 text-center">
-          <p className="text-sm text-[#8a8578]">No contributions match these filters</p>
+        <div className="border border-dashed border-[rgba(28,26,21,0.3)] py-16 text-center">
+          <p className="text-sm text-[#96907a]">No contributions match these filters</p>
         </div>
       )}
 
@@ -186,16 +186,22 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     <span className="text-sm font-medium">
                       {c.github_username}
                     </span>
+                    <span
+                      className="font-mono text-[10px] uppercase tracking-wider"
+                      style={{ color: c.source === "github" ? "#1f6f66" : "#a4451f" }}
+                    >
+                      {c.source === "github" ? "GH" : "MANUAL"}
+                    </span>
                     <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
                       {c.category}
                     </Badge>
                     <Link
                       href={`/contributions/${c.id}`}
-                      className="label-mono !text-[#c23600] hover:underline"
+                      className="label-mono !text-[#a4451f] hover:underline"
                     >
                       DETAILS
                     </Link>
-                    <span className="font-mono text-xs text-[#8a8578]">
+                    <span className="font-mono text-xs text-[#96907a]">
                       {timeAgo(c.created_at)}
                     </span>
                     {isOwnContribution && (
@@ -203,7 +209,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     )}
                   </div>
 
-                  <p className="text-sm break-words">
+                  <p className={`break-words ${c.source === "github" ? "font-mono text-[13px]" : "font-serif text-[15px]"}`}>
                     {c.description}
                   </p>
 
@@ -214,14 +220,14 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       onClick={() =>
                         setHistoryOpenId((prev) => (prev === c.id ? null : c.id))
                       }
-                      className="label-mono hover:text-[#141311] inline-flex items-center gap-1"
+                      className="label-mono hover:text-[#1c1a15] inline-flex items-center gap-1"
                     >
                       {historyOpenId === c.id ? "▾" : "▸"} HISTORY ({c.votes.length})
                     </button>
                   )}
 
                   {historyOpenId === c.id && (c.votes?.length || 0) > 0 && (
-                    <div className="space-y-2 pt-1 pl-3 border-l-2 border-[rgba(20,19,17,0.14)]">
+                    <div className="space-y-2 pt-1 pl-3 border-l-2 border-[rgba(28,26,21,0.14)]">
                       {c.votes.map((v, i) => (
                         <div key={i} className="flex items-start gap-2">
                           <Avatar src={v.avatar_url} name={v.username} size="xs" />
@@ -230,13 +236,13 @@ export default function PeerVerificationList({ initialContributions = [], curren
                               <span className="font-medium">{v.username}</span>{" "}
                               <span
                                 className="font-mono uppercase tracking-wide"
-                                style={{ color: v.vote === "approve" ? "#2c4a2e" : "#b3271e" }}
+                                style={{ color: v.vote === "approve" ? "#2f5c3f" : "#9c1f1f" }}
                               >
                                 {v.vote === "approve" ? "approved" : "flagged"}
                               </span>
                             </p>
                             {v.comment && (
-                              <p className="text-xs text-[#4a473f] italic mt-0.5">
+                              <p className="text-xs text-[#55503f] italic mt-0.5">
                                 &ldquo;{v.comment}&rdquo;
                               </p>
                             )}
@@ -253,7 +259,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       target="_blank"
                       rel="noopener noreferrer"
                       download={c.attachment_name || true}
-                      className="inline-flex items-center gap-2 font-mono text-xs text-[#4a473f] hover:text-[#141311] underline decoration-[rgba(20,19,17,0.3)]"
+                      className="inline-flex items-center gap-2 font-mono text-xs text-[#55503f] hover:text-[#1c1a15] underline decoration-[rgba(28,26,21,0.3)]"
                       title="Download and inspect supporting document"
                     >
                       ⌷ {c.attachment_name || "Download Document"}
@@ -270,14 +276,20 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     <span className="stat-num text-lg">
                       {Number(c.time_estimate).toFixed(1)}h
                     </span>
-                    <span className="stamp" style={{ color: stamp.color }}>
-                      {stamp.label}
-                    </span>
+                    {c.status === "pending" || !c.status ? (
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#96907a]">
+                        awaiting review
+                      </span>
+                    ) : (
+                      <span className="rubber-stamp" style={{ color: stamp.color }}>
+                        {stamp.label}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center md:justify-end gap-3 font-mono text-xs text-[#8a8578] mt-1.5">
+                  <div className="flex items-center md:justify-end gap-3 font-mono text-xs text-[#96907a] mt-1.5">
                     <span>{c.approves_count || 0} approve{c.approves_count === 1 ? "" : "s"}</span>
                     {(c.flags_count || 0) > 0 && (
-                      <span className="text-[#b3271e]">{c.flags_count} flagged</span>
+                      <span className="text-[#9c1f1f]">{c.flags_count} flagged</span>
                     )}
                   </div>
                 </div>
@@ -295,7 +307,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         }
                         placeholder="Optional comment (visible to the team)…"
                         maxLength={280}
-                        className="w-full sm:w-56 text-xs rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-2.5 py-1.5 placeholder:text-[#8a8578] focus:outline-none focus:border-[#141311]"
+                        className="w-full sm:w-56 text-xs rounded-none border border-[rgba(28,26,21,0.2)] bg-[#faf7f0] px-2.5 py-1.5 placeholder:text-[#96907a] focus:outline-none focus:border-[#1c1a15]"
                       />
                       <div className="flex items-center gap-2">
                         <Button
@@ -306,8 +318,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           onClick={() => handleVote(c.id, "approve")}
                           className={
                             hasVotedApprove
-                              ? "!bg-[#2c4a2e] !text-[#f3f1ea] !border-[#2c4a2e]"
-                              : "!text-[#2c4a2e] !border-[#2c4a2e] hover:!bg-[#2c4a2e] hover:!text-[#f3f1ea]"
+                              ? "!bg-[#2f5c3f] !text-[#f2ede3] !border-[#2f5c3f]"
+                              : "!text-[#2f5c3f] !border-[#2f5c3f] hover:!bg-[#2f5c3f] hover:!text-[#f2ede3]"
                           }
                           title="Verify and approve teammate's work"
                         >
@@ -321,7 +333,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           disabled={isVotingThis}
                           onClick={() => handleVote(c.id, "flag")}
                           variant="danger"
-                          className={hasVotedFlag ? "!bg-[#b3271e] !text-[#f3f1ea]" : ""}
+                          className={hasVotedFlag ? "!bg-[#9c1f1f] !text-[#f2ede3]" : ""}
                           title="Flag contribution if work is inaccurate or suspicious"
                         >
                           {hasVotedFlag ? "Flagged" : "Flag"}

@@ -1,42 +1,57 @@
 @import "tailwindcss";
 
 /* ── Design tokens ─────────────────────────────────────────── */
-/* Editorial/industrial system: paper + ink + one accent. */
+/*
+ * THE LOGBOOK SYSTEM
+ * Contribution Tracker is a shared logbook, and a logbook has two voices:
+ *   — the SYSTEM voice: GitHub commits, machine-generated, terse, monospace
+ *   — the HUMAN voice: manual entries someone actually sat down and wrote
+ * Color and type are assigned by voice, not decoration. See globals.css
+ * comments below each rule for what it's actually for.
+ */
 :root {
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans-ui: "Archivo", system-ui, -apple-system, sans-serif;
-  --font-mono-ui: "IBM Plex Mono", "Courier New", monospace;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;  /* identity: project name, the one hero number */
+  --font-journal: "Fraunces", Georgia, serif;                     /* human voice: manual entry narrative text */
+  --font-sans-ui: "Archivo", system-ui, -apple-system, sans-serif; /* UI chrome: nav, buttons, controls */
+  --font-mono-ui: "IBM Plex Mono", "Courier New", monospace;       /* system voice: commits, SHAs, timestamps */
 
-  /* Palette */
-  --color-accent: #ff4b12;
-  --color-accent-ink: #c23600;
-  --color-accent-tint: #fff0ea;
+  /* Ground */
+  --color-bg: #f2ede3;
+  --color-surface: #faf7f0;
+  --color-ink: #1c1a15;
+  --color-ink-soft: #55503f;
+  --color-ink-faint: #96907a;
 
-  --color-bg: #f3f1ea;
-  --color-surface: #faf9f5;
-  --color-ink: #141311;
-  --color-ink-soft: #4a473f;
-  --color-ink-faint: #8a8578;
+  --color-rule: rgba(28, 26, 21, 0.13);
+  --color-rule-strong: rgba(28, 26, 21, 0.85);
 
-  --color-rule: rgba(20, 19, 17, 0.14);
-  --color-rule-strong: rgba(20, 19, 17, 0.85);
+  /* Voice colors — semantic, not decorative */
+  --color-system: #1f6f66;        /* GitHub / machine-generated entries */
+  --color-system-tint: #e8f2f0;
+  --color-human: #a4451f;         /* manual / human-written entries — a warm terracotta ink */
+  --color-human-tint: #f7ece3;
 
-  --color-sidebar: #f3f1ea;
-  --color-sidebar-ink: #141311;
+  /* The stamp — verification only, never used elsewhere */
+  --color-stamp: #9c1f1f;
+  --color-stamp-approve: #2f5c3f;
 
-  --color-verified: #2c4a2e;
-  --color-pending: #7a5c00;
-  --color-flagged: #b3271e;
+  /* Utility signal (pending/waiting) */
+  --color-pending: #8a6a1f;
 
   /* Legacy aliases kept so any un-migrated component still renders sanely */
+  --color-accent: var(--color-human);
+  --color-accent-ink: #7a3216;
+  --color-accent-tint: var(--color-human-tint);
   --color-text-primary: var(--color-ink);
   --color-text-secondary: var(--color-ink-soft);
   --color-text-muted: var(--color-ink-faint);
   --color-border: var(--color-rule);
   --color-border-strong: var(--color-rule-strong);
-  --color-success: var(--color-verified);
+  --color-success: var(--color-stamp-approve);
   --color-warning: var(--color-pending);
-  --color-danger: var(--color-flagged);
+  --color-danger: var(--color-stamp);
+  --color-verified: var(--color-stamp-approve);
+  --color-flagged: var(--color-stamp);
 }
 
 @theme inline {
@@ -89,6 +104,36 @@ body {
   padding: 0.2em 0.55em;
   border: 1px solid currentColor;
   border-radius: 0;
+}
+
+/* The rubber stamp — verification is a physical human act, not a status pill.
+   Used only for APPROVED / FLAGGED on a peer-reviewed contribution. */
+.rubber-stamp {
+  display: inline-block;
+  font-family: var(--font-mono-ui);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3em 0.7em;
+  border: 2.5px solid currentColor;
+  border-radius: 3px 9px 5px 8px / 8px 4px 9px 3px;
+  transform: rotate(-4deg);
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  opacity: 0.88;
+  mix-blend-mode: multiply;
+}
+.rubber-stamp--flat {
+  transform: rotate(-2deg);
+}
+
+/* A hairline that looks hand-ruled, not vector-perfect — used sparingly
+   for the dashboard's single hero figure, not every divider. */
+.rule-hand {
+  border: none;
+  border-top: 1.5px solid var(--color-ink);
+  border-radius: 999px;
 }
 
 /* ── Animations ────────────────────────────────────────────── */

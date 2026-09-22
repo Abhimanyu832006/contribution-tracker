@@ -62,12 +62,12 @@ export default async function PeerVerificationPage() {
         <h1 className="font-serif text-4xl sm:text-5xl leading-none">
           Verification &amp; Review
         </h1>
-        <p className="text-sm text-[#4a473f] mt-3 max-w-xl">
+        <p className="text-sm text-[#55503f] mt-3 max-w-xl">
           Review teammates&apos; work, inspect supporting documents, and vote to verify or flag contributions.
         </p>
 
         {/* Rule guide — how peer review works */}
-        <div className="mt-4 text-xs text-[#4a473f] space-y-1 font-mono">
+        <div className="mt-4 text-xs text-[#55503f] space-y-1 font-mono">
           <p>→ Open any attached document to inspect it before voting.</p>
           <p>→ 2+ approvals with 0 flags marks a contribution VERIFIED.</p>
           <p>→ Any flag marks it FLAGGED, pending team resolution.</p>

@@ -13,7 +13,7 @@ export default async function AppLayout({ children }) {
   const projects = await getUserProjects(session.user.dbId);
 
   return (
-    <div className="flex min-h-screen bg-[#f3f1ea]">
+    <div className="flex min-h-screen bg-[#f2ede3]">
       <Sidebar
         user={{
           githubUsername: session.user.githubUsername,
@@ -28,7 +28,7 @@ export default async function AppLayout({ children }) {
       {/* Main content area — offset by sidebar width on large screens, top bar height on mobile */}
       <main className="flex-1 lg:ml-72 pt-14 lg:pt-0">
         {/* Editorial top strip — technical metadata, not decorative */}
-        <div className="hidden lg:flex items-center justify-between px-8 py-2 border-b border-[rgba(20,19,17,0.14)] label-mono">
+        <div className="hidden lg:flex items-center justify-between px-8 py-2 border-b border-[rgba(28,26,21,0.14)] label-mono">
           <span>{membership.name.toUpperCase()}</span>
           <span>{membership.role === "leader" ? "ROLE: LEADER" : "ROLE: MEMBER"}</span>
         </div>

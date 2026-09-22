@@ -147,17 +147,17 @@ export default function ContributionForm({ onSuccess }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="rule-b pb-2 flex items-center justify-between">
         <p className="label-mono">MANUAL CONTRIBUTION</p>
-        <p className="label-mono !text-[#8a8578]">SOURCE: MANUAL</p>
+        <p className="label-mono !text-[#96907a]">SOURCE: MANUAL</p>
       </div>
 
       {error && (
-        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
+        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="text-sm text-[#2c4a2e] border border-[#2c4a2e] px-4 py-3">
+        <div className="text-sm text-[#2f5c3f] border border-[#2f5c3f] px-4 py-3">
           {success}
         </div>
       )}
@@ -204,7 +204,7 @@ export default function ContributionForm({ onSuccess }) {
       {/* Supporting Document Upload Section */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="font-mono text-[11px] uppercase tracking-wider text-[#4a473f]">
+          <label className="font-mono text-[11px] uppercase tracking-wider text-[#55503f]">
             {isDoc
               ? "Attach Documentation File (.docx, .doc, .pdf)"
               : isResearch
@@ -215,14 +215,14 @@ export default function ContributionForm({ onSuccess }) {
         </div>
 
         {selectedFile ? (
-          <div className="flex items-center justify-between p-3.5 bg-[#faf9f5] border border-[#141311]">
+          <div className="flex items-center justify-between p-3.5 bg-[#faf7f0] border border-[#1c1a15]">
             <div className="flex items-center gap-3 min-w-0">
               {getFileIcon(selectedFile.name)}
               <div className="min-w-0">
                 <p className="text-sm truncate">
                   {selectedFile.name}
                 </p>
-                <p className="font-mono text-xs text-[#8a8578]">
+                <p className="font-mono text-xs text-[#96907a]">
                   {formatBytes(selectedFile.size)}
                 </p>
               </div>
@@ -230,7 +230,7 @@ export default function ContributionForm({ onSuccess }) {
             <button
               type="button"
               onClick={removeFile}
-              className="p-1.5 text-[#8a8578] hover:text-[#b3271e] transition-colors ml-2"
+              className="p-1.5 text-[#96907a] hover:text-[#9c1f1f] transition-colors ml-2"
               title="Remove file"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -243,8 +243,8 @@ export default function ContributionForm({ onSuccess }) {
             onClick={() => fileInputRef.current?.click()}
             className={`border border-dashed p-4 text-center cursor-pointer transition-colors ${
               isDoc || isResearch
-                ? "border-[#ff4b12] bg-[#fff0ea]/40 hover:bg-[#fff0ea]/70"
-                : "border-[rgba(20,19,17,0.3)] hover:bg-[#faf9f5]"
+                ? "border-[#a4451f] bg-[#f7ece3]/40 hover:bg-[#f7ece3]/70"
+                : "border-[rgba(28,26,21,0.3)] hover:bg-[#faf7f0]"
             }`}
           >
             <input
@@ -262,9 +262,9 @@ export default function ContributionForm({ onSuccess }) {
             />
             <div className="flex flex-col items-center justify-center gap-1.5">
               <p className="text-xs">
-                <span className="text-[#c23600] font-medium hover:underline">Click to upload</span> or drag and drop
+                <span className="text-[#a4451f] font-medium hover:underline">Click to upload</span> or drag and drop
               </p>
-              <p className="font-mono text-[11px] text-[#8a8578]">
+              <p className="font-mono text-[11px] text-[#96907a]">
                 {isDoc
                   ? "Word files (.docx, .doc), PDFs, or Markdown"
                   : isResearch

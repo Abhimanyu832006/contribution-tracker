@@ -74,10 +74,10 @@ export default async function ContributionDetailPage({ params }) {
   const isGithub = c.source === "github";
   const stampColor =
     c.status === "verified" || c.status === "approved"
-      ? "#2c4a2e"
+      ? "#2f5c3f"
       : c.status === "flagged"
-      ? "#b3271e"
-      : "#7a5c00";
+      ? "#9c1f1f"
+      : "#8a6a1f";
   const statusLabel =
     c.status === "approved" ? "verified" : c.status || "pending";
 
@@ -85,7 +85,7 @@ export default async function ContributionDetailPage({ params }) {
     <div className="space-y-6 max-w-2xl">
       <Link
         href="/contributions"
-        className="label-mono hover:text-[#141311] inline-flex items-center gap-1.5"
+        className="label-mono hover:text-[#1c1a15] inline-flex items-center gap-1.5"
       >
         ← BACK TO CONTRIBUTIONS
       </Link>
@@ -97,12 +97,18 @@ export default async function ContributionDetailPage({ params }) {
             <Avatar src={c.avatar_url} name={c.github_username} size="lg" />
             <div>
               <p className="font-serif text-2xl leading-none">{c.github_username}</p>
-              <p className="font-mono text-xs text-[#8a8578] mt-1.5">{formatDate(c.created_at)}</p>
+              <p className="font-mono text-xs text-[#96907a] mt-1.5">{formatDate(c.created_at)}</p>
             </div>
           </div>
-          <span className="stamp shrink-0" style={{ color: stampColor }}>
-            {statusLabel}
-          </span>
+          {statusLabel === "pending" ? (
+            <span className="font-mono text-[10px] uppercase tracking-wider text-[#96907a] shrink-0">
+              awaiting review
+            </span>
+          ) : (
+            <span className="rubber-stamp shrink-0" style={{ color: stampColor }}>
+              {statusLabel}
+            </span>
+          )}
         </div>
 
         {/* Category + Source */}
@@ -110,7 +116,7 @@ export default async function ContributionDetailPage({ params }) {
           <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>{c.category}</Badge>
           <span
             className="label-mono"
-            style={{ color: isGithub ? "#c23600" : "#4a473f" }}
+            style={{ color: isGithub ? "#1f6f66" : "#a4451f" }}
           >
             {isGithub ? "SOURCE: GITHUB" : "SOURCE: MANUAL"}
           </span>
@@ -119,7 +125,9 @@ export default async function ContributionDetailPage({ params }) {
         {/* Description */}
         <div>
           <p className="label-mono mb-1.5">DESCRIPTION</p>
-          <p className="text-sm leading-relaxed">{c.description}</p>
+          <p className={`leading-relaxed ${isGithub ? "font-mono text-sm" : "font-serif text-lg"}`}>
+            {c.description}
+          </p>
         </div>
 
         {isGithub ? (
@@ -138,12 +146,12 @@ export default async function ContributionDetailPage({ params }) {
                   href={c.commit_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-[#c23600] hover:underline font-medium"
+                  className="text-sm text-[#1f6f66] hover:underline font-medium"
                 >
                   View on GitHub ↗
                 </a>
               ) : (
-                <p className="text-sm text-[#8a8578]">—</p>
+                <p className="text-sm text-[#96907a]">—</p>
               )}
             </div>
           </div>
@@ -164,7 +172,7 @@ export default async function ContributionDetailPage({ params }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   download={c.attachment_name || true}
-                  className="inline-flex items-center gap-2 font-mono text-xs text-[#4a473f] hover:text-[#141311] underline decoration-[rgba(20,19,17,0.3)]"
+                  className="inline-flex items-center gap-2 font-mono text-xs text-[#55503f] hover:text-[#1c1a15] underline decoration-[rgba(28,26,21,0.3)]"
                 >
                   ⌷ {c.attachment_name || "Download"}
                   {c.attachment_size && ` (${formatBytes(c.attachment_size)})`}
@@ -181,7 +189,7 @@ export default async function ContributionDetailPage({ params }) {
             {c.flags_count > 0 ? `, ${c.flags_count} FLAGGED` : ""}
           </p>
           {c.votes.length === 0 ? (
-            <p className="text-sm text-[#8a8578]">No teammates have reviewed this yet.</p>
+            <p className="text-sm text-[#96907a]">No teammates have reviewed this yet.</p>
           ) : (
             <div className="space-y-3">
               {c.votes.map((v, i) => (
@@ -192,14 +200,14 @@ export default async function ContributionDetailPage({ params }) {
                       <span className="font-medium">{v.username}</span>{" "}
                       <span
                         className="font-mono uppercase tracking-wide"
-                        style={{ color: v.vote === "approve" ? "#2c4a2e" : "#b3271e" }}
+                        style={{ color: v.vote === "approve" ? "#2f5c3f" : "#9c1f1f" }}
                       >
                         {v.vote === "approve" ? "approved" : "flagged"}
                       </span>{" "}
-                      <span className="font-mono text-xs text-[#8a8578]">{formatDate(v.created_at)}</span>
+                      <span className="font-mono text-xs text-[#96907a]">{formatDate(v.created_at)}</span>
                     </p>
                     {v.comment && (
-                      <p className="text-sm text-[#4a473f] italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
+                      <p className="text-sm text-[#55503f] italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
                     )}
                   </div>
                 </div>

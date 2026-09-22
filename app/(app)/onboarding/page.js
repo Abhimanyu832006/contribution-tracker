@@ -72,7 +72,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f3f1ea] px-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#f2ede3] px-6">
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="mb-10 rule-strong-b pb-6">
@@ -80,7 +80,7 @@ export default function OnboardingPage() {
           <h1 className="font-serif text-4xl leading-none">
             Welcome, {session?.user?.githubUsername || "there"}
           </h1>
-          <p className="text-sm text-[#4a473f] mt-3">
+          <p className="text-sm text-[#55503f] mt-3">
             Create a new project or join an existing one to begin.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
               <p className="text-base font-medium mt-3">
                 Create a Project
               </p>
-              <p className="text-xs text-[#4a473f] mt-1">
+              <p className="text-xs text-[#55503f] mt-1">
                 Start a new project and invite your team
               </p>
             </Card>
@@ -111,7 +111,7 @@ export default function OnboardingPage() {
               <p className="text-base font-medium mt-3">
                 Join a Project
               </p>
-              <p className="text-xs text-[#4a473f] mt-1">
+              <p className="text-xs text-[#55503f] mt-1">
                 Enter an invite code from your team leader
               </p>
             </Card>
@@ -123,7 +123,7 @@ export default function OnboardingPage() {
           <Card>
             <p className="label-mono rule-b pb-2 mb-4">CREATE A PROJECT</p>
             {error && (
-              <p className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-2.5 mb-4">
+              <p className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -157,7 +157,7 @@ export default function OnboardingPage() {
           <Card>
             <p className="label-mono rule-b pb-2 mb-4">JOIN A PROJECT</p>
             {error && (
-              <p className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-2.5 mb-4">
+              <p className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -189,7 +189,7 @@ export default function OnboardingPage() {
         <div className="mt-8 text-center">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="label-mono hover:text-[#141311] hover:underline"
+            className="label-mono hover:text-[#1c1a15] hover:underline"
           >
             SIGN OUT / RECONNECT ACCOUNT
           </button>

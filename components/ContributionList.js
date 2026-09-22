@@ -25,27 +25,27 @@ function timeAgo(iso) {
 }
 
 const STATUS_COLOR = {
-  verified: "#2c4a2e",
-  approved: "#2c4a2e",
-  flagged: "#b3271e",
-  pending: "#7a5c00",
+  verified: "#2f5c3f",
+  approved: "#2f5c3f",
+  flagged: "#9c1f1f",
+  pending: "#8a6a1f",
 };
 
 export default function ContributionList({ contributions = [] }) {
   if (contributions.length === 0) {
     return (
-      <div className="border border-dashed border-[rgba(20,19,17,0.3)] py-16 text-center">
-        <p className="text-sm text-[#8a8578]">No contributions yet</p>
+      <div className="border border-dashed border-[rgba(28,26,21,0.3)] py-16 text-center">
+        <p className="text-sm text-[#96907a]">No contributions yet</p>
         <p className="label-mono mt-1">LOG THE FIRST ONE TO GET STARTED</p>
       </div>
     );
   }
 
   return (
-    <div className="border-t border-[rgba(20,19,17,0.14)]">
+    <div className="border-t border-[rgba(28,26,21,0.14)]">
       {contributions.map((c) => {
         const isGithub = c.source === "github";
-        const statusColor = STATUS_COLOR[c.status] || "#8a8578";
+        const statusColor = STATUS_COLOR[c.status] || "#96907a";
 
         // Row itself is a plain container — never an <a>/<Link>, since it may
         // contain the attachment link below and nested anchors are invalid HTML.
@@ -53,12 +53,15 @@ export default function ContributionList({ contributions = [] }) {
         return (
           <div
             key={c.id}
-            className={`flex items-center gap-4 py-3.5 pl-4 pr-1 border-b border-[rgba(20,19,17,0.14)] border-l-2 transition-colors hover:bg-[#faf9f5] ${
-              isGithub ? "border-l-[#ff4b12]" : "border-l-[#141311]"
+            className={`flex items-center gap-4 py-3.5 pl-4 pr-1 border-b border-[rgba(28,26,21,0.14)] border-l-2 transition-colors hover:bg-[#faf7f0] ${
+              isGithub ? "border-l-[#1f6f66]" : "border-l-[#a4451f]"
             }`}
           >
-            {/* Source tag — the primary visual distinction */}
-            <span className="label-mono w-14 shrink-0">
+            {/* Source tag — the primary visual distinction, colored by voice */}
+            <span
+              className="font-mono text-[10px] uppercase tracking-wider w-14 shrink-0"
+              style={{ color: isGithub ? "#1f6f66" : "#a4451f" }}
+            >
               {isGithub ? "GH" : "MANUAL"}
             </span>
 
@@ -74,10 +77,10 @@ export default function ContributionList({ contributions = [] }) {
               {c.category}
             </Badge>
 
-            {/* Content */}
+            {/* Content — GitHub reads as a log line, manual reads as a written sentence */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-sm truncate">
+                <p className={`text-sm truncate ${isGithub ? "font-mono text-[13px]" : "font-serif text-[15px]"}`}>
                   {c.description}
                 </p>
                 {c.attachment_url && (
@@ -86,7 +89,7 @@ export default function ContributionList({ contributions = [] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     download={c.attachment_name || true}
-                    className="font-mono text-[10px] uppercase tracking-wider text-[#4a473f] hover:text-[#141311] underline decoration-[rgba(20,19,17,0.3)] shrink-0"
+                    className="font-mono text-[10px] uppercase tracking-wider text-[#55503f] hover:text-[#1c1a15] underline decoration-[rgba(28,26,21,0.3)] shrink-0"
                     title={`Download ${c.attachment_name || "document"}`}
                   >
                     ⌷ {c.attachment_name || "Attachment"}
@@ -94,7 +97,7 @@ export default function ContributionList({ contributions = [] }) {
                 )}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
-                <p className="font-mono text-xs text-[#8a8578]">
+                <p className="font-mono text-xs text-[#96907a]">
                   {c.github_username || c.user_name}
                 </p>
                 {c.status && (
@@ -111,11 +114,11 @@ export default function ContributionList({ contributions = [] }) {
             {/* Hours + time */}
             <div className="text-right shrink-0 font-mono text-xs">
               {!isGithub && (
-                <p className="text-sm text-[#141311]">
+                <p className="text-sm text-[#1c1a15]">
                   {Number(c.time_estimate).toFixed(1)}h
                 </p>
               )}
-              <p className="text-[#8a8578] mt-0.5">
+              <p className="text-[#96907a] mt-0.5">
                 {timeAgo(c.created_at)}
               </p>
             </div>
@@ -126,7 +129,7 @@ export default function ContributionList({ contributions = [] }) {
                 href={c.commit_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 text-[#8a8578] hover:text-[#ff4b12] transition-colors"
+                className="shrink-0 text-[#96907a] hover:text-[#1f6f66] transition-colors"
                 title="View commit on GitHub"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -136,7 +139,7 @@ export default function ContributionList({ contributions = [] }) {
             ) : (
               <Link
                 href={`/contributions/${c.id}`}
-                className="shrink-0 text-[#8a8578] hover:text-[#141311] transition-colors"
+                className="shrink-0 text-[#96907a] hover:text-[#1c1a15] transition-colors"
                 title="View details"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -31,13 +31,13 @@ export default function InviteCodeCard({ inviteCode }) {
         <p className="stat-num text-3xl mt-1 tracking-widest">
           {inviteCode}
         </p>
-        <p className="text-xs text-[#4a473f] mt-1">
+        <p className="text-xs text-[#55503f] mt-1">
           Share this code with your teammates so they can join the project
         </p>
       </div>
       <button
         onClick={handleCopy}
-        className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#141311] hover:bg-[#141311] hover:text-[#f3f1ea] transition-colors"
+        className="font-mono uppercase tracking-wider text-xs px-4 py-2.5 border border-[#1c1a15] hover:bg-[#1c1a15] hover:text-[#f2ede3] transition-colors"
       >
         {copied ? "Copied ✓" : "Copy Code"}
       </button>

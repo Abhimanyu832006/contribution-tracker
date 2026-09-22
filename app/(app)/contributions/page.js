@@ -132,13 +132,13 @@ export default function ContributionsPage() {
       </div>
 
       {syncError && (
-        <div className="text-sm text-[#b3271e] border border-[#b3271e] px-4 py-3">
+        <div className="text-sm text-[#9c1f1f] border border-[#9c1f1f] px-4 py-3">
           {syncError}
         </div>
       )}
 
       {syncResult && (
-        <div className="flex items-center justify-between gap-3 text-sm border border-[#2c4a2e] text-[#2c4a2e] px-4 py-3">
+        <div className="flex items-center justify-between gap-3 text-sm border border-[#2f5c3f] text-[#2f5c3f] px-4 py-3">
           <span className="font-mono">
             SYNC COMPLETE — {syncResult.added} added / {syncResult.skipped} skipped / {syncResult.unmatched} unmatched
           </span>
@@ -185,8 +185,8 @@ export default function ContributionsPage() {
             onClick={() => setFilter("mine")}
             className={`label-mono !text-xs pb-1 ${
               filter === "mine"
-                ? "text-[#141311] border-b-2 border-[#ff4b12] -mb-[9px]"
-                : "hover:text-[#141311]"
+                ? "text-[#1c1a15] border-b-2 border-[#a4451f] -mb-[9px]"
+                : "hover:text-[#1c1a15]"
             }`}
           >
             MINE
@@ -196,8 +196,8 @@ export default function ContributionsPage() {
             onClick={() => setFilter("everyone")}
             className={`label-mono !text-xs pb-1 ${
               filter === "everyone"
-                ? "text-[#141311] border-b-2 border-[#ff4b12] -mb-[9px]"
-                : "hover:text-[#141311]"
+                ? "text-[#1c1a15] border-b-2 border-[#a4451f] -mb-[9px]"
+                : "hover:text-[#1c1a15]"
             }`}
           >
             EVERYONE&apos;S
@@ -220,7 +220,7 @@ export default function ContributionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search description or contributor…"
-            className="flex-1 rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141311] placeholder-[#8a8578] transition-colors duration-150 focus:outline-none focus:border-[#141311]"
+            className="flex-1 rounded-none border border-[rgba(28,26,21,0.2)] bg-[#faf7f0] px-3.5 py-2.5 text-sm text-[#1c1a15] placeholder-[#96907a] transition-colors duration-150 focus:outline-none focus:border-[#1c1a15]"
           />
           <Select
             id="category-filter"
@@ -249,7 +249,7 @@ export default function ContributionsPage() {
 
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-4 h-4 mx-auto border-2 border-[#141311] border-t-transparent animate-spin" />
+            <div className="w-4 h-4 mx-auto border-2 border-[#1c1a15] border-t-transparent animate-spin" />
             <p className="label-mono mt-3">LOADING…</p>
           </div>
         ) : (

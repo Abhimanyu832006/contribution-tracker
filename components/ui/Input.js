@@ -13,14 +13,14 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-[11px] uppercase tracking-wider text-[#4a473f]"
+          className="font-mono text-[11px] uppercase tracking-wider text-[#55503f]"
         >
           {label}
         </label>
       )}
       <input
         id={id}
-        className={`w-full rounded-none border border-[rgba(20,19,17,0.2)] bg-[#faf9f5] px-3.5 py-2.5 text-sm text-[#141311] placeholder-[#8a8578] transition-colors duration-150 focus:outline-none focus:border-[#141311] ${className}`}
+        className={`w-full rounded-none border border-[rgba(28,26,21,0.2)] bg-[#faf7f0] px-3.5 py-2.5 text-sm text-[#1c1a15] placeholder-[#96907a] transition-colors duration-150 focus:outline-none focus:border-[#1c1a15] ${className}`}
         {...props}
       />
     </div>

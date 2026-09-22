@@ -73,7 +73,7 @@ export default function ScoresReport({
           { label: "CONTRIBUTIONS", value: String(teamTotalContributions).padStart(3, "0") },
           { label: "CONTRIBUTORS", value: String(members.length).padStart(2, "0") },
         ].map((s, i) => (
-          <div key={s.label} className={`py-4 rule-t ${i > 0 ? "border-l border-[rgba(20,19,17,0.14)] pl-6" : ""}`}>
+          <div key={s.label} className={`py-4 rule-t ${i > 0 ? "border-l border-[rgba(28,26,21,0.14)] pl-6" : ""}`}>
             <p className="stat-num text-4xl sm:text-5xl">{s.value}</p>
             <p className="label-mono mt-2">{s.label}</p>
           </div>
@@ -107,7 +107,7 @@ export default function ScoresReport({
             {members.map((m) => {
               const pct = teamTotalHours ? (m.total_hours / teamTotalHours) * 100 : 0;
               return (
-                <tr key={m.id} className="border-b border-[rgba(20,19,17,0.14)] hover:bg-[#faf9f5] transition-colors">
+                <tr key={m.id} className="border-b border-[rgba(28,26,21,0.14)] hover:bg-[#faf7f0] transition-colors">
                   <td className="py-3">
                     <div className="flex items-center gap-2.5">
                       <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
@@ -122,12 +122,12 @@ export default function ScoresReport({
                   <td className="text-right px-4 py-3 font-mono font-medium">
                     {Number(m.total_hours).toFixed(1)}
                   </td>
-                  <td className="text-right px-4 py-3 font-mono text-[#4a473f]">{m.github_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#4a473f]">{m.manual_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#2c4a2e]">{m.verified_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#7a5c00]">{m.pending_count}</td>
-                  <td className="text-right px-4 py-3 font-mono text-[#b3271e]">{m.flagged_count}</td>
-                  <td className="text-right py-3 font-mono text-[#8a8578]">{pct.toFixed(1)}%</td>
+                  <td className="text-right px-4 py-3 font-mono text-[#55503f]">{m.github_count}</td>
+                  <td className="text-right px-4 py-3 font-mono text-[#55503f]">{m.manual_count}</td>
+                  <td className="text-right px-4 py-3 font-mono text-[#2f5c3f]">{m.verified_count}</td>
+                  <td className="text-right px-4 py-3 font-mono text-[#8a6a1f]">{m.pending_count}</td>
+                  <td className="text-right px-4 py-3 font-mono text-[#9c1f1f]">{m.flagged_count}</td>
+                  <td className="text-right py-3 font-mono text-[#96907a]">{pct.toFixed(1)}%</td>
                 </tr>
               );
             })}
