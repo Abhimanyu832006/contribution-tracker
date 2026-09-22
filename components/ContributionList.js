@@ -67,14 +67,32 @@ export default function ContributionList({ contributions = [] }) {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
-                {c.description}
-                {isGithub && (
-                  <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
+                  {c.description}
+                  {isGithub && (
+                    <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  )}
+                </p>
+                {c.attachment_url && (
+                  <a
+                    href={c.attachment_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={c.attachment_name || true}
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors shrink-0"
+                    title={`Download ${c.attachment_name || "document"}`}
+                  >
+                    <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.373L8.559 18.32a1.5 1.5 0 01-2.122-2.122l8.76-8.76" />
+                    </svg>
+                    <span className="truncate max-w-[120px]">{c.attachment_name || "Attachment"}</span>
+                  </a>
                 )}
-              </p>
+              </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-xs text-gray-500">
                   {c.github_username || c.user_name}
@@ -82,6 +100,20 @@ export default function ContributionList({ contributions = [] }) {
                 <Badge variant={isGithub ? "indigo" : "default"} className="!text-[10px] !px-1.5 !py-0">
                   {isGithub ? "GitHub" : "Manual"}
                 </Badge>
+                {c.status && (
+                  <Badge
+                    variant={
+                      c.status === "verified"
+                        ? "green"
+                        : c.status === "flagged"
+                        ? "red"
+                        : "yellow"
+                    }
+                    className="!text-[10px] !px-1.5 !py-0 capitalize"
+                  >
+                    {c.status}
+                  </Badge>
+                )}
               </div>
             </div>
 

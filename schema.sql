@@ -8,6 +8,7 @@
 -- ------------------------------------------------------------
 
 -- 1. Drop old tables (order matters for FK dependencies)
+DROP TABLE IF EXISTS contribution_votes CASCADE;
 DROP TABLE IF EXISTS contributions CASCADE;
 DROP TABLE IF EXISTS project_members CASCADE;
 DROP TABLE IF EXISTS projects CASCADE;
@@ -45,21 +46,36 @@ CREATE TABLE project_members (
 
 -- 5. Contributions table (Scoped directly to project and user)
 CREATE TABLE contributions (
-  id            SERIAL PRIMARY KEY,
-  project_id    INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-  user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  source        TEXT    NOT NULL DEFAULT 'manual',
-  category      TEXT    NOT NULL,
-  description   TEXT    NOT NULL,
-  time_estimate REAL    NOT NULL,
-  status        TEXT    NOT NULL DEFAULT 'pending',
-  commit_sha    TEXT,
-  commit_url    TEXT,
-  created_at    TIMESTAMP NOT NULL DEFAULT NOW()
+  id              SERIAL PRIMARY KEY,
+  project_id      INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  source          TEXT    NOT NULL DEFAULT 'manual',
+  category        TEXT    NOT NULL,
+  description     TEXT    NOT NULL,
+  time_estimate   REAL    NOT NULL,
+  status          TEXT    NOT NULL DEFAULT 'pending',
+  commit_sha      TEXT,
+  commit_url      TEXT,
+  attachment_url  TEXT,
+  attachment_name TEXT,
+  attachment_size INTEGER,
+  attachment_type TEXT,
+  created_at      TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Unique index to prevent duplicate commit syncs for a project
 CREATE UNIQUE INDEX uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
+
+-- 6. Contribution Votes table (Peer review & verification)
+CREATE TABLE contribution_votes (
+  id              SERIAL PRIMARY KEY,
+  contribution_id INTEGER NOT NULL REFERENCES contributions(id) ON DELETE CASCADE,
+  user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  vote            TEXT NOT NULL CHECK (vote IN ('approve', 'flag')),
+  comment         TEXT,
+  created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_contribution_user_vote UNIQUE (contribution_id, user_id)
+);
 
 -- ============================================================
 -- SECTION B: In-Place Migration Script (v2 -> v3)
@@ -120,4 +136,27 @@ ALTER TABLE contributions ADD COLUMN IF NOT EXISTS commit_url TEXT;
 
 -- 3. Create unique index to prevent duplicate commit logs per project
 CREATE UNIQUE INDEX IF NOT EXISTS uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
+
+-- ============================================================
+-- SECTION D: In-Place Migration Script (v4 -> v5: Attachments & Peer Voting)
+-- Run these statements manually on your Postgres database
+-- to add support for file attachments and peer verification votes.
+-- ============================================================
+
+-- 1. Add attachment columns to contributions table
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS attachment_url TEXT;
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS attachment_name TEXT;
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS attachment_size INTEGER;
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS attachment_type TEXT;
+
+-- 2. Create contribution_votes table for peer verification
+CREATE TABLE IF NOT EXISTS contribution_votes (
+  id              SERIAL PRIMARY KEY,
+  contribution_id INTEGER NOT NULL REFERENCES contributions(id) ON DELETE CASCADE,
+  user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  vote            TEXT NOT NULL CHECK (vote IN ('approve', 'flag')),
+  comment         TEXT,
+  created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_contribution_user_vote UNIQUE (contribution_id, user_id)
+);
 
