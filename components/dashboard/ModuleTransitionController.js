@@ -3,19 +3,20 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import ModuleGrid from "@/components/dashboard/ModuleGrid";
-import { useModuleTransition } from "@/components/dashboard/ModuleTransitionProvider";
+import { useNavigationLoading } from "@/components/NavigationLoadingProvider";
 
 /**
  * Thin dashboard-side adapter — all orchestration (the loading overlay,
- * navigation, readiness) lives in ModuleTransitionProvider, which is
- * mounted higher up (in AppChrome) so it survives the actual page swap.
- * No tile geometry is needed here anymore (the loading-screen model
- * doesn't do shared-element positioning), so this is just a click
- * handler and a prefetch hint.
+ * navigation, readiness) lives in NavigationLoadingProvider, which is
+ * mounted higher up (in AppChrome) so it survives the actual page swap
+ * and covers every other in-app navigation too. Dashboard tiles call
+ * beginTransition directly (and call preventDefault themselves) so they
+ * can pass their own icon/accent/label for a richer look than the
+ * generic version every other link gets automatically.
  */
 export default function ModuleTransitionController({ tiles, header, statStrip, bottomSection }) {
   const router = useRouter();
-  const { beginTransition } = useModuleTransition();
+  const { beginTransition } = useNavigationLoading();
 
   const handleTileClick = useCallback(
     (e, tile) => {
@@ -24,7 +25,13 @@ export default function ModuleTransitionController({ tiles, header, statStrip, b
 
       e.preventDefault();
       router.prefetch(tile.href);
-      beginTransition({ tile });
+      beginTransition({
+        href: tile.href,
+        label: tile.label,
+        icon: tile.icon,
+        accent: tile.accent,
+        textLight: tile.textLight,
+      });
     },
     [router, beginTransition],
   );

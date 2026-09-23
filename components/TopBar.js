@@ -67,6 +67,7 @@ export default function TopBar({
           href="/dashboard"
           className="flex items-center gap-2.5 shrink-0 group"
           aria-label="Back to home"
+          data-nav-label="Dashboard"
         >
           <span
             className="w-9 h-9 rounded flex items-center justify-center border-2 border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
