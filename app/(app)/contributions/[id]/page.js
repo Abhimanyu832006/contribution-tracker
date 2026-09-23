@@ -83,15 +83,20 @@ export default async function ContributionDetailPage({ params }) {
 
   return (
     <div className="space-y-6 animate-fade-in max-w-2xl">
-      <Link
-        href="/contributions"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-        Back to Contributions
-      </Link>
+      <div>
+        <Link
+          href="/contributions"
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Back to Contributions
+        </Link>
+        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)] mt-2">
+          Contribution Details
+        </h1>
+      </div>
 
       <Card accent={isGithub ? "github" : "manual"} className="space-y-6">
         {/* Header */}
@@ -99,8 +104,8 @@ export default async function ContributionDetailPage({ params }) {
           <div className="flex items-start gap-3.5">
             <Avatar src={c.avatar_url} name={c.github_username} size="lg" />
             <div>
-              <p className="text-base font-semibold text-slate-900">{c.github_username}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{formatDate(c.created_at)}</p>
+              <p className="text-base font-semibold text-[var(--color-text-primary)]">{c.github_username}</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{formatDate(c.created_at)}</p>
             </div>
           </div>
           <Badge variant={statusVariant} className="uppercase font-bold shrink-0">
@@ -118,25 +123,25 @@ export default async function ContributionDetailPage({ params }) {
 
         {/* Description */}
         <div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+          <p className="label-mono mb-1.5">
             Description
           </p>
-          <p className="text-sm text-slate-800 leading-relaxed">{c.description}</p>
+          <p className="text-sm text-[var(--color-text-primary)] leading-relaxed">{c.description}</p>
         </div>
 
         {isGithub ? (
           /* GitHub-specific fields */
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[var(--color-border)]">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              <p className="label-mono mb-1">
                 Commit SHA
               </p>
-              <p className="text-sm font-mono text-slate-800">
+              <p className="text-sm font-mono text-[var(--color-text-primary)]">
                 {c.commit_sha ? c.commit_sha.slice(0, 10) : "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              <p className="label-mono mb-1">
                 Commit Link
               </p>
               {c.commit_url ? (
@@ -144,7 +149,7 @@ export default async function ContributionDetailPage({ params }) {
                   href={c.commit_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium inline-flex items-center gap-1"
+                  className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium inline-flex items-center gap-1"
                 >
                   View on GitHub
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -152,24 +157,24 @@ export default async function ContributionDetailPage({ params }) {
                   </svg>
                 </a>
               ) : (
-                <p className="text-sm text-slate-400">—</p>
+                <p className="text-sm text-[var(--color-text-muted)]">—</p>
               )}
             </div>
           </div>
         ) : (
           /* Manual-specific fields */
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[var(--color-border)]">
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+              <p className="label-mono mb-1">
                 Time Estimate
               </p>
-              <p className="text-sm font-semibold text-indigo-600">
+              <p className="text-sm font-semibold text-[var(--color-primary)]">
                 {Number(c.time_estimate).toFixed(1)} hrs
               </p>
             </div>
             {c.attachment_url && (
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                <p className="label-mono mb-1">
                   Supporting Evidence
                 </p>
                 <a
@@ -177,14 +182,14 @@ export default async function ContributionDetailPage({ params }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   download={c.attachment_name || true}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50/80 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--color-primary)] bg-[var(--color-primary-light)] border-2 border-[var(--color-border)] rounded hover:brutal-shadow-sm transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                   {c.attachment_name || "Download"}
                   {c.attachment_size && (
-                    <span className="text-indigo-500 font-normal">
+                    <span className="text-[var(--color-text-muted)] font-normal">
                       ({formatBytes(c.attachment_size)})
                     </span>
                   )}
@@ -195,34 +200,34 @@ export default async function ContributionDetailPage({ params }) {
         )}
 
         {/* Verification history */}
-        <div className="pt-2 border-t border-slate-100">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+        <div className="pt-2 border-t border-[var(--color-border)]">
+          <p className="label-mono mb-3">
             Verification ({c.approves_count} approve{c.approves_count === 1 ? "" : "s"}
             {c.flags_count > 0 ? `, ${c.flags_count} flagged` : ""})
           </p>
           {c.votes.length === 0 ? (
-            <p className="text-sm text-slate-400">No teammates have reviewed this yet.</p>
+            <p className="text-sm text-[var(--color-text-muted)]">No teammates have reviewed this yet.</p>
           ) : (
             <div className="space-y-3">
               {c.votes.map((v, i) => (
                 <div key={i} className="flex items-start gap-2.5">
                   <Avatar src={v.avatar_url} name={v.username} size="sm" />
                   <div className="min-w-0">
-                    <p className="text-sm text-slate-700">
+                    <p className="text-sm text-[var(--color-text-secondary)]">
                       <span className="font-semibold">{v.username}</span>{" "}
                       <span
                         className={
                           v.vote === "approve"
-                            ? "text-emerald-600 font-medium"
-                            : "text-red-600 font-medium"
+                            ? "text-[var(--color-success)] font-bold"
+                            : "text-[var(--color-danger)] font-medium"
                         }
                       >
                         {v.vote === "approve" ? "approved" : "flagged"}
                       </span>{" "}
-                      <span className="text-slate-400 text-xs">{formatDate(v.created_at)}</span>
+                      <span className="text-[var(--color-text-muted)] text-xs">{formatDate(v.created_at)}</span>
                     </p>
                     {v.comment && (
-                      <p className="text-sm text-slate-500 italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
+                      <p className="text-sm text-[var(--color-text-muted)] italic mt-0.5">&ldquo;{v.comment}&rdquo;</p>
                     )}
                   </div>
                 </div>

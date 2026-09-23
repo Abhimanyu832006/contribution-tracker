@@ -110,14 +110,14 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
   if (contributions.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center">
-        <div className="text-slate-300 mb-3">
+      <div className="brutal-card border-dashed py-16 text-center">
+        <div className="text-[var(--color-text-muted)] mb-3">
           <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <p className="text-sm text-slate-400">No contributions to verify yet</p>
-        <p className="text-xs text-slate-300 mt-1">Log contributions with documentation or research first</p>
+        <p className="text-sm font-bold text-[var(--color-text-primary)]">No contributions to verify yet</p>
+        <p className="text-xs text-[var(--color-text-muted)] mt-1">Log contributions with documentation or research first</p>
       </div>
     );
   }
@@ -125,7 +125,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
   return (
     <div className="space-y-4">
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 animate-scale-in">
+        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
           </svg>
@@ -134,11 +134,11 @@ export default function PeerVerificationList({ initialContributions = [], curren
       )}
 
       {pendingCount > 0 && (
-        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 font-bold text-sm shrink-0">
+        <div className="flex items-center gap-3 bg-[var(--color-warning-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 brutal-shadow-sm">
+          <span className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-warning)] stat-num text-base shrink-0">
             {pendingCount}
           </span>
-          <span className="text-sm font-medium text-amber-800">
+          <span className="text-sm font-bold text-[var(--color-text-primary)]">
             contribution{pendingCount === 1 ? "" : "s"} awaiting your review
           </span>
         </div>
@@ -146,16 +146,16 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+        <div className="flex items-center gap-1 p-1 border-2 border-[var(--color-border)] bg-[var(--color-bg)] rounded w-fit">
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
                 statusFilter === tab.value
-                  ? "bg-white text-slate-900 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
               }`}
             >
               {tab.label}
@@ -167,13 +167,13 @@ export default function PeerVerificationList({ initialContributions = [], curren
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search description or contributor…"
-          className="sm:w-72 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300"
+          className="sm:w-72 rounded border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
         />
       </div>
 
       {filteredContributions.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-300 py-16 text-center">
-          <p className="text-sm text-slate-400">No contributions match these filters</p>
+        <div className="brutal-card border-dashed py-16 text-center">
+          <p className="text-sm font-bold text-[var(--color-text-primary)]">No contributions match these filters</p>
         </div>
       )}
 
@@ -190,7 +190,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
             <Card
               key={c.id}
               accent={isFlagged ? "danger" : isVerified ? "success" : "warning"}
-              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 hover:shadow-md"
+              className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 hover:brutal-shadow"
             >
               {/* Left Info: Author, Category, Description, Attached File */}
               <div className="flex items-start gap-3.5 min-w-0 flex-1">
@@ -198,7 +198,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-slate-900">
+                    <span className="text-sm font-semibold text-[var(--color-text-primary)]">
                       {c.github_username}
                     </span>
                     <Badge variant={c.source === "github" ? "blue" : "yellow"}>
@@ -209,11 +209,11 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     </Badge>
                     <Link
                       href={`/contributions/${c.id}`}
-                      className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                      className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
                     >
                       View details
                     </Link>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-[var(--color-text-muted)]">
                       {timeAgo(c.created_at)}
                     </span>
                     {isOwnContribution && (
@@ -223,7 +223,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     )}
                   </div>
 
-                  <p className="text-sm text-slate-800 font-medium break-words">
+                  <p className="text-sm text-[var(--color-text-primary)] font-medium break-words">
                     {c.description}
                   </p>
 
@@ -234,7 +234,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       onClick={() =>
                         setHistoryOpenId((prev) => (prev === c.id ? null : c.id))
                       }
-                      className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors inline-flex items-center gap-1"
+                      className="text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] transition-colors inline-flex items-center gap-1"
                     >
                       <svg
                         className={`w-3 h-3 transition-transform ${historyOpenId === c.id ? "rotate-90" : ""}`}
@@ -250,18 +250,18 @@ export default function PeerVerificationList({ initialContributions = [], curren
                   )}
 
                   {historyOpenId === c.id && (c.votes?.length || 0) > 0 && (
-                    <div className="space-y-2 pt-1 pl-1 border-l-2 border-slate-100 animate-scale-in">
+                    <div className="space-y-2 pt-1 pl-1 border-l-2 border-[var(--color-border)] animate-scale-in">
                       {c.votes.map((v, i) => (
                         <div key={i} className="flex items-start gap-2 pl-3">
                           <Avatar src={v.avatar_url} name={v.username} size="xs" />
                           <div className="min-w-0">
-                            <p className="text-xs text-slate-700">
+                            <p className="text-xs text-[var(--color-text-secondary)]">
                               <span className="font-semibold">{v.username}</span>{" "}
                               <span
                                 className={
                                   v.vote === "approve"
-                                    ? "text-emerald-600 font-medium"
-                                    : "text-red-600 font-medium"
+                                    ? "text-[var(--color-success)] font-bold"
+                                    : "text-[var(--color-danger)] font-bold"
                                 }
                               >
                                 {v.vote === "approve" ? "approved" : "flagged"}
@@ -269,7 +269,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                               this contribution
                             </p>
                             {v.comment && (
-                              <p className="text-xs text-slate-500 italic mt-0.5">
+                              <p className="text-xs text-[var(--color-text-muted)] italic mt-0.5">
                                 &ldquo;{v.comment}&rdquo;
                               </p>
                             )}
@@ -287,17 +287,17 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         target="_blank"
                         rel="noopener noreferrer"
                         download={c.attachment_name || true}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50/80 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors shadow-xs group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary-light)] border-2 border-[var(--color-border)] rounded hover:brutal-shadow-sm transition-all group"
                         title="Download and inspect supporting document"
                       >
-                        <svg className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className="w-4 h-4 text-[var(--color-primary)] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                         <span className="font-semibold truncate max-w-[200px] sm:max-w-xs">
                           {c.attachment_name || "Download Document"}
                         </span>
                         {c.attachment_size && (
-                          <span className="text-indigo-500 font-normal text-[11px]">
+                          <span className="text-[var(--color-text-muted)] font-normal text-[11px]">
                             ({formatBytes(c.attachment_size)})
                           </span>
                         )}
@@ -308,11 +308,11 @@ export default function PeerVerificationList({ initialContributions = [], curren
               </div>
 
               {/* Right Info: Time, Live Votes, & Voting Action Buttons */}
-              <div className="flex items-center justify-between md:justify-end gap-5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+              <div className="flex items-center justify-between md:justify-end gap-5 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-[var(--color-border)]">
                 {/* Time and verification status badge */}
                 <div className="text-left md:text-right">
                   <div className="flex items-center md:justify-end gap-1.5">
-                    <span className="text-sm font-bold text-slate-900">
+                    <span className="text-sm font-bold text-[var(--color-text-primary)]">
                       {Number(c.time_estimate).toFixed(1)} hrs
                     </span>
                     <Badge
@@ -324,15 +324,15 @@ export default function PeerVerificationList({ initialContributions = [], curren
                   </div>
 
                   {/* Votes count summary */}
-                  <div className="flex items-center md:justify-end gap-2 text-xs text-slate-500 mt-1">
-                    <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                  <div className="flex items-center md:justify-end gap-2 text-xs text-[var(--color-text-muted)] mt-1">
+                    <span className="flex items-center gap-1 text-[var(--color-success)] font-bold">
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
                       </svg>
                       {c.approves_count || 0} approve{c.approves_count === 1 ? "" : "s"}
                     </span>
                     {(c.flags_count || 0) > 0 && (
-                      <span className="flex items-center gap-1 text-red-600 font-medium">
+                      <span className="flex items-center gap-1 text-[var(--color-danger)] font-medium">
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v10a1 1 0 01-1 1H5.414l-2.707 2.707A1 1 0 011 16V4a1 1 0 011-1h1zm2 3a1 1 0 012 0v3a1 1 0 11-2 0V6zm1 7a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
@@ -345,7 +345,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                 {/* Vote Action Buttons */}
                 <div className="flex flex-col items-end gap-2">
                   {isOwnContribution ? (
-                    <span className="text-xs text-slate-400 italic px-2 py-1 bg-slate-50 rounded-lg">
+                    <span className="text-xs font-bold text-[var(--color-text-muted)] italic px-2 py-1 border-2 border-dashed border-[var(--color-border)] rounded">
                       Your contribution
                     </span>
                   ) : (
@@ -358,7 +358,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         }
                         placeholder="Optional comment (visible to the team)…"
                         maxLength={280}
-                        className="w-full sm:w-56 text-xs rounded-lg border border-slate-200 px-2.5 py-1.5 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+                        className="w-full sm:w-56 text-xs rounded border-2 border-[var(--color-border)] px-2.5 py-1.5 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
                       />
                       <div className="flex items-center gap-2">
                         <Button
@@ -369,8 +369,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           onClick={() => handleVote(c.id, "approve")}
                           className={`transition-all ${
                             hasVotedApprove
-                              ? "!bg-emerald-600 !text-white !border-emerald-600 shadow-sm"
-                              : "text-emerald-700 bg-white border border-emerald-300 hover:bg-emerald-50"
+                              ? "!bg-[var(--color-success)] !text-white"
+                              : "!bg-[var(--color-success-light)] text-[var(--color-success)]"
                           }`}
                           title="Verify and approve teammate's work"
                         >
@@ -388,8 +388,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
                           onClick={() => handleVote(c.id, "flag")}
                           className={`transition-all ${
                             hasVotedFlag
-                              ? "!bg-red-600 !text-white !border-red-600 shadow-sm"
-                              : "text-red-600 bg-white border border-red-300 hover:bg-red-50"
+                              ? "!bg-[var(--color-danger)] !text-white"
+                              : "!bg-[var(--color-danger-light)] text-[var(--color-danger)]"
                           }`}
                           title="Flag contribution if work is inaccurate or suspicious"
                         >

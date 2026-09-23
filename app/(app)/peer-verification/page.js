@@ -58,29 +58,29 @@ export default async function PeerVerificationPage() {
     <div className="space-y-8 animate-fade-in">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">
           Peer Verification
         </h1>
-        <p className="text-sm text-slate-500 mt-1 max-w-xl">
+        <p className="text-sm text-[var(--color-text-muted)] mt-1 max-w-xl">
           Review teammates&apos; work, inspect supporting documents, and vote to verify or flag contributions.
         </p>
 
         {/* Info guide card */}
-        <div className="mt-4 flex items-start gap-3 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
-          <div className="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg shrink-0 mt-0.5">
+        <div className="mt-4 flex items-start gap-3 rounded border-2 border-[var(--color-border)] bg-[var(--color-verification-light)] p-4">
+          <div className="p-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-verification)] rounded shrink-0 mt-0.5">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <div className="text-xs text-slate-600 space-y-1">
+          <div className="text-xs font-medium text-[var(--color-text-primary)] space-y-1">
             <p>
               • Open any attached document to inspect it before voting.
             </p>
             <p>
-              • <strong>2+ approvals</strong> with 0 flags marks a contribution <strong className="text-emerald-700">Verified</strong>.
+              • <strong>2+ approvals</strong> with 0 flags marks a contribution <strong style={{ color: "var(--color-success)" }}>Verified</strong>.
             </p>
             <p>
-              • Any flag marks it <strong className="text-red-600">Flagged</strong>, pending team resolution.
+              • Any flag marks it <strong style={{ color: "var(--color-danger)" }}>Flagged</strong>, pending team resolution.
             </p>
           </div>
         </div>

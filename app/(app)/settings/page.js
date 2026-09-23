@@ -43,8 +43,8 @@ export default async function SettingsPage() {
     <div className="space-y-10 animate-fade-in">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Project Settings</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Project Settings</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">
           Manage workspace details, team membership, and integrations for{" "}
           {project?.name}
         </p>
@@ -58,7 +58,7 @@ export default async function SettingsPage() {
 
       {/* ── Team Management ─────────────────────────────────────────── */}
       <section className="space-y-4">
-        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <h2 className="label-mono">
           Team Management
         </h2>
 
@@ -67,7 +67,7 @@ export default async function SettingsPage() {
 
         {/* Member roster */}
         <div>
-          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+          <h3 className="label-mono mb-3">
             Members ({memberCount})
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
@@ -85,7 +85,7 @@ export default async function SettingsPage() {
 
       {/* ── Project lifecycle (leave / delete) ──────────────────────── */}
       <section className="space-y-4">
-        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <h2 className="label-mono">
           Project Lifecycle
         </h2>
 

@@ -72,11 +72,11 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-6 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] px-6 py-12">
       <div className="w-full max-w-lg animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 mb-5">
+          <div className="w-14 h-14 mx-auto rounded border-2 border-[var(--color-border)] bg-[var(--color-primary)] flex items-center justify-center brutal-shadow mb-5">
             <svg
               className="w-7 h-7 text-white"
               fill="none"
@@ -91,10 +91,10 @@ export default function OnboardingPage() {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-3xl font-black tracking-tight text-[var(--color-text-primary)]">
             Welcome, {session?.user?.githubUsername || "there"}!
           </h1>
-          <p className="text-sm text-slate-500 mt-2">
+          <p className="text-sm text-[var(--color-text-muted)] mt-2">
             Get started by creating a new project or joining an existing one.
           </p>
         </div>
@@ -107,9 +107,9 @@ export default function OnboardingPage() {
               className="cursor-pointer text-center group"
               onClick={() => setMode("create")}
             >
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+              <div className="w-12 h-12 mx-auto rounded bg-[var(--color-primary-light)] flex items-center justify-center mb-4 group-hover:brutal-shadow-sm transition-colors">
                 <svg
-                  className="w-6 h-6 text-indigo-600"
+                  className="w-6 h-6 text-[var(--color-primary)]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -122,10 +122,10 @@ export default function OnboardingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-1">
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
                 Create a Project
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--color-text-muted)]">
                 Start a new project and invite your team
               </p>
             </Card>
@@ -135,9 +135,9 @@ export default function OnboardingPage() {
               className="cursor-pointer text-center group"
               onClick={() => setMode("join")}
             >
-              <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors">
+              <div className="w-12 h-12 mx-auto rounded bg-[var(--color-success-light)] flex items-center justify-center mb-4 group-hover:brutal-shadow-sm transition-colors">
                 <svg
-                  className="w-6 h-6 text-emerald-600"
+                  className="w-6 h-6 text-[var(--color-success)]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -150,10 +150,10 @@ export default function OnboardingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-1">
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
                 Join a Project
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--color-text-muted)]">
                 Enter an invite code from your team leader
               </p>
             </Card>
@@ -163,11 +163,11 @@ export default function OnboardingPage() {
         {/* Create form */}
         {mode === "create" && (
           <Card className="animate-scale-in">
-            <h3 className="text-base font-semibold text-slate-900 mb-4">
+            <h3 className="text-lg font-black uppercase tracking-tight text-[var(--color-text-primary)] mb-4">
               Create a Project
             </h3>
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
+              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -199,11 +199,11 @@ export default function OnboardingPage() {
         {/* Join form */}
         {mode === "join" && (
           <Card className="animate-scale-in">
-            <h3 className="text-base font-semibold text-slate-900 mb-4">
+            <h3 className="text-lg font-black uppercase tracking-tight text-[var(--color-text-primary)] mb-4">
               Join a Project
             </h3>
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 mb-4">
+              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
         <div className="mt-8 text-center animate-fade-in">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors"
+            className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] font-medium transition-colors"
           >
             Sign out of GitHub / Reconnect account
           </button>

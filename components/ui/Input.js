@@ -12,14 +12,14 @@ export default function Input({
       {label && (
         <label
           htmlFor={id}
-          className="text-sm font-medium text-slate-700"
+          className="text-xs font-bold uppercase tracking-wide text-[var(--color-text-secondary)]"
         >
           {label}
         </label>
       )}
       <input
         id={id}
-        className={`w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300 ${className}`}
+        className={`w-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 rounded focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)] ${className}`}
         {...props}
       />
     </div>

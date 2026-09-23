@@ -116,8 +116,8 @@ export default function ContributionsPage() {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Contributions</h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Contributions</h1>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">
             Log your work and browse everything the team has recorded
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function ContributionsPage() {
             size="sm"
           >
             <svg
-              className="w-4 h-4 text-slate-500 mr-1.5"
+              className="w-4 h-4 text-[var(--color-text-muted)] mr-1.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -148,7 +148,7 @@ export default function ContributionsPage() {
       </div>
 
       {syncError && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3 border border-red-200 animate-scale-in">
+        <div className="flex items-center gap-2 text-sm text-[var(--color-danger)] bg-[var(--color-danger-light)] rounded px-4 py-3 border-2 border-[var(--color-border)] animate-scale-in">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
           </svg>
@@ -157,7 +157,7 @@ export default function ContributionsPage() {
       )}
 
       {syncResult && (
-        <div className="flex items-center justify-between gap-3 text-sm text-emerald-700 bg-emerald-50 rounded-xl px-4 py-3 border border-emerald-200 animate-scale-in">
+        <div className="flex items-center justify-between gap-3 text-sm text-[var(--color-success)] font-bold bg-[var(--color-success-light)] rounded px-4 py-3 border-2 border-[var(--color-border)] animate-scale-in">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
@@ -170,7 +170,7 @@ export default function ContributionsPage() {
           </div>
           <button
             onClick={() => setSyncResult(null)}
-            className="text-xs font-semibold text-emerald-600 hover:text-emerald-800"
+            className="text-xs font-bold uppercase text-[var(--color-success)] hover:underline"
           >
             Dismiss
           </button>
@@ -181,13 +181,13 @@ export default function ContributionsPage() {
       {filter === "mine" && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <h2 className="label-mono">
               Log New Contribution
             </h2>
             <button
               type="button"
               onClick={() => setShowForm((p) => !p)}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
             >
               {showForm ? "Hide form" : "Show form"}
             </button>
@@ -207,14 +207,14 @@ export default function ContributionsPage() {
 
       {/* Filter toggle */}
       <div className="space-y-4">
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+        <div className="flex items-center gap-1 p-1 bg-[var(--color-bg)] rounded w-fit">
           <button
             type="button"
             onClick={() => setFilter("mine")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
               filter === "mine"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
+                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
             }`}
           >
             Mine
@@ -222,10 +222,10 @@ export default function ContributionsPage() {
           <button
             type="button"
             onClick={() => setFilter("everyone")}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
               filter === "everyone"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
+                ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
+                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
             }`}
           >
             Everyone&apos;s
@@ -233,7 +233,7 @@ export default function ContributionsPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <h2 className="label-mono">
             {filter === "mine" ? "Your Contributions" : "All Team Contributions"}
           </h2>
           {!loading && (
@@ -254,7 +254,7 @@ export default function ContributionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search description or contributor…"
-            className="flex-1 rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-slate-300"
+            className="flex-1 rounded-lg border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
           />
           <Select
             id="category-filter"
@@ -283,8 +283,8 @@ export default function ContributionsPage() {
 
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-6 h-6 mx-auto border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-slate-400 mt-3">Loading…</p>
+            <div className="w-6 h-6 mx-auto border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-[var(--color-text-muted)] mt-3">Loading…</p>
           </div>
         ) : (
           <ContributionList contributions={filteredContributions} />

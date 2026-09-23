@@ -48,8 +48,8 @@ export default async function ScoresPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Reports</h1>
-        <p className="text-sm text-slate-500 mt-1 max-w-xl">
+        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Reports</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1 max-w-xl">
           Per-member breakdown for {projectName}, computed directly from recorded
           contributions and peer verification — export as CSV to share or archive.
         </p>
@@ -57,7 +57,7 @@ export default async function ScoresPage() {
 
       {members.length === 0 || teamTotalContributions === 0 ? (
         <Card className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[var(--color-text-muted)]">
             No contributions recorded yet — reports will populate automatically once your
             team starts logging work.
           </p>

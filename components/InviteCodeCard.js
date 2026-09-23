@@ -25,27 +25,26 @@ export default function InviteCodeCard({ inviteCode }) {
   }
 
   return (
-    <Card className="bg-gradient-to-r from-indigo-50 to-violet-50 border-indigo-200/40">
+    <Card className="bg-[var(--color-settings-light)]" style={{ borderLeft: "6px solid var(--color-settings)" }}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium text-indigo-600 uppercase tracking-wider">
-            Invite Code
-          </p>
-          <p className="text-2xl font-mono font-bold text-slate-900 mt-1 tracking-widest">
+          <p className="label-mono">Invite Code</p>
+          <p className="text-2xl font-mono font-black text-[var(--color-text-primary)] mt-1 tracking-widest">
             {inviteCode}
           </p>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Share this code with your teammates so they can join the project
           </p>
         </div>
         <button
           onClick={handleCopy}
-          className="inline-flex items-center gap-2 rounded-xl bg-white text-slate-700 border border-slate-200 px-4 py-2.5 text-sm font-medium hover:bg-slate-50 transition-all duration-200 shadow-sm active:scale-[0.98]"
+          className="brutal-btn inline-flex items-center gap-2 rounded bg-[var(--color-surface)] text-[var(--color-text-primary)] px-4 py-2.5 text-sm"
         >
           {copied ? (
             <>
               <svg
-                className="w-4 h-4 text-emerald-600"
+                className="w-4 h-4"
+                style={{ color: "var(--color-success)" }}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

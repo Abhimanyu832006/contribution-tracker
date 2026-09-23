@@ -1,14 +1,14 @@
 /**
- * Card component — rounded container with subtle border and shadow.
- * Supports hover lift effect via `hover` prop, and an optional colored
- * left accent bar via `accent` (github | manual | success | warning | danger).
+ * Card component — neo-brutalist container: thick black border, hard
+ * offset shadow, no blur. Supports hover lift via `hover` prop, and an
+ * optional colored left accent bar via `accent` (github | manual | success | warning | danger).
  */
 const ACCENTS = {
-  github: "#2563eb",
-  manual: "#d97706",
-  success: "#16a34a",
-  warning: "#d97706",
-  danger: "#dc2626",
+  github: "var(--color-github)",
+  manual: "var(--color-manual)",
+  success: "var(--color-success)",
+  warning: "var(--color-warning)",
+  danger: "var(--color-danger)",
 };
 
 export default function Card({
@@ -19,12 +19,10 @@ export default function Card({
   padding = "p-6",
   ...props
 }) {
-  const base = "bg-white rounded-xl border border-slate-200 shadow-sm";
-  const hoverClass = hover
-    ? "transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
-    : "";
+  const base = "brutal-card";
+  const hoverClass = hover ? "brutal-tile" : "";
   const accentStyle = accent
-    ? { borderLeft: `3px solid ${ACCENTS[accent] || accent}` }
+    ? { borderLeft: `6px solid ${ACCENTS[accent] || accent}` }
     : undefined;
 
   return (

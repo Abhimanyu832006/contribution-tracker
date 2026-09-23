@@ -69,31 +69,25 @@ export default function ScoresReport({
     <div className="space-y-6">
       {/* Team summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Team Total Hours
-          </p>
-          <p className="text-3xl font-bold text-indigo-600 mt-2">
+        <Card className="relative overflow-hidden" style={{ borderLeft: "6px solid var(--color-reports)" }}>
+          <p className="label-mono">Team Total Hours</p>
+          <p className="stat-num text-4xl mt-2" style={{ color: "var(--color-primary)" }}>
             {teamTotalHours.toFixed(1)}
           </p>
         </Card>
-        <Card>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Total Contributions
-          </p>
-          <p className="text-3xl font-bold text-slate-900 mt-2">{teamTotalContributions}</p>
+        <Card style={{ borderLeft: "6px solid var(--color-contributions)" }}>
+          <p className="label-mono">Total Contributions</p>
+          <p className="stat-num text-4xl mt-2">{teamTotalContributions}</p>
         </Card>
-        <Card>
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Contributors
-          </p>
-          <p className="text-3xl font-bold text-slate-900 mt-2">{members.length}</p>
+        <Card style={{ borderLeft: "6px solid var(--color-team)" }}>
+          <p className="label-mono">Contributors</p>
+          <p className="stat-num text-4xl mt-2">{members.length}</p>
         </Card>
       </div>
 
       {/* Export action */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <h2 className="text-sm font-black uppercase tracking-tight">
           Per-Member Breakdown
         </h2>
         <Button id="export-csv" variant="secondary" size="sm" onClick={handleExportCsv}>
@@ -109,58 +103,68 @@ export default function ScoresReport({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/60">
-                <th className="text-left font-semibold text-slate-500 text-xs uppercase tracking-wider px-5 py-3">
+              <tr className="border-b-2 border-[var(--color-border)] bg-[var(--color-primary)]">
+                <th className="text-left font-black text-white text-xs uppercase tracking-wide px-5 py-3">
                   Member
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   Hours
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   GitHub
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   Manual
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   Verified
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   Pending
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
                   Flagged
                 </th>
-                <th className="text-right font-semibold text-slate-500 text-xs uppercase tracking-wider px-5 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-5 py-3">
                   % of Hours
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y-2 divide-[var(--color-border)]">
               {members.map((m) => {
                 const pct = teamTotalHours ? (m.total_hours / teamTotalHours) * 100 : 0;
                 return (
-                  <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
+                  <tr key={m.id} className="hover:bg-[var(--color-bg)] transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2.5">
                         <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
                         <div>
-                          <p className="font-medium text-slate-900">{m.github_username}</p>
+                          <p className="font-bold text-[var(--color-text-primary)]">{m.github_username}</p>
                           <Badge variant={m.role === "leader" ? "indigo" : "default"} className="!text-[10px] mt-0.5">
                             {m.role === "leader" ? "Leader" : "Member"}
                           </Badge>
                         </div>
                       </div>
                     </td>
-                    <td className="text-right px-4 py-3 font-semibold text-slate-900">
+                    <td className="text-right px-4 py-3 stat-num text-base">
                       {Number(m.total_hours).toFixed(1)}
                     </td>
-                    <td className="text-right px-4 py-3 text-slate-600">{m.github_count}</td>
-                    <td className="text-right px-4 py-3 text-slate-600">{m.manual_count}</td>
-                    <td className="text-right px-4 py-3 text-emerald-600 font-medium">{m.verified_count}</td>
-                    <td className="text-right px-4 py-3 text-amber-600 font-medium">{m.pending_count}</td>
-                    <td className="text-right px-4 py-3 text-red-600 font-medium">{m.flagged_count}</td>
-                    <td className="text-right px-5 py-3 text-slate-500">{pct.toFixed(1)}%</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]">{m.github_count}</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]">{m.manual_count}</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-success)] font-bold">{m.verified_count}</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-warning)] font-bold">{m.pending_count}</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-danger)] font-bold">{m.flagged_count}</td>
+                    <td className="text-right px-5 py-3">
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="text-[var(--color-text-muted)] text-xs font-bold w-10 text-right">{pct.toFixed(1)}%</span>
+                        <span className="hidden sm:block w-14 h-2 border border-[var(--color-border)] overflow-hidden">
+                          <span
+                            className="block h-full"
+                            style={{ width: `${Math.min(pct, 100)}%`, background: "var(--color-reports)" }}
+                          />
+                        </span>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -169,7 +173,7 @@ export default function ScoresReport({
         </div>
       </Card>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs font-medium text-[var(--color-text-muted)] border-l-2 border-[var(--color-border)] pl-3">
         Figures are computed directly from logged contributions and peer verification votes.
         No weighting or scoring formula is applied.
       </p>

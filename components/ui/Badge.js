@@ -1,5 +1,6 @@
 /**
  * Badge component for category labels, roles, statuses.
+ * Neo-brutalist: flat saturated fill, thin black border, sharp corners.
  * Variants: default, indigo, green, yellow, red, blue
  */
 export default function Badge({
@@ -7,15 +8,15 @@ export default function Badge({
   variant = "default",
   className = "",
 }) {
-  const base = "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium";
+  const base = "inline-flex items-center border border-[var(--color-border)] px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
 
   const variants = {
-    default: "bg-slate-100 text-slate-600",
-    indigo:  "bg-indigo-50 text-indigo-700",
-    green:   "bg-green-50 text-green-700",
-    yellow:  "bg-amber-50 text-amber-700",
-    red:     "bg-red-50 text-red-700",
-    blue:    "bg-blue-50 text-blue-700",
+    default: "bg-[var(--color-bg)] text-[var(--color-text-primary)]",
+    indigo:  "bg-[var(--color-settings-light)] text-[var(--color-settings)]",
+    green:   "bg-[var(--color-success-light)] text-[var(--color-success)]",
+    yellow:  "bg-[var(--color-reports-light)] text-[#5a6b00]",
+    red:     "bg-[var(--color-danger-light)] text-[var(--color-danger)]",
+    blue:    "bg-[var(--color-contributions-light)] text-[var(--color-contributions)]",
   };
 
   return (

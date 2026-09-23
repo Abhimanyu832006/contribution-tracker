@@ -1,5 +1,6 @@
 /**
- * Button component with variant support.
+ * Button component with variant support — neo-brutalist: thick border,
+ * hard offset shadow that compresses on press.
  * Variants: primary (default), secondary, ghost, danger
  * Sizes: sm, md (default), lg
  */
@@ -12,17 +13,13 @@ export default function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+    "brutal-btn inline-flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)] disabled:opacity-50 disabled:pointer-events-none";
 
   const variants = {
-    primary:
-      "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm hover:shadow-md",
-    secondary:
-      "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm",
-    ghost:
-      "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100",
-    danger:
-      "bg-red-600 text-white hover:bg-red-700 shadow-sm",
+    primary: "bg-[var(--color-primary)] text-white",
+    secondary: "bg-[var(--color-surface)] text-[var(--color-text-primary)]",
+    ghost: "border-transparent shadow-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-black/5",
+    danger: "bg-[var(--color-danger)] text-white",
   };
 
   const sizes = {
