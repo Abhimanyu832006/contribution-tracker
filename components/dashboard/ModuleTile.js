@@ -1,18 +1,12 @@
 "use client";
 
-import { forwardRef } from "react";
 import Link from "next/link";
 
-/**
- * A single bento tile. Pure presentation + ref forwarding — all
- * transition math lives in ModuleTransitionController, which drives
- * this element's transform/opacity directly via the forwarded ref
- * (not through props/re-renders) once a transition starts.
- */
-const ModuleTile = forwardRef(function ModuleTile({ tile, onClick }, ref) {
+/** A single bento tile — pure presentation. No ref forwarding needed;
+ * the loading-overlay transition model doesn't measure tile geometry. */
+export default function ModuleTile({ tile, onClick }) {
   return (
     <Link
-      ref={ref}
       href={tile.href}
       onClick={onClick}
       className={`brutal-tile overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${tile.big}`}
@@ -53,6 +47,4 @@ const ModuleTile = forwardRef(function ModuleTile({ tile, onClick }, ref) {
       </div>
     </Link>
   );
-});
-
-export default ModuleTile;
+}

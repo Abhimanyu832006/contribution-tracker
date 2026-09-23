@@ -295,6 +295,18 @@ body {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* Indeterminate neo-brutal loading bar — a solid block sweeping across
+   a bordered track, used by ModuleLoadingOverlay while a destination
+   loads underneath. No fade/blur, just a hard-edged block in motion. */
+@keyframes loading-bar-sweep {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+
+.loading-bar-sweep {
+  animation: loading-bar-sweep 1.05s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 .animate-fade-in {
   animation: fade-in 0.35s ease-out both;
 }
