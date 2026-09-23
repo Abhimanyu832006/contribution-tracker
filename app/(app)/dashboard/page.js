@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import Avatar from "@/components/ui/Avatar";
 import HomeHeader from "@/components/HomeHeader";
+import DashboardShell from "@/components/DashboardShell";
 
 export const metadata = {
   title: "Home — Contribution Tracker",
@@ -133,116 +133,73 @@ export default async function DashboardPage() {
     },
   ];
 
-  return (
-    <div className="min-h-screen">
-      <HomeHeader
-        projectName={project?.name}
-        repoOwner={project?.repo_owner}
-        repoName={project?.repo_name}
-        user={{
-          githubUsername: session.user.githubUsername,
-          avatarUrl: session.user.avatarUrl,
-        }}
-      />
+  const header = (
+    <HomeHeader
+      projectName={project?.name}
+      repoOwner={project?.repo_owner}
+      repoName={project?.repo_name}
+      user={{
+        githubUsername: session.user.githubUsername,
+        avatarUrl: session.user.avatarUrl,
+      }}
+    />
+  );
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
-        {/* Verification snapshot strip */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6 animate-fade-in">
-          <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
-            <p className="label-mono text-[var(--color-text-muted)]">Pending</p>
-            <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-warning)" }}>{counts.pending}</p>
-          </div>
-          <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
-            <p className="label-mono text-[var(--color-text-muted)]">Verified</p>
-            <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-success)" }}>{counts.verified}</p>
-          </div>
-          <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
-            <p className="label-mono text-[var(--color-text-muted)]">Flagged</p>
-            <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-danger)" }}>{counts.flagged}</p>
-          </div>
-        </div>
-
-        {/* Bento grid of modules */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-[140px] sm:auto-rows-[160px] gap-3 sm:gap-4 stagger-children">
-          {tiles.map((tile) => (
-            <Link
-              key={tile.href}
-              href={tile.href}
-              className={`brutal-tile relative overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${tile.big}`}
-              style={{ background: tile.accent }}
-            >
-              <div className="flex items-center justify-between">
-                <svg
-                  className={`w-6 h-6 sm:w-7 sm:h-7 ${tile.textLight ? "text-white" : "text-black"}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.75}
-                >
-                  {tile.icon}
-                </svg>
-                <svg
-                  className={`w-4 h-4 ${tile.textLight ? "text-white/60" : "text-black/40"}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </div>
-              <div>
-                {tile.stat !== null && (
-                  <p
-                    className={`stat-num text-3xl sm:text-4xl ${tile.textLight ? "text-white" : "text-black"}`}
-                  >
-                    {tile.stat}
-                  </p>
-                )}
-                <p className={`text-sm font-black uppercase tracking-tight mt-0.5 ${tile.textLight ? "text-white" : "text-black"}`}>
-                  {tile.label}
-                </p>
-                <p className={`text-xs mt-0.5 truncate ${tile.textLight ? "text-white/70" : "text-black/60"}`}>
-                  {tile.sub || tile.statLabel}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Top contributor + category highlight */}
-        {(topMember || topCategory[0]) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6 stagger-children">
-            {topMember && (
-              <div className="brutal-card p-4 sm:p-5 flex items-center gap-3">
-                <Avatar src={topMember.avatar_url} name={topMember.github_username} size="lg" />
-                <div className="min-w-0">
-                  <p className="label-mono text-[var(--color-text-muted)]">Top contributor</p>
-                  <p className="text-lg font-black truncate mt-0.5">{topMember.github_username}</p>
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    {topMember.total_hours.toFixed(1)}h · {topMember.contribution_count} contributions
-                  </p>
-                </div>
-              </div>
-            )}
-            {topCategory[0] && (
-              <div className="brutal-card p-4 sm:p-5 flex items-center justify-between">
-                <div>
-                  <p className="label-mono text-[var(--color-text-muted)]">Most active category</p>
-                  <p className="text-lg font-black mt-0.5">{topCategory[0].category}</p>
-                  <p className="text-sm text-[var(--color-text-secondary)]">{topCategory[0].count} entries</p>
-                </div>
-                <div
-                  className="w-14 h-14 shrink-0 border-2 border-[var(--color-border)] rounded flex items-center justify-center"
-                  style={{ background: "var(--color-reports)" }}
-                >
-                  <span className="stat-num text-xl">{topCategory[0].count}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+  const statStrip = (
+    <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6 animate-fade-in">
+      <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
+        <p className="label-mono text-[var(--color-text-muted)]">Pending</p>
+        <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-warning)" }}>{counts.pending}</p>
+      </div>
+      <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
+        <p className="label-mono text-[var(--color-text-muted)]">Verified</p>
+        <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-success)" }}>{counts.verified}</p>
+      </div>
+      <div className="brutal-card px-4 py-3 sm:px-5 sm:py-4">
+        <p className="label-mono text-[var(--color-text-muted)]">Flagged</p>
+        <p className="stat-num text-2xl sm:text-3xl mt-1" style={{ color: "var(--color-danger)" }}>{counts.flagged}</p>
       </div>
     </div>
+  );
+
+  const bottomSection = (topMember || topCategory[0]) && (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6 stagger-children">
+      {topMember && (
+        <div className="brutal-card p-4 sm:p-5 flex items-center gap-3">
+          <Avatar src={topMember.avatar_url} name={topMember.github_username} size="lg" />
+          <div className="min-w-0">
+            <p className="label-mono text-[var(--color-text-muted)]">Top contributor</p>
+            <p className="text-lg font-black truncate mt-0.5">{topMember.github_username}</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {topMember.total_hours.toFixed(1)}h · {topMember.contribution_count} contributions
+            </p>
+          </div>
+        </div>
+      )}
+      {topCategory[0] && (
+        <div className="brutal-card p-4 sm:p-5 flex items-center justify-between">
+          <div>
+            <p className="label-mono text-[var(--color-text-muted)]">Most active category</p>
+            <p className="text-lg font-black mt-0.5">{topCategory[0].category}</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">{topCategory[0].count} entries</p>
+          </div>
+          <div
+            className="w-14 h-14 shrink-0 border-2 border-[var(--color-border)] rounded flex items-center justify-center"
+            style={{ background: "var(--color-reports)" }}
+          >
+            <span className="stat-num text-xl">{topCategory[0].count}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <DashboardShell
+      tiles={tiles}
+      header={header}
+      statStrip={statStrip}
+      bottomSection={bottomSection}
+    />
   );
 }
