@@ -1,45 +1,67 @@
-import { assignFormationAngles, buildFormationKeyframes } from "@/lib/moduleOrbitMath";
-import { getModuleGlowShadow } from "@/lib/moduleThemes";
-
-export const PHASE1_DURATION_MS = 950;
-const SNAP_END = 150 / 950;
-const DECEL_START = 750 / 950;
-const ORBIT_SWEEP_RAD = (5 / 6) * 2 * Math.PI; // ~300 degrees total group sweep
-const SELECTED_SCALE_END = 1.07;
+import { buildNonSelectedKeyframes } from "@/lib/moduleOrbitMath";
 
 /**
- * Runs Phase 1: all tiles move onto a shared circular formation and the
- * whole group orbits together (shared angular sweep, no per-tile self
- * rotation), opacity pinned at 1 until the deceleration stage where the
- * non-selected tiles fade fully to 0. Every tile is driven by a single
- * pre-sampled WAAPI animation (`easing: "linear"` between samples, since
- * the curve is already baked into the sample distribution) — no rAF
- * polling, no per-frame React state.
- *
- * @returns {Promise<void>} resolves once the selected tile's own
- *   formation animation finishes (all tiles share one duration, so this
- *   is an accurate proxy for "the whole orbit is done").
+ * Total duration of the non-selected tiles' morph (compress → orbit →
+ * fade). Runs concurrently with the selected clone's pre-maximize morph
+ * which shares the same duration and stage fractions, so the two look
+ * like ONE animation of six cards until the fade-vs-emerge split at the
+ * very end.
  */
-export function runModuleOrbit({ tileEntries, selectedIndex, pivot, radius, moduleKey, animationsRef, timeScale = 1 }) {
-  const rects = tileEntries.map((entry) => entry.rect);
-  const { targetAngles } = assignFormationAngles(rects, pivot);
-  const duration = PHASE1_DURATION_MS * timeScale;
+export const NON_SELECTED_DURATION_MS = 1050;
 
-  const animations = tileEntries.map((entry, i) => {
+/**
+ * Total radians swept during the orbit stage — full one-and-a-bit
+ * rotation so it reads as continuous rotational motion, not a hop.
+ */
+const ORBIT_SWEEP_RAD = 1.15 * 2 * Math.PI;
+
+/**
+ * Drives the 5 non-selected real tiles' continuous morph (compress →
+ * orbit → fade). Also runs a short glow highlight on the selected tile's
+ * real element — but that's a no-op the moment the provider hides it and
+ * mounts the clone (which happens synchronously at click time), so this
+ * shadow is only visible if something aborts before the clone mounts.
+ *
+ * Returns a promise that resolves once EVERY non-selected tile's own
+ * animation has finished (they share one duration, so all finish
+ * together — awaiting any one is equivalent).
+ */
+export function runNonSelectedMorph({
+  tileEntries,
+  selectedIndex,
+  pivot,
+  radius,
+  targetAngles,
+  perTileScale,
+  animationsRef,
+  timeScale = 1,
+}) {
+  const duration = NON_SELECTED_DURATION_MS * timeScale;
+
+  const promises = [];
+
+  tileEntries.forEach((entry, i) => {
+    if (i === selectedIndex) {
+      // The selected tile's real element is hidden by the provider (the
+      // clone in the portal handles its full motion), so we don't animate
+      // it here at all. Ignoring it also avoids fighting the visibility
+      // change during the tile's own registered animations list cleanup.
+      return;
+    }
+
     const { el, rect } = entry;
     const cx0 = rect.left + rect.width / 2;
     const cy0 = rect.top + rect.height / 2;
     const angle0 = Math.atan2(cy0 - pivot.y, cx0 - pivot.x);
     const radius0 = Math.hypot(cx0 - pivot.x, cy0 - pivot.y) || 1;
-    const isSelected = i === selectedIndex;
 
-    // Kill the `.stagger-children` mount animation before driving this
-    // tile ourselves — its fill-mode:both end value otherwise silently
-    // overrides any WAAPI/inline style change to the same properties.
+    // Kill the .stagger-children mount animation before driving this tile
+    // ourselves — its fill-mode:both end value otherwise silently
+    // overrides any WAAPI/inline transform we set.
     el.style.animation = "none";
     el.style.willChange = "transform, opacity";
 
-    const keyframes = buildFormationKeyframes({
+    const keyframes = buildNonSelectedKeyframes({
       angle0,
       radius0,
       cx0,
@@ -48,28 +70,17 @@ export function runModuleOrbit({ tileEntries, selectedIndex, pivot, radius, modu
       radius,
       pivot,
       orbitSweep: ORBIT_SWEEP_RAD,
-      snapEnd: SNAP_END,
-      decelStart: DECEL_START,
-      selectedScaleEnd: isSelected ? SELECTED_SCALE_END : 1,
-      isSelected,
+      compressScale: perTileScale ? perTileScale[i] : 0.78,
     });
 
-    const anim = el.animate(keyframes, { duration, easing: "linear", fill: "forwards" });
+    const anim = el.animate(keyframes, {
+      duration,
+      easing: "linear",
+      fill: "forwards",
+    });
     animationsRef.current.push(anim);
-
-    if (isSelected) {
-      const glowAnim = el.animate(
-        [
-          { boxShadow: "var(--shadow-brutal)", offset: 0 },
-          { boxShadow: getModuleGlowShadow(moduleKey), offset: 1 },
-        ],
-        { duration: 150 * timeScale, easing: "ease-out", fill: "forwards" }
-      );
-      animationsRef.current.push(glowAnim);
-    }
-
-    return anim;
+    promises.push(anim.finished.catch(() => {}));
   });
 
-  return animations[selectedIndex].finished.catch(() => {});
+  return Promise.all(promises).then(() => {});
 }
