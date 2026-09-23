@@ -1,50 +1,28 @@
 "use client";
 
-import {
-  buildSelectedPreMaxKeyframes,
-  buildSelectedPreMaxContentKeyframes,
-  buildMaximizeKeyframes,
-  buildMaximizeContentKeyframes,
-  computeSelectedEmergeEndState,
-} from "@/lib/moduleOrbitMath";
-import { getModuleGlowShadow } from "@/lib/moduleThemes";
+import { buildExpansionTransforms } from "@/lib/moduleTransitionMath";
 
 /**
- * Selected clone's pre-maximize morph (compress → orbit → emerge) shares
- * the non-selected morph's total duration, so the six cards read as ONE
- * animated formation until the selected one visibly extracts outward at
- * the very end.
+ * Shared-element expansion duration — the clicked tile's clone grows
+ * from its exact grid rect to fullscreen. Runs concurrently with the
+ * siblings' push-away (see ModulePush.js); both start at the same
+ * instant so the two halves of the Tizen-style pattern read as one
+ * motion, not a sequence.
  */
-export const SELECTED_PREMAX_DURATION_MS = 1050;
+export const EXPAND_DURATION_MS = 560;
 
-/**
- * Genie maximize expansion — clone smoothly grows from its emerge-end
- * orbital position into fullscreen. Reasonably fast so the destination
- * page has real time to load underneath it (navigation fires the instant
- * this begins) but long enough to read as a deliberate window maximize
- * rather than a snap.
- */
-export const MAXIMIZE_DURATION_MS = 560;
-
-const ORBIT_SWEEP_RAD = 1.15 * 2 * Math.PI;
-const COMPRESS_SCALE = 0.78;
-const EMERGE_SCALE = 0.94;
+// Modest, independently-tuned content growth — noticeably larger than
+// resting size by the end, far short of the outer surface's ~6-8x
+// growth, so content never looks abandoned-tiny or blown-up-blurry.
 const CONTENT_END_SCALE = 2.4;
 
 /**
  * Presentational portal clone — the same visual atoms as ModuleTile
- * (icon, stat, label) but sized/positioned via transforms only, never
- * layout. The outer div is a full-viewport surface from the very first
- * frame; its `transform` is what visually shrinks it down to exactly
- * match the selected tile's captured rect at t=0, moves it around during
- * the morph, and grows it back out to fill the viewport at genie-max end.
- *
- * The inner content div has a fixed pixel size (rect.width × rect.height)
- * and is counter-scaled per-frame so it visually stays at natural tile
- * size throughout compress+orbit+emerge, then interpolates to a modest
- * ~2.4× visual growth during the maximize (see buildMaximizeContent-
- * Keyframes for why not a raw 1/scale reciprocal and not a raw pass-
- * through of the outer's ~7× growth).
+ * (icon, stat, label), positioned via transforms only, never layout.
+ * The outer div is a full-viewport surface from its very first paint;
+ * its initial inline transform (computed here, not applied later via
+ * WAAPI) already matches the real tile's rect exactly, so there's no
+ * flash of a fullscreen colored surface before the animation starts.
  */
 export function ModuleTransitionClone({
   tile,
@@ -54,25 +32,10 @@ export function ModuleTransitionClone({
   cloneRef,
   contentRef,
 }) {
-  const textClass = tile.textLight
-    ? "text-[var(--color-ink-fg)]"
-    : "text-black";
-  const subTextClass = tile.textLight
-    ? "text-[var(--color-ink-fg)]/70"
-    : "text-black/60";
+  const textClass = tile.textLight ? "text-[var(--color-ink-fg)]" : "text-black";
+  const subTextClass = tile.textLight ? "text-[var(--color-ink-fg)]/70" : "text-black/60";
 
-  // Initial transforms — the outer visually matches the tile rect and the
-  // content is counter-scaled so it visually matches the tile's own
-  // content dimensions. Set inline (not via WAAPI) so the very first
-  // React paint of the clone already looks right — no flash of a
-  // fullscreen colored surface before the animation's first keyframe
-  // applies.
-  const baseSX = rect.width / viewportW;
-  const baseSY = rect.height / viewportH;
-  const initialOuterTransform =
-    `translate(${rect.left}px, ${rect.top}px) scale(${baseSX}, ${baseSY})`;
-  const initialContentTransform =
-    `scale(${1 / baseSX}, ${1 / baseSY})`;
+  const { outerStart, contentStart } = buildExpansionTransforms(rect, viewportW, viewportH);
 
   return (
     <div
@@ -86,7 +49,7 @@ export function ModuleTransitionClone({
         height: "100vh",
         background: tile.accent,
         transformOrigin: "0 0",
-        transform: initialOuterTransform,
+        transform: outerStart,
         zIndex: 9999,
         pointerEvents: "none",
         overflow: "hidden",
@@ -102,7 +65,7 @@ export function ModuleTransitionClone({
           width: rect.width,
           height: rect.height,
           transformOrigin: "0 0",
-          transform: initialContentTransform,
+          transform: contentStart,
           padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
@@ -110,31 +73,23 @@ export function ModuleTransitionClone({
           willChange: "transform",
         }}
       >
-        <div className="flex items-center justify-between">
-          <svg
-            className={`w-6 h-6 sm:w-7 sm:h-7 ${textClass}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.75}
-          >
-            {tile.icon}
-          </svg>
-        </div>
+        <svg
+          className={`w-6 h-6 sm:w-7 sm:h-7 ${textClass}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.75}
+        >
+          {tile.icon}
+        </svg>
         <div>
           {tile.stat !== null && (
-            <p className={`stat-num text-3xl sm:text-4xl ${textClass}`}>
-              {tile.stat}
-            </p>
+            <p className={`stat-num text-3xl sm:text-4xl ${textClass}`}>{tile.stat}</p>
           )}
-          <p
-            className={`text-sm font-black uppercase tracking-tight mt-0.5 ${textClass}`}
-          >
+          <p className={`text-sm font-black uppercase tracking-tight mt-0.5 ${textClass}`}>
             {tile.label}
           </p>
-          <p className={`text-xs mt-0.5 truncate ${subTextClass}`}>
-            {tile.sub || tile.statLabel}
-          </p>
+          <p className={`text-xs mt-0.5 truncate ${subTextClass}`}>{tile.sub || tile.statLabel}</p>
         </div>
       </div>
     </div>
@@ -142,160 +97,48 @@ export function ModuleTransitionClone({
 }
 
 /**
- * Runs the selected clone's PRE-MAXIMIZE morph (compress → orbit →
- * emerge) as one continuous WAAPI animation on the outer surface, plus a
- * parallel WAAPI animation on the content wrapper that counter-scales
- * the outer's shrink to keep content visually natural throughout.
+ * Runs the shared-element expansion: a transform-only FLIP of the outer
+ * surface (translate+scale from the tile's exact rect to fullscreen)
+ * plus the content wrapper interpolating from its natural-size counter-
+ * scale to a modest hero size. Both are plain 2-keyframe WAAPI
+ * animations — the path is a straight-line lerp, so native easing does
+ * the curve; no manual sampling needed (unlike the old circular-orbit
+ * motion this replaces).
  *
- * Also runs an independent short glow highlight on the outer (color-
- * matched to the module) that ramps in during the compress stage — the
- * card is visibly "the chosen one" before it emerges from the buffer.
- *
- * Returns { finished, emergeEndState } — the caller awaits `finished` to
- * kick off maximize, and passes `emergeEndState` into
- * runMaximizeExpansion so the two animations start byte-identical.
+ * @returns {Promise<void>} resolves once the surface animation finishes.
+ *   This does NOT mean the destination is ready to reveal — that's a
+ *   separate, later readiness check owned by the provider.
  */
-export function runSelectedPreMax({
+export function runSharedElementExpansion({
   cloneEl,
   contentEl,
   rect,
   viewportW,
   viewportH,
-  angle0,
-  radius0,
-  targetAngle,
-  radius,
-  pivot,
-  compressScale = COMPRESS_SCALE,
-  animationsRef,
-  moduleKey,
-  timeScale = 1,
-}) {
-  const duration = SELECTED_PREMAX_DURATION_MS * timeScale;
-
-  const outerKF = buildSelectedPreMaxKeyframes({
-    rect,
-    viewportW,
-    viewportH,
-    angle0,
-    radius0,
-    targetAngle,
-    radius,
-    pivot,
-    orbitSweep: ORBIT_SWEEP_RAD,
-    compressScale,
-    emergeScale: EMERGE_SCALE,
-  });
-
-  const contentKF = buildSelectedPreMaxContentKeyframes({
-    rect,
-    viewportW,
-    viewportH,
-    compressScale,
-    emergeScale: EMERGE_SCALE,
-  });
-
-  const outerAnim = cloneEl.animate(outerKF, {
-    duration,
-    easing: "linear",
-    fill: "forwards",
-  });
-  animationsRef.current.push(outerAnim);
-
-  if (contentEl) {
-    const contentAnim = contentEl.animate(contentKF, {
-      duration,
-      easing: "linear",
-      fill: "forwards",
-    });
-    animationsRef.current.push(contentAnim);
-  }
-
-  // Glow highlight — short ramp during the compress stage that then holds
-  // through orbit + emerge. Kept short so it doesn't fight the compress
-  // motion.
-  const glowAnim = cloneEl.animate(
-    [
-      { boxShadow: "0 0 0 0 rgba(0,0,0,0)", offset: 0 },
-      { boxShadow: getModuleGlowShadow(moduleKey), offset: 0.3 },
-      { boxShadow: getModuleGlowShadow(moduleKey), offset: 1 },
-    ],
-    { duration, easing: "ease-out", fill: "forwards" },
-  );
-  animationsRef.current.push(glowAnim);
-
-  const emergeEndState = computeSelectedEmergeEndState({
-    viewportW,
-    viewportH,
-    emergeScale: EMERGE_SCALE,
-  });
-
-  return {
-    finished: outerAnim.finished.catch(() => {}),
-    emergeEndState,
-  };
-}
-
-/**
- * Runs the genie maximize — clone's outer surface grows from the emerge-
- * end orbital position to fullscreen, content interpolates from its
- * natural counter-scaled size at emerge end to a modest ~2.4× visual
- * growth at fullscreen. Also fades the glow shadow out as the clone
- * becomes the full page (no shadow on a fullscreen surface — there's
- * nothing behind it to shadow onto).
- */
-export function runMaximizeExpansion({
-  cloneEl,
-  contentEl,
-  rect,
-  viewportW,
-  viewportH,
-  emergeEndState,
   animationsRef,
   timeScale = 1,
 }) {
-  const duration = MAXIMIZE_DURATION_MS * timeScale;
+  const duration = EXPAND_DURATION_MS * timeScale;
+  const { outerStart, outerEnd, contentStart } = buildExpansionTransforms(rect, viewportW, viewportH);
 
-  const outerKF = buildMaximizeKeyframes({
-    rect,
-    viewportW,
-    viewportH,
-    startCenter: emergeEndState.center,
-    startScale: emergeEndState.scale,
-  });
+  // A gentle "snap open" curve — quick to leave the rect, cushioned
+  // settle into fullscreen, reads as a deliberate expansion rather than
+  // a linear resize.
+  const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-  const contentKF = buildMaximizeContentKeyframes({
-    rect,
-    viewportW,
-    viewportH,
-    startScale: emergeEndState.scale,
-    contentEndScale: CONTENT_END_SCALE,
-  });
-
-  const outerAnim = cloneEl.animate(outerKF, {
-    duration,
-    easing: "linear",
-    fill: "forwards",
-  });
+  const outerAnim = cloneEl.animate(
+    [{ transform: outerStart }, { transform: outerEnd }],
+    { duration, easing, fill: "forwards" },
+  );
   animationsRef.current.push(outerAnim);
 
   if (contentEl) {
-    const contentAnim = contentEl.animate(contentKF, {
-      duration,
-      easing: "linear",
-      fill: "forwards",
-    });
+    const contentAnim = contentEl.animate(
+      [{ transform: contentStart }, { transform: `scale(${CONTENT_END_SCALE})` }],
+      { duration, easing, fill: "forwards" },
+    );
     animationsRef.current.push(contentAnim);
   }
-
-  const glowFade = cloneEl.animate(
-    [
-      { boxShadow: cloneEl.style.boxShadow || "none", offset: 0 },
-      { boxShadow: "0 0 0 0 rgba(0,0,0,0)", offset: 1 },
-    ],
-    { duration, easing: "ease-out", fill: "forwards" },
-  );
-  animationsRef.current.push(glowFade);
 
   return outerAnim.finished.catch(() => {});
 }
