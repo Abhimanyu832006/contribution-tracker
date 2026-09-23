@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import Avatar from "@/components/ui/Avatar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 /**
  * Header for the bento home ("/dashboard"). No persistent sidebar —
@@ -37,6 +38,7 @@ export default function HomeHeader({ projectName, repoOwner, repoName, user }) {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <ThemeToggle />
           <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="md" />
           <button
             onClick={() => signOut({ callbackUrl: "/" })}

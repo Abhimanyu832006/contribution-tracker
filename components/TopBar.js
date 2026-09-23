@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Avatar from "@/components/ui/Avatar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 /**
  * Slim brutalist top bar used inside a module's focused view.
@@ -145,6 +146,7 @@ export default function TopBar({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <ThemeToggle />
           <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="sm" />
           <button
             onClick={() => signOut({ callbackUrl: "/" })}

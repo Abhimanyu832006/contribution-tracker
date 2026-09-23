@@ -1,28 +1,32 @@
-import { computePushDirection, computePushTravel } from "@/lib/moduleTransitionMath";
+import {
+  computePushDirection,
+  computePushTravel,
+  PART_EASING,
+  PART_SHRINK_SCALE,
+} from "@/lib/moduleTransitionMath";
 
 /**
- * How long the non-selected tiles take to clear the viewport. Runs
- * concurrently with the selected tile's expansion (see ModuleTransition
- * .js) — both start at the same instant, so the whole thing reads as one
- * motion: the clicked card takes over the screen while its siblings are
- * shoved out of the way, not two separate sequential steps.
+ * How long the non-selected tiles take to clear the viewport — quick
+ * and short relative to the anchor tile's own, longer, softer expansion
+ * (see EXPAND_DURATION_MS in ModuleTransition.js). The parting tiles
+ * "snap outward quickly and decelerate smoothly" while the anchor takes
+ * its time settling into fullscreen — two distinct paces on purpose.
  */
-export const PUSH_DURATION_MS = 480;
+export const PUSH_DURATION_MS = 380;
 
 /**
  * Pushes every non-selected tile radially away from the clicked tile's
- * center until it clears the viewport — the "layout displacement" half
- * of the Tizen-style app-launch pattern: siblings don't fade or spin in
- * place, they're shoved off to the edges to clear the stage.
+ * center until it clears the viewport, shrinking slightly and fading to
+ * 0 opacity along the way — the "parting" half of the Contextual Grid
+ * Parting pattern: siblings don't spin or hold their size, they visibly
+ * recede from the point of focus.
  *
- * Each tile is one WAAPI animation: a straight-line translate (native
- * easing handles the curve — no manual sampling needed for a 2-point
- * path) with opacity fading in step, using the same fast-out easing as
- * the clicked tile's expansion so both halves of the motion accelerate
- * together instead of the expansion visibly racing ahead.
+ * Each tile is one WAAPI animation: a straight-line translate+scale
+ * (native easing handles the curve — no manual sampling needed for a
+ * 2-point path) with opacity fading in step.
  *
- * @returns {Promise<void>} resolves once every sibling's push animation
- *   has finished.
+ * @returns {Promise<void>} resolves once every sibling's parting
+ *   animation has finished.
  */
 export function runSiblingPush({
   tileEntries,
@@ -52,16 +56,12 @@ export function runSiblingPush({
     const tx = dir.x * travel;
     const ty = dir.y * travel;
 
-    // Same easing as the clicked tile's expansion (ModuleTransition.js)
-    // so both halves of the motion accelerate together from the first
-    // frame — a coordinated "shove" rather than the expansion visibly
-    // racing ahead of a slower-starting push.
     const anim = el.animate(
       [
-        { transform: "translate(0px, 0px)", opacity: 1 },
-        { transform: `translate(${tx}px, ${ty}px)`, opacity: 0 },
+        { transform: "translate(0px, 0px) scale(1)", opacity: 1 },
+        { transform: `translate(${tx}px, ${ty}px) scale(${PART_SHRINK_SCALE})`, opacity: 0 },
       ],
-      { duration, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" },
+      { duration, easing: PART_EASING, fill: "forwards" },
     );
     animationsRef.current.push(anim);
     promises.push(anim.finished.catch(() => {}));

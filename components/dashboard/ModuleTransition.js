@@ -1,20 +1,26 @@
 "use client";
 
-import { buildExpansionTransforms } from "@/lib/moduleTransitionMath";
+import { buildExpansionTransforms, EXPAND_EASING } from "@/lib/moduleTransitionMath";
 
 /**
- * Shared-element expansion duration — the clicked tile's clone grows
- * from its exact grid rect to fullscreen. Runs concurrently with the
- * siblings' push-away (see ModulePush.js); both start at the same
- * instant so the two halves of the Tizen-style pattern read as one
- * motion, not a sequence.
+ * The anchor tile's own expansion duration — deliberately LONGER than
+ * the siblings' parting animation (see PUSH_DURATION_MS in
+ * ModulePush.js). Both start in the same tick, but the anchor settles
+ * in slower and softer while everyone else clears out fast — that pace
+ * difference is what makes this read as "graceful focus," not a blast.
  */
-export const EXPAND_DURATION_MS = 560;
+export const EXPAND_DURATION_MS = 700;
 
 // Modest, independently-tuned content growth — noticeably larger than
 // resting size by the end, far short of the outer surface's ~6-8x
 // growth, so content never looks abandoned-tiny or blown-up-blurry.
 const CONTENT_END_SCALE = 2.4;
+
+// Matches .brutal-tile's CSS border-radius — the clone's corners start
+// here (so its very first paint is pixel-identical to the real tile)
+// and shrink to 0 by the time it fills the viewport, since a fullscreen
+// surface with rounded corners would look like a mistake.
+const TILE_CORNER_RADIUS_PX = 20;
 
 /**
  * Presentational portal clone — the same visual atoms as ModuleTile
@@ -35,7 +41,12 @@ export function ModuleTransitionClone({
   const textClass = tile.textLight ? "text-[var(--color-ink-fg)]" : "text-black";
   const subTextClass = tile.textLight ? "text-[var(--color-ink-fg)]/70" : "text-black/60";
 
-  const { outerStart, contentStart } = buildExpansionTransforms(rect, viewportW, viewportH);
+  const { outerStart, contentStart, radiusStart } = buildExpansionTransforms(
+    rect,
+    viewportW,
+    viewportH,
+    TILE_CORNER_RADIUS_PX,
+  );
 
   return (
     <div
@@ -48,6 +59,7 @@ export function ModuleTransitionClone({
         width: "100vw",
         height: "100vh",
         background: tile.accent,
+        borderRadius: radiusStart,
         transformOrigin: "0 0",
         transform: outerStart,
         zIndex: 9999,
@@ -119,23 +131,26 @@ export function runSharedElementExpansion({
   timeScale = 1,
 }) {
   const duration = EXPAND_DURATION_MS * timeScale;
-  const { outerStart, outerEnd, contentStart } = buildExpansionTransforms(rect, viewportW, viewportH);
-
-  // A gentle "snap open" curve — quick to leave the rect, cushioned
-  // settle into fullscreen, reads as a deliberate expansion rather than
-  // a linear resize.
-  const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+  const { outerStart, outerEnd, contentStart, radiusStart, radiusEnd } = buildExpansionTransforms(
+    rect,
+    viewportW,
+    viewportH,
+    TILE_CORNER_RADIUS_PX,
+  );
 
   const outerAnim = cloneEl.animate(
-    [{ transform: outerStart }, { transform: outerEnd }],
-    { duration, easing, fill: "forwards" },
+    [
+      { transform: outerStart, borderRadius: radiusStart },
+      { transform: outerEnd, borderRadius: radiusEnd },
+    ],
+    { duration, easing: EXPAND_EASING, fill: "forwards" },
   );
   animationsRef.current.push(outerAnim);
 
   if (contentEl) {
     const contentAnim = contentEl.animate(
       [{ transform: contentStart }, { transform: `scale(${CONTENT_END_SCALE})` }],
-      { duration, easing, fill: "forwards" },
+      { duration, easing: EXPAND_EASING, fill: "forwards" },
     );
     animationsRef.current.push(contentAnim);
   }

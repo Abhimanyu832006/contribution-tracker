@@ -69,13 +69,22 @@
   --color-rule-strong: var(--color-border-strong);
 }
 
-/* ── Dark mode — automatic, OS-driven ──────────────────────────
+/* ── Dark mode — OS-driven by default, manually overridable ────
    Same neo-brutalist system, paper/ink inverted: near-black surface,
-   off-white ink, module accents brightened just enough to stay
-   legible on a dark ground. Shadows/borders need no separate rule —
-   they already var()-reference --color-border, which flips here. */
+   off-white ink. Module accents are DULLED here (lower saturation)
+   rather than a straight brightness bump — a neon-bright tile reads
+   fine on paper but feels harsh on a dark ground. Shadows/borders need
+   no separate rule — they already var()-reference --color-border,
+   which flips here.
+
+   Applies automatically when the OS prefers dark UNLESS the user has
+   explicitly picked light (data-theme="light" — see ThemeToggle), and
+   always when the user has explicitly picked dark (data-theme="dark"),
+   regardless of the OS setting. Both blocks below carry the identical
+   variable set on purpose — CSS has no mixin to share it between a
+   media-query-guarded selector and a plain attribute selector. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --color-bg: #121110;
     --color-surface: #1c1a17;
     --color-border: #f2ede3;
@@ -85,24 +94,24 @@
     --color-text-secondary: #cbc4b8;
     --color-text-muted: #8f887d;
 
-    --color-primary: #5c7cff;
-    --color-primary-hover: #7d97ff;
+    --color-primary: #7c8fdb;
+    --color-primary-hover: #93a3e0;
     --color-primary-light: #1f2a5c;
 
-    --color-contributions: #5c7cff;
+    --color-contributions: #7c8fdb;
     --color-contributions-light: #1c2450;
-    --color-verification: #ff6fa3;
+    --color-verification: #d98aab;
     --color-verification-light: #4a1830;
-    --color-reports: #c8f24a;
+    --color-reports: #b3d666;
     --color-reports-light: #2b3a0a;
-    --color-settings: #a374ff;
+    --color-settings: #a08ecf;
     --color-settings-light: #2c1a52;
-    --color-team: #ff9c4d;
+    --color-team: #d1996a;
     --color-team-light: #4a2a0a;
 
-    --color-github: #5c7cff;
+    --color-github: #7c8fdb;
     --color-github-light: #1c2450;
-    --color-manual: #ff9c4d;
+    --color-manual: #d1996a;
     --color-manual-light: #4a2a0a;
 
     --color-success: #2fbf6f;
@@ -115,6 +124,47 @@
     --color-ink-block: #f2ede3;
     --color-ink-fg: #111111;
   }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #121110;
+  --color-surface: #1c1a17;
+  --color-border: #f2ede3;
+  --color-border-strong: #f2ede3;
+
+  --color-text-primary: #f2ede3;
+  --color-text-secondary: #cbc4b8;
+  --color-text-muted: #8f887d;
+
+  --color-primary: #7c8fdb;
+  --color-primary-hover: #93a3e0;
+  --color-primary-light: #1f2a5c;
+
+  --color-contributions: #7c8fdb;
+  --color-contributions-light: #1c2450;
+  --color-verification: #d98aab;
+  --color-verification-light: #4a1830;
+  --color-reports: #b3d666;
+  --color-reports-light: #2b3a0a;
+  --color-settings: #a08ecf;
+  --color-settings-light: #2c1a52;
+  --color-team: #d1996a;
+  --color-team-light: #4a2a0a;
+
+  --color-github: #7c8fdb;
+  --color-github-light: #1c2450;
+  --color-manual: #d1996a;
+  --color-manual-light: #4a2a0a;
+
+  --color-success: #2fbf6f;
+  --color-success-light: #123524;
+  --color-warning: #f2a93d;
+  --color-warning-light: #3a2a0a;
+  --color-danger: #ff5b5f;
+  --color-danger-light: #3a1414;
+
+  --color-ink-block: #f2ede3;
+  --color-ink-fg: #111111;
 }
 
 @theme inline {
@@ -178,14 +228,14 @@ body {
   background: var(--color-surface);
   border: 2px solid var(--color-border);
   box-shadow: var(--shadow-brutal);
-  border-radius: 4px;
+  border-radius: 20px;
 }
 
 .brutal-tile {
   background: var(--color-surface);
   border: 2px solid var(--color-border);
   box-shadow: var(--shadow-brutal);
-  border-radius: 4px;
+  border-radius: 20px;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -202,7 +252,7 @@ body {
 .brutal-btn {
   border: 2px solid var(--color-border);
   box-shadow: var(--shadow-brutal-sm);
-  border-radius: 4px;
+  border-radius: 14px;
   font-weight: 700;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }

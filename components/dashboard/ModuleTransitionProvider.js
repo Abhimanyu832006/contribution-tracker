@@ -45,13 +45,17 @@ export function useModuleTransition() {
  * makes a real crossfade possible instead of a hard cut, since Next.js
  * doesn't remount this component when only the page segment swaps.
  *
- * Owns a Tizen-style app-launch transition (not a spinner/orbit): the
+ * Owns a "Contextual Grid Parting with In-Place Fade Expansion"
+ * transition (not a spinner/orbit, not a punchy full-screen blast): the
  * instant a tile is clicked —
  *   1. the real tile is hidden and a portal clone is mounted at its
  *      exact rect in the same synchronous commit (no visible jump);
- *   2. the clone does a shared-element expansion to fullscreen while
- *      every other tile is simultaneously pushed radially off-screen
- *      (ModulePush.js) — both motions start together and read as one;
+ *   2. the clone (the anchor) grows in place to fill the screen with a
+ *      soft, longer, near-linear curve — graceful, not a snap — while
+ *      every other tile simultaneously parts away radially from the
+ *      anchor's center, shrinking and fading to 0 opacity on a quicker,
+ *      snappier curve (ModulePush.js) — both start together but at
+ *      deliberately different paces;
  *   3. navigation fires immediately, inside startTransition, so the
  *      destination has the entire expansion window (and however long
  *      it needs afterward) to load underneath the still-fullscreen
