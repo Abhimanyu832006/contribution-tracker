@@ -4,18 +4,24 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
-// GPU-composited (transform/opacity only) so it stays smooth regardless of
-// what the main thread is doing underneath — this is what actually hides
-// the DB round trip: the route is prefetched the instant the click fires,
-// so the real page is usually already resolved by the time this finishes.
-const DURATION_MS = 520;
+// This is now purely a click-feedback flourish on the dashboard itself —
+// the actual DB round trip is hidden by the destination route's own
+// colored loading.js (Next can't meaningfully prefetch these pages ahead
+// of navigation since they're fully dynamic/cookie-based), so this can
+// stay short and snappy rather than trying to outlast the fetch.
+const DURATION_MS = 420;
+const FADE_MS = 180; // opacity only fades in the last stretch, so the spin is visible first
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 // Applied unconditionally (mounted AND resting) so the browser always has
 // `transition` registered before transform/opacity change — adding
 // `transition` and changing the value in the same render can get silently
 // skipped, which is what caused the animation to sometimes not play at all.
-const tileTransition = `transform ${DURATION_MS}ms ${EASE}, opacity ${DURATION_MS}ms ${EASE}`;
+// The opacity fade is delayed to start after most of the spin has already
+// played, instead of fading at the same rate as the rotation (which made
+// the spin nearly invisible — it was 80% transparent before it had turned
+// even a quarter-circle).
+const tileTransitionInstant = `transform ${DURATION_MS}ms ${EASE}, opacity ${FADE_MS}ms ease-in 0ms`;
 
 function prefersReducedMotion() {
   return (
@@ -62,18 +68,14 @@ export default function DashboardShell({ tiles, header, statStrip, bottomSection
 
   const transitioning = activeIndex !== null;
 
-  const fadeStyle = {
-    transition: `opacity ${DURATION_MS}ms ${EASE}, filter ${DURATION_MS}ms ${EASE}`,
-    opacity: transitioning ? 0 : 1,
-    filter: transitioning ? "blur(4px)" : "none",
-  };
-
   return (
     <div className="min-h-screen overflow-hidden">
-      <div style={fadeStyle}>{header}</div>
+      {/* Header/stats/bottom section stay put — only the tiles themselves
+          animate, so the screen is never left blank mid-transition. */}
+      {header}
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
-        <div style={fadeStyle}>{statStrip}</div>
+        {statStrip}
 
         <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-[140px] sm:auto-rows-[160px] gap-3 sm:gap-4 stagger-children">
           {tiles.map((tile, i) => {
@@ -82,18 +84,25 @@ export default function DashboardShell({ tiles, header, statStrip, bottomSection
 
             let transform = "none";
             let opacity = 1;
+            let transition = tileTransitionInstant;
 
             if (isActive) {
-              // The clicked module simply fades away in place.
+              // The clicked module simply fades away in place, over the
+              // full duration so it finishes exactly as the others do.
               transform = "scale(0.92)";
               opacity = 0;
+              transition = `transform ${DURATION_MS}ms ${EASE}, opacity ${DURATION_MS}ms ease-in`;
             } else if (isOther) {
-              // Everything else spins — a full rotation (direction
-              // alternating per tile) while shrinking and fading.
+              // Everything else spins clearly visible first — the
+              // rotation runs the full duration, but opacity only starts
+              // fading in the final third, staggered slightly per tile,
+              // so you see it turning before it vanishes.
               const direction = i % 2 === 0 ? 1 : -1;
               const spinDeg = direction * (360 + i * 60);
-              transform = `rotate(${spinDeg}deg) scale(0.35)`;
+              const stagger = i * 20;
+              transform = `rotate(${spinDeg}deg) scale(0.4)`;
               opacity = 0;
+              transition = `transform ${DURATION_MS}ms ${EASE} ${stagger}ms, opacity ${FADE_MS}ms ease-in ${DURATION_MS - FADE_MS + stagger}ms`;
             }
 
             return (
@@ -106,8 +115,7 @@ export default function DashboardShell({ tiles, header, statStrip, bottomSection
                   background: tile.accent,
                   transform,
                   opacity,
-                  transition: tileTransition,
-                  transitionDelay: isOther ? `${i * 25}ms` : "0ms",
+                  transition,
                   willChange: "transform, opacity",
                 }}
               >
@@ -149,7 +157,7 @@ export default function DashboardShell({ tiles, header, statStrip, bottomSection
           })}
         </div>
 
-        <div style={fadeStyle}>{bottomSection}</div>
+        {bottomSection}
       </div>
     </div>
   );
