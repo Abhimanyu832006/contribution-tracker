@@ -2,7 +2,7 @@ import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import Avatar from "@/components/ui/Avatar";
 import HomeHeader from "@/components/HomeHeader";
-import DashboardShell from "@/components/DashboardShell";
+import ModuleTransitionController from "@/components/dashboard/ModuleTransitionController";
 
 export const metadata = {
   title: "Home — Contribution Tracker",
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
   );
 
   return (
-    <DashboardShell
+    <ModuleTransitionController
       tiles={tiles}
       header={header}
       statStrip={statStrip}
