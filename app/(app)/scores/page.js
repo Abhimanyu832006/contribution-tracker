@@ -14,32 +14,30 @@ export default async function ScoresPage() {
   // Per-member breakdown: hours, contribution counts by source and status.
   // All figures are computed directly from recorded contributions/votes —
   // no invented weighting or scoring formula.
-  const { rows: members } = await pool.query(
-    `SELECT
-       u.id,
-       u.github_username,
-       u.avatar_url,
-       pm.role,
-       COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
-       COUNT(c.id)::int AS contribution_count,
-       COUNT(c.id) FILTER (WHERE c.source = 'github')::int AS github_count,
-       COUNT(c.id) FILTER (WHERE c.source = 'manual')::int AS manual_count,
-       COUNT(c.id) FILTER (WHERE c.status = 'pending')::int AS pending_count,
-       COUNT(c.id) FILTER (WHERE c.status IN ('verified', 'approved'))::int AS verified_count,
-       COUNT(c.id) FILTER (WHERE c.status = 'flagged')::int AS flagged_count
-     FROM project_members pm
-     JOIN users u ON u.id = pm.user_id
-     LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
-     WHERE pm.project_id = $1
-     GROUP BY u.id, pm.role
-     ORDER BY total_hours DESC`,
-    [projectId]
-  );
-
-  const { rows: projectRows } = await pool.query(
-    "SELECT name FROM projects WHERE id = $1",
-    [projectId]
-  );
+  const [{ rows: members }, { rows: projectRows }] = await Promise.all([
+    pool.query(
+      `SELECT
+         u.id,
+         u.github_username,
+         u.avatar_url,
+         pm.role,
+         COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
+         COUNT(c.id)::int AS contribution_count,
+         COUNT(c.id) FILTER (WHERE c.source = 'github')::int AS github_count,
+         COUNT(c.id) FILTER (WHERE c.source = 'manual')::int AS manual_count,
+         COUNT(c.id) FILTER (WHERE c.status = 'pending')::int AS pending_count,
+         COUNT(c.id) FILTER (WHERE c.status IN ('verified', 'approved'))::int AS verified_count,
+         COUNT(c.id) FILTER (WHERE c.status = 'flagged')::int AS flagged_count
+       FROM project_members pm
+       JOIN users u ON u.id = pm.user_id
+       LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
+       WHERE pm.project_id = $1
+       GROUP BY u.id, pm.role
+       ORDER BY total_hours DESC`,
+      [projectId]
+    ),
+    pool.query("SELECT name FROM projects WHERE id = $1", [projectId]),
+  ]);
   const projectName = projectRows[0]?.name || "Project";
 
   const teamTotalHours = members.reduce((sum, m) => sum + Number(m.total_hours), 0);

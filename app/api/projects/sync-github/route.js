@@ -19,9 +19,12 @@ export async function POST() {
       );
     }
 
-    // Fetch the project details (repository owner and name)
+    // Fetch the project details and the leader's access token in one round trip
     const { rows: projects } = await pool.query(
-      "SELECT id, name, repo_owner, repo_name, leader_id FROM projects WHERE id = $1",
+      `SELECT p.id, p.name, p.repo_owner, p.repo_name, p.leader_id, u.github_access_token
+       FROM projects p
+       LEFT JOIN users u ON u.id = p.leader_id
+       WHERE p.id = $1`,
       [membership.project_id]
     );
     const project = projects[0];
@@ -33,12 +36,7 @@ export async function POST() {
       );
     }
 
-    // Fetch the leader's access token
-    const { rows: leaders } = await pool.query(
-      "SELECT github_access_token FROM users WHERE id = $1",
-      [project.leader_id]
-    );
-    const token = leaders[0]?.github_access_token;
+    const token = project.github_access_token;
     if (!token) {
       return NextResponse.json(
         { error: "The project leader does not have a valid connected GitHub token. Please ask the leader to log in again and reconnect." },
@@ -110,20 +108,21 @@ export async function POST() {
       );
     }
 
-    // Fetch existing project members for user mapping
-    const { rows: projectMembers } = await pool.query(
-      `SELECT u.id, u.github_username
-       FROM project_members pm
-       JOIN users u ON u.id = pm.user_id
-       WHERE pm.project_id = $1`,
-      [membership.project_id]
-    );
-
-    // Fetch existing synced commit SHAs to prevent duplicates
-    const { rows: existingCommits } = await pool.query(
-      "SELECT commit_sha FROM contributions WHERE project_id = $1 AND commit_sha IS NOT NULL",
-      [membership.project_id]
-    );
+    // Fetch project members (for author matching) and already-synced SHAs
+    // (to skip duplicates) in parallel — neither depends on the other.
+    const [{ rows: projectMembers }, { rows: existingCommits }] = await Promise.all([
+      pool.query(
+        `SELECT u.id, u.github_username
+         FROM project_members pm
+         JOIN users u ON u.id = pm.user_id
+         WHERE pm.project_id = $1`,
+        [membership.project_id]
+      ),
+      pool.query(
+        "SELECT commit_sha FROM contributions WHERE project_id = $1 AND commit_sha IS NOT NULL",
+        [membership.project_id]
+      ),
+    ]);
     const existingShas = new Set(existingCommits.map((c) => c.commit_sha));
 
     let added = 0;
@@ -164,11 +163,13 @@ export async function POST() {
       return null;
     }
 
-    // Process and insert commits
+    // Determine which commits to insert first (pure in-memory filtering),
+    // then insert them all in a single batched multi-row query instead of
+    // one round trip per commit.
+    const toInsert = [];
     for (const commit of commits) {
       if (!commit.sha) continue;
 
-      // Skip if already synced
       if (existingShas.has(commit.sha)) {
         skipped++;
         continue;
@@ -184,25 +185,35 @@ export async function POST() {
       const commitUrl = commit.html_url || `https://github.com/${project.repo_owner}/${project.repo_name}/commit/${commit.sha}`;
       const createdAt = commit.commit?.author?.date || new Date().toISOString();
 
-      // Insert contribution
+      toInsert.push([
+        membership.project_id,
+        matchedUser.id,
+        "github",
+        "Code",
+        description.substring(0, 255),
+        0.0, // 0.0 hours default per commit (no time taken)
+        "approved", // Auto-approved for verified git source
+        commit.sha,
+        commitUrl,
+        createdAt,
+      ]);
+    }
+
+    if (toInsert.length > 0) {
+      const cols = 10;
+      const values = [];
+      const placeholders = toInsert.map((row, i) => {
+        values.push(...row);
+        const base = i * cols;
+        return `(${Array.from({ length: cols }, (_, j) => `$${base + j + 1}`).join(", ")})`;
+      });
+
       await pool.query(
         `INSERT INTO contributions (project_id, user_id, source, category, description, time_estimate, status, commit_sha, commit_url, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-        [
-          membership.project_id,
-          matchedUser.id,
-          "github",
-          "Code",
-          description.substring(0, 255),
-          0.0, // 0.0 hours default per commit (no time taken)
-          "approved", // Auto-approved for verified git source
-          commit.sha,
-          commitUrl,
-          createdAt,
-        ]
+         VALUES ${placeholders.join(", ")}`,
+        values
       );
-
-      added++;
+      added = toInsert.length;
     }
 
     return NextResponse.json({

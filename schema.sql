@@ -66,6 +66,15 @@ CREATE TABLE contributions (
 -- Unique index to prevent duplicate commit syncs for a project
 CREATE UNIQUE INDEX uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
 
+-- Indexes for the hot filter/join columns used by dashboard, reports, and
+-- peer-verification queries (WHERE project_id = ..., GROUP BY status/category,
+-- JOIN c.user_id = u.id AND c.project_id = pm.project_id).
+CREATE INDEX idx_contributions_project_user ON contributions (project_id, user_id);
+CREATE INDEX idx_contributions_project_status ON contributions (project_id, status);
+CREATE INDEX idx_contributions_project_category ON contributions (project_id, category);
+CREATE INDEX idx_project_members_project ON project_members (project_id);
+CREATE INDEX idx_project_members_user ON project_members (user_id);
+
 -- 6. Contribution Votes table (Peer review & verification)
 CREATE TABLE contribution_votes (
   id              SERIAL PRIMARY KEY,
@@ -159,4 +168,17 @@ CREATE TABLE IF NOT EXISTS contribution_votes (
   created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
   CONSTRAINT uq_contribution_user_vote UNIQUE (contribution_id, user_id)
 );
+
+-- ============================================================
+-- SECTION E: In-Place Migration Script (v5 -> v6: Performance Indexes)
+-- Run these statements manually on your Postgres database to speed up
+-- dashboard/reports/peer-verification queries on larger datasets.
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS idx_contributions_project_user ON contributions (project_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_contributions_project_status ON contributions (project_id, status);
+CREATE INDEX IF NOT EXISTS idx_contributions_project_category ON contributions (project_id, category);
+CREATE INDEX IF NOT EXISTS idx_project_members_project ON project_members (project_id);
+CREATE INDEX IF NOT EXISTS idx_project_members_user ON project_members (user_id);
+CREATE INDEX IF NOT EXISTS idx_contribution_votes_contribution ON contribution_votes (contribution_id);
 

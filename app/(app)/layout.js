@@ -3,14 +3,15 @@ import AppChrome from "@/components/AppChrome";
 
 export default async function AppLayout({ children }) {
   const session = await requireAuth();
-  const membership = await getActiveMembership(session.user.dbId);
+  const [membership, projects] = await Promise.all([
+    getActiveMembership(session.user.dbId),
+    getUserProjects(session.user.dbId),
+  ]);
 
   // If user has no active project membership (e.g. on /onboarding), render children directly without chrome
   if (!membership) {
     return <>{children}</>;
   }
-
-  const projects = await getUserProjects(session.user.dbId);
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">

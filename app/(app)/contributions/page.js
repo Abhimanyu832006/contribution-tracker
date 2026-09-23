@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -37,6 +37,25 @@ export default function ContributionsPage() {
     loadActiveProject();
   }, []);
 
+  async function fetchContributions(signal) {
+    setLoading(true);
+    try {
+      const url =
+        filter === "mine"
+          ? "/api/contributions?mine=1"
+          : "/api/contributions";
+      const res = await fetch(url, { signal });
+      if (res.ok) {
+        const data = await res.json();
+        setContributions(data);
+      }
+    } catch {
+      // Aborted requests (filter changed / unmount) are expected and ignored.
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
+  }
+
   async function handleSync() {
     setSyncing(true);
     setSyncError("");
@@ -57,45 +76,14 @@ export default function ContributionsPage() {
     }
   }
 
-  const fetchContributions = useCallback(async () => {
-    setLoading(true);
-    try {
-      const url =
-        filter === "mine"
-          ? "/api/contributions?mine=1"
-          : "/api/contributions";
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        setContributions(data);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [filter]);
-
   useEffect(() => {
-    let ignore = false;
-    async function load() {
-      setLoading(true);
-      try {
-        const url =
-          filter === "mine"
-            ? "/api/contributions?mine=1"
-            : "/api/contributions";
-        const res = await fetch(url);
-        if (res.ok && !ignore) {
-          const data = await res.json();
-          setContributions(data);
-        }
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      ignore = true;
-    };
+    const controller = new AbortController();
+    // Standard fetch-on-mount/filter-change pattern; setLoading(true) inside
+    // fetchContributions is intentional and cancellation-safe via AbortController.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchContributions(controller.signal);
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const filteredContributions = useMemo(() => {

@@ -12,44 +12,48 @@ export default async function DashboardPage() {
   const session = await requireProject();
   const projectId = session.user.projectId;
 
-  const { rows: projectRows } = await pool.query(
-    "SELECT name, repo_owner, repo_name FROM projects WHERE id = $1",
-    [projectId]
-  );
+  const [
+    { rows: projectRows },
+    { rows: members },
+    { rows: countRows },
+    { rows: topCategory },
+  ] = await Promise.all([
+    pool.query(
+      "SELECT name, repo_owner, repo_name FROM projects WHERE id = $1",
+      [projectId]
+    ),
+    pool.query(
+      `SELECT
+         u.id, u.github_username, u.avatar_url, pm.role,
+         COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
+         COUNT(c.id)::int AS contribution_count
+       FROM project_members pm
+       JOIN users u ON u.id = pm.user_id
+       LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
+       WHERE pm.project_id = $1
+       GROUP BY u.id, pm.role
+       ORDER BY total_hours DESC`,
+      [projectId]
+    ),
+    pool.query(
+      `SELECT
+         COUNT(*)::int AS total,
+         COUNT(*) FILTER (WHERE source = 'github')::int AS github,
+         COUNT(*) FILTER (WHERE source = 'manual')::int AS manual,
+         COUNT(*) FILTER (WHERE status = 'pending')::int AS pending,
+         COUNT(*) FILTER (WHERE status IN ('verified','approved'))::int AS verified,
+         COUNT(*) FILTER (WHERE status = 'flagged')::int AS flagged
+       FROM contributions WHERE project_id = $1`,
+      [projectId]
+    ),
+    pool.query(
+      `SELECT category, COUNT(*)::int AS count FROM contributions
+       WHERE project_id = $1 GROUP BY category ORDER BY count DESC LIMIT 1`,
+      [projectId]
+    ),
+  ]);
   const project = projectRows[0];
-
-  const { rows: members } = await pool.query(
-    `SELECT
-       u.id, u.github_username, u.avatar_url, pm.role,
-       COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
-       COUNT(c.id)::int AS contribution_count
-     FROM project_members pm
-     JOIN users u ON u.id = pm.user_id
-     LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
-     WHERE pm.project_id = $1
-     GROUP BY u.id, pm.role
-     ORDER BY total_hours DESC`,
-    [projectId]
-  );
-
-  const { rows: countRows } = await pool.query(
-    `SELECT
-       COUNT(*)::int AS total,
-       COUNT(*) FILTER (WHERE source = 'github')::int AS github,
-       COUNT(*) FILTER (WHERE source = 'manual')::int AS manual,
-       COUNT(*) FILTER (WHERE status = 'pending')::int AS pending,
-       COUNT(*) FILTER (WHERE status IN ('verified','approved'))::int AS verified,
-       COUNT(*) FILTER (WHERE status = 'flagged')::int AS flagged
-     FROM contributions WHERE project_id = $1`,
-    [projectId]
-  );
   const counts = countRows[0];
-
-  const { rows: topCategory } = await pool.query(
-    `SELECT category, COUNT(*)::int AS count FROM contributions
-     WHERE project_id = $1 GROUP BY category ORDER BY count DESC LIMIT 1`,
-    [projectId]
-  );
 
   const totalHours = members.reduce((sum, m) => sum + m.total_hours, 0);
   const topMember = members[0];
