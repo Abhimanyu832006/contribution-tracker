@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import TopBar from "@/components/TopBar";
+import ModuleTransitionProvider from "@/components/dashboard/ModuleTransitionProvider";
 
 const ACCENTS = {
   "/contributions": "var(--color-contributions)",
@@ -27,22 +28,24 @@ export default function AppChrome({ user, projectName, activeProjectId, projects
   const pathname = usePathname();
   const isHome = pathname === "/dashboard";
 
-  if (isHome) {
-    return <>{children}</>;
-  }
-
   return (
-    <>
-      <TopBar
-        user={user}
-        projectName={projectName}
-        activeProjectId={activeProjectId}
-        projects={projects}
-        accent={accentFor(pathname)}
-      />
-      <main>
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
-      </main>
-    </>
+    <ModuleTransitionProvider>
+      {isHome ? (
+        children
+      ) : (
+        <>
+          <TopBar
+            user={user}
+            projectName={projectName}
+            activeProjectId={activeProjectId}
+            projects={projects}
+            accent={accentFor(pathname)}
+          />
+          <main>
+            <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
+          </main>
+        </>
+      )}
+    </ModuleTransitionProvider>
   );
 }

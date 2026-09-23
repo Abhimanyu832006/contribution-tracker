@@ -20,7 +20,7 @@ const ModuleTile = forwardRef(function ModuleTile({ tile, onClick }, ref) {
     >
       <div className="flex items-center justify-between">
         <svg
-          className={`w-6 h-6 sm:w-7 sm:h-7 ${tile.textLight ? "text-white" : "text-black"}`}
+          className={`w-6 h-6 sm:w-7 sm:h-7 ${tile.textLight ? "text-[var(--color-ink-fg)]" : "text-black"}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -29,7 +29,7 @@ const ModuleTile = forwardRef(function ModuleTile({ tile, onClick }, ref) {
           {tile.icon}
         </svg>
         <svg
-          className={`w-4 h-4 ${tile.textLight ? "text-white/60" : "text-black/40"}`}
+          className={`w-4 h-4 ${tile.textLight ? "text-[var(--color-ink-fg)]/60" : "text-black/40"}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -40,14 +40,14 @@ const ModuleTile = forwardRef(function ModuleTile({ tile, onClick }, ref) {
       </div>
       <div>
         {tile.stat !== null && (
-          <p className={`stat-num text-3xl sm:text-4xl ${tile.textLight ? "text-white" : "text-black"}`}>
+          <p className={`stat-num text-3xl sm:text-4xl ${tile.textLight ? "text-[var(--color-ink-fg)]" : "text-black"}`}>
             {tile.stat}
           </p>
         )}
-        <p className={`text-sm font-black uppercase tracking-tight mt-0.5 ${tile.textLight ? "text-white" : "text-black"}`}>
+        <p className={`text-sm font-black uppercase tracking-tight mt-0.5 ${tile.textLight ? "text-[var(--color-ink-fg)]" : "text-black"}`}>
           {tile.label}
         </p>
-        <p className={`text-xs mt-0.5 truncate ${tile.textLight ? "text-white/70" : "text-black/60"}`}>
+        <p className={`text-xs mt-0.5 truncate ${tile.textLight ? "text-[var(--color-ink-fg)]/70" : "text-black/60"}`}>
           {tile.sub || tile.statLabel}
         </p>
       </div>

@@ -60,6 +60,7 @@ export default async function DashboardPage() {
 
   const tiles = [
     {
+      key: "contributions",
       href: "/contributions",
       label: "Contributions",
       accent: "var(--color-contributions)",
@@ -72,6 +73,7 @@ export default async function DashboardPage() {
       ),
     },
     {
+      key: "verification",
       href: "/peer-verification",
       label: "Peer Verification",
       accent: "var(--color-verification)",
@@ -83,10 +85,10 @@ export default async function DashboardPage() {
       ),
     },
     {
+      key: "reports",
       href: "/scores",
       label: "Reports",
       accent: "var(--color-reports)",
-      dark: false,
       big: "col-span-1 row-span-1",
       stat: totalHours.toFixed(1),
       statLabel: "hours logged",
@@ -95,6 +97,7 @@ export default async function DashboardPage() {
       ),
     },
     {
+      key: "team",
       href: "/team",
       label: "Team",
       accent: "var(--color-team)",
@@ -106,6 +109,7 @@ export default async function DashboardPage() {
       ),
     },
     {
+      key: "settings",
       href: "/settings",
       label: "Settings",
       accent: "var(--color-settings)",
@@ -120,9 +124,10 @@ export default async function DashboardPage() {
       ),
     },
     {
+      key: "log",
       href: "/log",
       label: "Log Contribution",
-      accent: "#111111",
+      accent: "var(--color-ink-block)",
       textLight: true,
       big: "col-span-1 row-span-1",
       stat: "+",

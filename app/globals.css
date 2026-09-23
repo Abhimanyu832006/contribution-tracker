@@ -52,6 +52,10 @@
   --color-danger: #e0262e;
   --color-danger-light: #ffd6d6;
 
+  /* The "Log Contribution" tile's ink block — flips in dark mode */
+  --color-ink-block: #111111;
+  --color-ink-fg: #ffffff;
+
   /* Hard offset shadow used everywhere instead of blur */
   --shadow-brutal-sm: 3px 3px 0 0 var(--color-border);
   --shadow-brutal: 5px 5px 0 0 var(--color-border);
@@ -63,6 +67,54 @@
   --color-accent-tint: var(--color-primary-light);
   --color-rule: var(--color-border);
   --color-rule-strong: var(--color-border-strong);
+}
+
+/* ── Dark mode — automatic, OS-driven ──────────────────────────
+   Same neo-brutalist system, paper/ink inverted: near-black surface,
+   off-white ink, module accents brightened just enough to stay
+   legible on a dark ground. Shadows/borders need no separate rule —
+   they already var()-reference --color-border, which flips here. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121110;
+    --color-surface: #1c1a17;
+    --color-border: #f2ede3;
+    --color-border-strong: #f2ede3;
+
+    --color-text-primary: #f2ede3;
+    --color-text-secondary: #cbc4b8;
+    --color-text-muted: #8f887d;
+
+    --color-primary: #5c7cff;
+    --color-primary-hover: #7d97ff;
+    --color-primary-light: #1f2a5c;
+
+    --color-contributions: #5c7cff;
+    --color-contributions-light: #1c2450;
+    --color-verification: #ff6fa3;
+    --color-verification-light: #4a1830;
+    --color-reports: #c8f24a;
+    --color-reports-light: #2b3a0a;
+    --color-settings: #a374ff;
+    --color-settings-light: #2c1a52;
+    --color-team: #ff9c4d;
+    --color-team-light: #4a2a0a;
+
+    --color-github: #5c7cff;
+    --color-github-light: #1c2450;
+    --color-manual: #ff9c4d;
+    --color-manual-light: #4a2a0a;
+
+    --color-success: #2fbf6f;
+    --color-success-light: #123524;
+    --color-warning: #f2a93d;
+    --color-warning-light: #3a2a0a;
+    --color-danger: #ff5b5f;
+    --color-danger-light: #3a1414;
+
+    --color-ink-block: #f2ede3;
+    --color-ink-fg: #111111;
+  }
 }
 
 @theme inline {
