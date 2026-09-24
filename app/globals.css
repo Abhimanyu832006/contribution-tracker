@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
-/* ── Design tokens — neo-brutalist ────────────────────────────
-   Off-white paper base, near-black ink for borders/type, and a set of
-   soft, gently-muted accent blocks — one signature hue per module —
-   instead of a single-brand indigo. Deliberately NOT neon/max-
-   saturation: the shapes (thick borders, hard shadows, flat fills)
-   carry the brutalist identity, so the colors themselves can stay easy
-   on the eyes rather than fighting for attention. */
+/* ── Design tokens ──────────────────────────────────────────────
+   Off-white paper base, near-black ink for borders/type, and a fresh
+   set of accent blocks — one signature hue per module. This is a
+   genuinely different palette from earlier iterations, not a muted/
+   dulled version of the old one: blue, teal, amber, coral, and violet,
+   picked as a cohesive family at similar chroma/lightness so they read
+   as pleasant and intentional side by side, not harsh or washed out. */
 :root {
   --font-sans-ui: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono-ui: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
@@ -22,38 +22,38 @@
   --color-text-muted: #78716c;
 
   /* Signature accent (primary actions) */
-  --color-primary: #5568d9;
-  --color-primary-hover: #4456bd;
-  --color-primary-light: #e1e6fb;
+  --color-primary: #4f7de0;
+  --color-primary-hover: #3d68c9;
+  --color-primary-light: #e2eafc;
 
   --color-sidebar: #111111;
   --color-sidebar-hover: #262626;
 
-  /* Module accent blocks — soft, gently-muted, easy on the eyes */
-  --color-contributions: #5568d9;
-  --color-contributions-light: #e1e6fb;
-  --color-verification: #d16b93;
-  --color-verification-light: #f8dfe8;
-  --color-reports: #9cc154;
-  --color-reports-light: #eef6da;
-  --color-settings: #8768c7;
+  /* Module accent blocks — a fresh five-hue family */
+  --color-contributions: #4f7de0;
+  --color-contributions-light: #e2eafc;
+  --color-verification: #2bb3a3;
+  --color-verification-light: #d9f2ee;
+  --color-reports: #e8a53d;
+  --color-reports-light: #fbecd2;
+  --color-settings: #9370db;
   --color-settings-light: #ece3fa;
-  --color-team: #d1874a;
-  --color-team-light: #f7e4d3;
+  --color-team: #e0715a;
+  --color-team-light: #fadfd8;
 
   /* Source colors — used sparingly, as small tags/dots, not full blocks */
-  --color-github: #5568d9;
-  --color-github-light: #e1e6fb;
-  --color-manual: #d1874a;
-  --color-manual-light: #f7e4d3;
+  --color-github: #4f7de0;
+  --color-github-light: #e2eafc;
+  --color-manual: #e0715a;
+  --color-manual-light: #fadfd8;
 
   /* Status */
-  --color-success: #3f9463;
-  --color-success-light: #dcf1e3;
-  --color-warning: #cc8a3d;
-  --color-warning-light: #f7e8d3;
-  --color-danger: #cc5850;
-  --color-danger-light: #f7dcda;
+  --color-success: #2f9e5c;
+  --color-success-light: #d9f2e3;
+  --color-warning: #d99a2b;
+  --color-warning-light: #faedd2;
+  --color-danger: #d9524a;
+  --color-danger-light: #fadad8;
 
   /* The "Log Contribution" tile's ink block — flips in dark mode */
   --color-ink-block: #111111;
@@ -73,12 +73,12 @@
 }
 
 /* ── Dark mode — OS-driven by default, manually overridable ────
-   Same neo-brutalist system, paper/ink inverted: near-black surface,
-   off-white ink. Module accents are DULLED here (lower saturation)
-   rather than a straight brightness bump — a neon-bright tile reads
-   fine on paper but feels harsh on a dark ground. Shadows/borders need
-   no separate rule — they already var()-reference --color-border,
-   which flips here.
+   Paper/ink inverted: near-black surface, off-white ink. Module
+   accents use the SAME hue family as light mode, lifted in lightness
+   (standard dark-mode color adaptation — a color needs to be lighter
+   to read at the same visual weight against a dark ground) rather than
+   flattened toward gray. Shadows/borders need no separate rule — they
+   already var()-reference --color-border, which flips here.
 
    Applies automatically when the OS prefers dark UNLESS the user has
    explicitly picked light (data-theme="light" — see ThemeToggle), and
@@ -97,31 +97,31 @@
     --color-text-secondary: #cbc4b8;
     --color-text-muted: #8f887d;
 
-    --color-primary: #6f7fc4;
-    --color-primary-hover: #8291d1;
-    --color-primary-light: #23294d;
+    --color-primary: #7c9de8;
+    --color-primary-hover: #91acec;
+    --color-primary-light: #1e2c4d;
 
-    --color-contributions: #6f7fc4;
-    --color-contributions-light: #23294d;
-    --color-verification: #bd7d9a;
-    --color-verification-light: #3d2530;
-    --color-reports: #94ad57;
-    --color-reports-light: #2a3018;
-    --color-settings: #8a79b3;
-    --color-settings-light: #291f42;
-    --color-team: #bd8a63;
-    --color-team-light: #3d2a18;
+    --color-contributions: #7c9de8;
+    --color-contributions-light: #1e2c4d;
+    --color-verification: #4ecbbd;
+    --color-verification-light: #163531;
+    --color-reports: #f0bc63;
+    --color-reports-light: #3a2c10;
+    --color-settings: #ab8fe6;
+    --color-settings-light: #2c2147;
+    --color-team: #ec8f7a;
+    --color-team-light: #3d211a;
 
-    --color-github: #6f7fc4;
-    --color-github-light: #23294d;
-    --color-manual: #bd8a63;
-    --color-manual-light: #3d2a18;
+    --color-github: #7c9de8;
+    --color-github-light: #1e2c4d;
+    --color-manual: #ec8f7a;
+    --color-manual-light: #3d211a;
 
-    --color-success: #4a9d6f;
+    --color-success: #4fbb7d;
     --color-success-light: #123524;
-    --color-warning: #cc9a54;
+    --color-warning: #e0ac52;
     --color-warning-light: #3a2a0a;
-    --color-danger: #cc6a66;
+    --color-danger: #e06e66;
     --color-danger-light: #3a1414;
 
     --color-ink-block: #f2ede3;
@@ -139,31 +139,31 @@
   --color-text-secondary: #cbc4b8;
   --color-text-muted: #8f887d;
 
-  --color-primary: #6f7fc4;
-  --color-primary-hover: #8291d1;
-  --color-primary-light: #23294d;
+  --color-primary: #7c9de8;
+  --color-primary-hover: #91acec;
+  --color-primary-light: #1e2c4d;
 
-  --color-contributions: #6f7fc4;
-  --color-contributions-light: #23294d;
-  --color-verification: #bd7d9a;
-  --color-verification-light: #3d2530;
-  --color-reports: #94ad57;
-  --color-reports-light: #2a3018;
-  --color-settings: #8a79b3;
-  --color-settings-light: #291f42;
-  --color-team: #bd8a63;
-  --color-team-light: #3d2a18;
+  --color-contributions: #7c9de8;
+  --color-contributions-light: #1e2c4d;
+  --color-verification: #4ecbbd;
+  --color-verification-light: #163531;
+  --color-reports: #f0bc63;
+  --color-reports-light: #3a2c10;
+  --color-settings: #ab8fe6;
+  --color-settings-light: #2c2147;
+  --color-team: #ec8f7a;
+  --color-team-light: #3d211a;
 
-  --color-github: #6f7fc4;
-  --color-github-light: #23294d;
-  --color-manual: #bd8a63;
-  --color-manual-light: #3d2a18;
+  --color-github: #7c9de8;
+  --color-github-light: #1e2c4d;
+  --color-manual: #ec8f7a;
+  --color-manual-light: #3d211a;
 
-  --color-success: #4a9d6f;
+  --color-success: #4fbb7d;
   --color-success-light: #123524;
-  --color-warning: #cc9a54;
+  --color-warning: #e0ac52;
   --color-warning-light: #3a2a0a;
-  --color-danger: #cc6a66;
+  --color-danger: #e06e66;
   --color-danger-light: #3a1414;
 
   --color-ink-block: #f2ede3;
