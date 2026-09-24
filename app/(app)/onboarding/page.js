@@ -72,7 +72,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] px-6 py-12">
+    <div className="min-h-screen flex items-center justify-center dot-bg px-6 py-12">
       <div className="w-full max-w-lg animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">

@@ -27,9 +27,8 @@ export function NavigationLoadingOverlay({ label, icon, accent, accentLight, ove
         position: "fixed",
         inset: 0,
         zIndex: 9999,
-        background: "var(--color-bg)",
       }}
-      className="flex items-center justify-center"
+      className="flex items-center justify-center dot-bg"
     >
       <div className="brutal-card p-6 sm:p-7" style={{ width: "min(90vw, 360px)" }}>
         <div className="flex items-center gap-3">

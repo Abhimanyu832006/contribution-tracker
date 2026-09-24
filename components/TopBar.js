@@ -59,7 +59,7 @@ export default function TopBar({
 
   return (
     <header
-      className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
+      className="sticky top-0 z-30 border-b border-[var(--color-border)] dot-bg"
       style={{ boxShadow: "var(--shadow-brutal-sm)" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3">

@@ -32,9 +32,9 @@ const FEATURES = [
 
 export default function LandingContent() {
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex flex-col">
+    <main className="min-h-screen dot-bg flex flex-col">
       {/* ── Navbar ──────────────────────────────────────────── */}
-      <nav className="w-full border-b border-[var(--color-border)] bg-[var(--color-bg)] sticky top-0 z-50">
+      <nav className="w-full border-b border-[var(--color-border)] dot-bg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded flex items-center justify-center border border-[var(--color-border)] brutal-shadow-sm" style={{ background: "var(--color-primary)" }}>
@@ -135,7 +135,7 @@ export default function LandingContent() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg)]">
+      <footer className="border-t border-[var(--color-border)] dot-bg">
         <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
           <p className="text-xs font-bold text-[var(--color-text-muted)]">
             © {new Date().getFullYear()} Contribution Tracker

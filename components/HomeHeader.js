@@ -11,8 +11,7 @@ import ThemeToggle from "@/components/ThemeToggle";
  */
 export default function HomeHeader({ projectName, repoOwner, repoName, user }) {
   return (
-    <header className="relative border-b border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden">
-      <div className="brand-grid" />
+    <header className="relative border-b border-[var(--color-border)] dot-bg overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 flex items-end justify-between gap-4">
         <div className="min-w-0 animate-rise-in">
           <p className="label-mono text-[var(--color-primary)]">Contribution Tracker</p>
