@@ -1,11 +1,15 @@
-import { Titan_One, Comic_Neue } from "next/font/google";
+import { Titan_One, Plus_Jakarta_Sans } from "next/font/google";
 import SessionProvider from "@/components/SessionProvider";
 import DotField from "@/components/DotField";
 import "./globals.css";
 
-const comicNeue = Comic_Neue({
+// Comic Neue's body weight was part of the legibility problem too —
+// Plus Jakarta Sans is a clean, high-x-height workhorse that keeps
+// labels/meta text crisp at small sizes, while Titan One still carries
+// all the comic personality on headlines and numbers.
+const interfaceFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans-ui",
 });
 
@@ -60,7 +64,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${comicNeue.variable} ${titanOne.variable} h-full antialiased`}
+      className={`${interfaceFont.variable} ${titanOne.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

@@ -55,7 +55,7 @@ export default function ModuleTile({ tile, onClick }) {
             <p className="stat-num text-3xl sm:text-4xl text-[var(--color-ink-fg)]">{tile.stat}</p>
           )}
           <p className="text-sm font-semibold text-[var(--color-ink-fg)] mt-0.5">{tile.label}</p>
-          <p className="text-sm font-medium mt-0.5 truncate text-[var(--color-ink-fg)]/80">
+          <p className="text-sm font-semibold mt-0.5 truncate text-[var(--color-ink-fg)]/80">
             {tile.sub || tile.statLabel}
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function ModuleTile({ tile, onClick }) {
         <p className="text-sm font-semibold text-[var(--color-text-primary)] mt-0.5">
           {tile.label}
         </p>
-        <p className="text-sm font-medium mt-0.5 truncate text-[var(--color-text-muted)]">
+        <p className="text-sm font-semibold mt-0.5 truncate text-[var(--color-text-muted)]">
           {tile.sub || tile.statLabel}
         </p>
       </div>

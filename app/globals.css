@@ -20,7 +20,7 @@
   --color-border-strong: #000000;
 
   --color-text-primary: #14141a;
-  --color-text-secondary: #1f2430;
+  --color-text-secondary: #1e293b;
   --color-text-muted: #47474f;
 
   /* Signature accent (primary actions) — comic blue */
@@ -108,7 +108,7 @@
     --color-border-strong: #ffffff;
 
     --color-text-primary: #f0f6fc;
-    --color-text-secondary: #cbd5e1;
+    --color-text-secondary: #e2e8f0;
     --color-text-muted: #a1a1aa;
 
     --color-primary: #38bdf8;
@@ -159,7 +159,7 @@
   --color-border-strong: #ffffff;
 
   --color-text-primary: #f0f6fc;
-  --color-text-secondary: #cbd5e1;
+  --color-text-secondary: #e2e8f0;
   --color-text-muted: #a1a1aa;
 
   --color-primary: #38bdf8;
@@ -241,10 +241,11 @@ body {
   font-variant-numeric: tabular-nums;
   line-height: 1;
   letter-spacing: 0.01em;
-  /* Titan One's counters are already open/solid — Bangers needed a
-     stroke+shadow to read as "bold" at all, but the same treatment on
-     Titan One just muddies already-thick letterforms. A single small
-     offset shadow is enough for the comic "pop". */
+  /* Unlike a full word, a lone digit (1, 0, 1.0) has no adjacent
+     letterforms to blob into — a stroke here reads as comic-sticker
+     definition against colored card backgrounds instead of destroying
+     legibility the way it did on hero-display's whole words. */
+  -webkit-text-stroke: 1.5px var(--color-border);
   text-shadow: 1.5px 1.5px 0 var(--color-border);
 }
 
