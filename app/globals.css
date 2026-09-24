@@ -31,17 +31,27 @@
   --color-sidebar: #14141a;
   --color-sidebar-hover: #2a2a33;
 
-  /* Module accent — bold comic-panel colors, used as real ink now */
+  /* Module accent — bold comic-panel colors, used as real ink now.
+     Each module also gets a "-surface" tint: an almost-imperceptible
+     wash of the accent over the card base, distinct from "-light"
+     (which stays a stronger tint reserved for icon badges and the
+     hover/active state) — this is the Level 2 in the background →
+     module-surface → accent hierarchy. */
   --color-contributions: #1e6fff;
   --color-contributions-light: #d9e9ff;
+  --color-contributions-surface: #f4f8ff;
   --color-verification: #12b76a;
   --color-verification-light: #d3f8e4;
+  --color-verification-surface: #f2faf6;
   --color-reports: #ff8a00;
   --color-reports-light: #ffe6c2;
+  --color-reports-surface: #fff7ed;
   --color-settings: #9a3dff;
   --color-settings-light: #ecdcff;
+  --color-settings-surface: #f8f3ff;
   --color-team: #ff3366;
   --color-team-light: #ffdce6;
+  --color-team-surface: #fff4f6;
 
   /* Source colors — used sparingly, as small tags/dots, not full blocks */
   --color-github: #1e6fff;
@@ -104,14 +114,19 @@
 
     --color-contributions: #5b9dff;
     --color-contributions-light: #16283f;
+    --color-contributions-surface: #1c2130;
     --color-verification: #3ddc94;
     --color-verification-light: #0f3324;
+    --color-verification-surface: #182620;
     --color-reports: #ffab40;
     --color-reports-light: #3f2a0a;
+    --color-reports-surface: #251d14;
     --color-settings: #c084fc;
     --color-settings-light: #2f1f47;
+    --color-settings-surface: #201a2c;
     --color-team: #ff6f91;
     --color-team-light: #3f1826;
+    --color-team-surface: #251821;
 
     --color-github: #5b9dff;
     --color-github-light: #16283f;
@@ -150,14 +165,19 @@
 
   --color-contributions: #5b9dff;
   --color-contributions-light: #16283f;
+  --color-contributions-surface: #1c2130;
   --color-verification: #3ddc94;
   --color-verification-light: #0f3324;
+  --color-verification-surface: #182620;
   --color-reports: #ffab40;
   --color-reports-light: #3f2a0a;
+  --color-reports-surface: #251d14;
   --color-settings: #c084fc;
   --color-settings-light: #2f1f47;
+  --color-settings-surface: #201a2c;
   --color-team: #ff6f91;
   --color-team-light: #3f1826;
+  --color-team-surface: #251821;
 
   --color-github: #5b9dff;
   --color-github-light: #16283f;
@@ -269,6 +289,49 @@ body {
 .brutal-tile:active {
   transform: translate(2px, 2px);
   box-shadow: var(--shadow-brutal-sm);
+}
+
+/* ── Module color identity ─────────────────────────────────────
+   Three-level hierarchy: the page background (Level 1) is neutral,
+   each module tile gets a barely-there tinted surface of its own
+   accent (Level 2, "-surface"), and the accent itself only shows up
+   at full strength in small doses — icon badge, stat number, hover/
+   active border (Level 3). Compound selectors (.brutal-tile.module-
+   tile-x) so these win over the plain .brutal-tile:hover/:active
+   rules above without relying on source order. */
+.module-tile-contributions { background: var(--color-contributions-surface); }
+.brutal-tile.module-tile-contributions:hover,
+.brutal-tile.module-tile-contributions:active {
+  background: var(--color-contributions-light);
+  border-color: var(--color-contributions);
+}
+
+.module-tile-verification { background: var(--color-verification-surface); }
+.brutal-tile.module-tile-verification:hover,
+.brutal-tile.module-tile-verification:active {
+  background: var(--color-verification-light);
+  border-color: var(--color-verification);
+}
+
+.module-tile-reports { background: var(--color-reports-surface); }
+.brutal-tile.module-tile-reports:hover,
+.brutal-tile.module-tile-reports:active {
+  background: var(--color-reports-light);
+  border-color: var(--color-reports);
+}
+
+.module-tile-team { background: var(--color-team-surface); }
+.brutal-tile.module-tile-team:hover,
+.brutal-tile.module-tile-team:active {
+  background: var(--color-team-light);
+  border-color: var(--color-team);
+}
+
+.module-tile-settings { background: var(--color-settings-surface); }
+.brutal-tile.module-tile-settings:hover,
+.brutal-tile.module-tile-settings:active {
+  background: var(--color-settings-light);
+  border-color: var(--color-settings);
 }
 
 .brutal-btn {

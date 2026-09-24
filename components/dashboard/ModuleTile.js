@@ -6,13 +6,21 @@ import Link from "next/link";
  * A single bento tile — pure presentation. No ref forwarding needed;
  * the loading-overlay transition model doesn't measure tile geometry.
  *
- * Modern dashboard treatment: a neutral card with a small tinted icon
- * badge carrying the module's color, not a full-bleed colored fill —
- * color used as an accent, not a background. The one exception is a
- * `cta` tile (Log Contribution), which stays a bold filled card since
- * it's meant to read as the dashboard's one primary action among
- * otherwise neutral info cards.
+ * Each module gets a barely-there tinted surface of its own accent
+ * (see .module-tile-* in globals.css) rather than a full-bleed colored
+ * fill — color used as an identity, not a background. The one
+ * exception is a `cta` tile (Log Contribution), which stays a bold
+ * filled card since it's meant to read as the dashboard's one primary
+ * action among otherwise neutral-surfaced info cards.
  */
+const MODULE_TILE_CLASS = {
+  contributions: "module-tile-contributions",
+  verification: "module-tile-verification",
+  reports: "module-tile-reports",
+  team: "module-tile-team",
+  settings: "module-tile-settings",
+};
+
 export default function ModuleTile({ tile, onClick }) {
   if (tile.cta) {
     return (
@@ -55,11 +63,13 @@ export default function ModuleTile({ tile, onClick }) {
     );
   }
 
+  const moduleClass = MODULE_TILE_CLASS[tile.key] || "";
+
   return (
     <Link
       href={tile.href}
       onClick={onClick}
-      className={`brutal-tile overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${tile.big}`}
+      className={`brutal-tile overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${moduleClass} ${tile.big}`}
     >
       <div className="flex items-center justify-between">
         <span
@@ -88,7 +98,7 @@ export default function ModuleTile({ tile, onClick }) {
       </div>
       <div>
         {tile.stat !== null && (
-          <p className="stat-num text-3xl sm:text-4xl text-[var(--color-text-primary)]">
+          <p className="stat-num text-3xl sm:text-4xl" style={{ color: tile.accent }}>
             {tile.stat}
           </p>
         )}
