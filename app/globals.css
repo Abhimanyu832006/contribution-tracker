@@ -371,11 +371,16 @@ body {
 .hero-display {
   font-family: var(--font-comic-display);
   font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 0.9;
+  letter-spacing: 0.05em;
+  line-height: 1.05;
   text-transform: uppercase;
-  -webkit-text-stroke: 1.5px var(--color-border);
-  text-shadow: 3px 3px 0 var(--color-border);
+  color: var(--color-text-primary);
+  /* A heavy stroke + big offset shadow on Bangers' already-tight, spurred
+     glyphs made short words (e.g. a 4-letter project name) blob together
+     into an illegible mass. A hairline stroke + small shadow keeps the
+     comic-lettering feel without destroying letterform legibility. */
+  -webkit-text-stroke: 0.5px var(--color-border);
+  text-shadow: 1.5px 1.5px 0 var(--color-border);
 }
 
 .link-sweep {
