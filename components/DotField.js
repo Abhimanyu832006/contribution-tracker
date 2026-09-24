@@ -126,13 +126,23 @@ export default function DotField() {
     window.addEventListener("resize", handleResize);
 
     let dotColor = "#14141a";
+    let highlightColor = "#14141a";
     let bgColor = "#fdf6e3";
     function refreshColors() {
       const cs = getComputedStyle(document.documentElement);
       bgColor = cs.getPropertyValue("--color-bg").trim() || bgColor;
-      dotColor = isDarkMode()
-        ? "rgba(245, 245, 240, 0.4)"
-        : cs.getPropertyValue("--color-border").trim() || dotColor;
+      if (isDarkMode()) {
+        // Light dots need real opacity against a near-black page to be
+        // "clearly visible" rather than a faint hint — 0.4 read as barely
+        // there; the dots the cursor is currently pulling get an extra,
+        // brighter pass (see the `frame` loop) so the interaction itself
+        // is easy to perceive, not just the resting field.
+        dotColor = "rgba(226, 226, 235, 0.62)";
+        highlightColor = "rgba(255, 255, 255, 0.95)";
+      } else {
+        dotColor = cs.getPropertyValue("--color-border").trim() || dotColor;
+        highlightColor = cs.getPropertyValue("--color-border-strong").trim() || dotColor;
+      }
     }
     refreshColors();
 
@@ -148,6 +158,10 @@ export default function DotField() {
     let running = true;
     let lastT = performance.now();
     const gravityR2 = GRAVITY_RADIUS * GRAVITY_RADIUS;
+    // The set of dots currently inside the cursor's gravity radius is
+    // always tiny (a local neighborhood, never the whole field) — a
+    // fixed-size scratch buffer avoids allocating an array every frame.
+    const activeIdx = new Int32Array(512);
 
     function frame(t) {
       if (!running) return;
@@ -160,6 +174,7 @@ export default function DotField() {
 
       ctx.fillStyle = dotColor;
       ctx.beginPath();
+      let activeCount = 0;
 
       for (let i = 0; i < count; i++) {
         const dxo = ox[i] - px[i];
@@ -178,6 +193,7 @@ export default function DotField() {
             const pull = (influence * influence * ATTRACT_STRENGTH) / dist;
             ax += dx * pull;
             ay += dy * pull;
+            if (activeCount < activeIdx.length) activeIdx[activeCount++] = i;
           }
         }
 
@@ -190,6 +206,21 @@ export default function DotField() {
         ctx.arc(px[i], py[i], DOT_RADIUS, 0, Math.PI * 2);
       }
       ctx.fill();
+
+      // A brighter second pass over just the dots the cursor is currently
+      // influencing — makes the gravity effect itself easy to perceive
+      // (including through the spring-return bounce) without touching
+      // the resting field's overall look.
+      if (activeCount > 0) {
+        ctx.fillStyle = highlightColor;
+        ctx.beginPath();
+        for (let k = 0; k < activeCount; k++) {
+          const i = activeIdx[k];
+          ctx.moveTo(px[i] + DOT_RADIUS, py[i]);
+          ctx.arc(px[i], py[i], DOT_RADIUS, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
 
       rafId = requestAnimationFrame(frame);
     }

@@ -14,7 +14,7 @@ import { useNavigationLoading } from "@/components/NavigationLoadingProvider";
  * can pass their own icon/accent/label for a richer look than the
  * generic version every other link gets automatically.
  */
-export default function ModuleTransitionController({ tiles, header, statStrip, bottomSection }) {
+export default function ModuleTransitionController({ tiles, titleCard, statStrip, bottomSection }) {
   const router = useRouter();
   const { beginTransition } = useNavigationLoading();
 
@@ -38,8 +38,8 @@ export default function ModuleTransitionController({ tiles, header, statStrip, b
 
   return (
     <div className="min-h-screen overflow-hidden">
-      {header}
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-6 sm:pt-8 pb-16">
+        {titleCard}
         {statStrip}
         <ModuleGrid tiles={tiles} onTileClick={handleTileClick} />
         {bottomSection}

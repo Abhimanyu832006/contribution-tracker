@@ -86,7 +86,7 @@ export function useNavigationLoading() {
  *     `<a>` is caught by the global click listener below and gets the
  *     same loading screen with a generic icon/accent and a label
  *     derived from the link's own text — so "every navigation" (the
- *     TopBar's back-to-dashboard link, any other in-app link) gets the
+ *     AppHeader's back-to-dashboard link, any other in-app link) gets the
  *     same treatment without every caller having to wire it up by hand.
  *   - Browser back/forward is caught via the Navigation API (see below
  *     for why not `popstate`) — it mounts the same overlay directly

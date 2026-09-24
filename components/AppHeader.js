@@ -8,11 +8,19 @@ import Avatar from "@/components/ui/Avatar";
 import ThemeToggle from "@/components/ThemeToggle";
 
 /**
- * Slim brutalist top bar used inside a module's focused view.
- * Replaces the persistent sidebar: a "back to home" control plus
- * project switcher and account menu, nothing else pinned on screen.
+ * The one global header, mounted once by AppChrome for every (app) page
+ * — including the dashboard, which used to render its own completely
+ * different header (branding left, controls right, no project switcher)
+ * while every other page used a "Home" back-link + centered project
+ * switcher. Same geometry and the same three zones everywhere now:
+ *
+ *   [LEFT: app identity, links home] [CENTER: project switcher] [RIGHT: theme/avatar/sign out]
+ *
+ * Page-specific content (the dashboard's title card, a module's own
+ * heading) lives below this, in the page itself — this component only
+ * ever renders global, page-independent chrome.
  */
-export default function TopBar({
+export default function AppHeader({
   user,
   projectName,
   activeProjectId,
@@ -66,19 +74,19 @@ export default function TopBar({
         <Link
           href="/dashboard"
           className="flex items-center gap-2.5 shrink-0 group"
-          aria-label="Back to home"
+          aria-label="Contribution Tracker — home"
           data-nav-label="Dashboard"
         >
           <span
             className="w-9 h-9 rounded flex items-center justify-center border border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
             style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
           >
-            <svg className="w-4.5 h-4.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            <svg className="w-4.5 h-4.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </span>
-          <span className="hidden sm:inline text-sm font-black uppercase tracking-tight">
-            Home
+          <span className="hidden sm:inline text-sm font-bold uppercase tracking-wide">
+            Contribution Tracker
           </span>
         </Link>
 

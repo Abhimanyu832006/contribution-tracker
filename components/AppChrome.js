@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import TopBar from "@/components/TopBar";
+import AppHeader from "@/components/AppHeader";
 import NavigationLoadingProvider from "@/components/NavigationLoadingProvider";
 
 const ACCENTS = {
@@ -21,8 +21,11 @@ function accentFor(pathname) {
 }
 
 /**
- * Wraps every (app) page. The bento home ("/dashboard") renders full-bleed
- * with no chrome; every other module gets a slim TopBar with a way back.
+ * Wraps every (app) page. AppHeader is the one global header, mounted
+ * here unconditionally so the dashboard and every module share the same
+ * navigation chrome — only the content below it differs: the dashboard
+ * renders full-bleed (it manages its own width/padding), every other
+ * module gets the standard centered, padded content column.
  */
 export default function AppChrome({ user, projectName, activeProjectId, projects, children }) {
   const pathname = usePathname();
@@ -30,21 +33,19 @@ export default function AppChrome({ user, projectName, activeProjectId, projects
 
   return (
     <NavigationLoadingProvider>
+      <AppHeader
+        user={user}
+        projectName={projectName}
+        activeProjectId={activeProjectId}
+        projects={projects}
+        accent={accentFor(pathname)}
+      />
       {isHome ? (
         children
       ) : (
-        <>
-          <TopBar
-            user={user}
-            projectName={projectName}
-            activeProjectId={activeProjectId}
-            projects={projects}
-            accent={accentFor(pathname)}
-          />
-          <main>
-            <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
-          </main>
-        </>
+        <main>
+          <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
+        </main>
       )}
     </NavigationLoadingProvider>
   );

@@ -1,7 +1,7 @@
 import { requireProject } from "@/lib/auth";
 import pool from "@/lib/db";
 import Avatar from "@/components/ui/Avatar";
-import HomeHeader from "@/components/HomeHeader";
+import DashboardTitleCard from "@/components/dashboard/DashboardTitleCard";
 import ModuleTransitionController from "@/components/dashboard/ModuleTransitionController";
 
 export const metadata = {
@@ -143,15 +143,11 @@ export default async function DashboardPage() {
     },
   ];
 
-  const header = (
-    <HomeHeader
+  const titleCard = (
+    <DashboardTitleCard
       projectName={project?.name}
       repoOwner={project?.repo_owner}
       repoName={project?.repo_name}
-      user={{
-        githubUsername: session.user.githubUsername,
-        avatarUrl: session.user.avatarUrl,
-      }}
     />
   );
 
@@ -207,7 +203,7 @@ export default async function DashboardPage() {
   return (
     <ModuleTransitionController
       tiles={tiles}
-      header={header}
+      titleCard={titleCard}
       statStrip={statStrip}
       bottomSection={bottomSection}
     />
