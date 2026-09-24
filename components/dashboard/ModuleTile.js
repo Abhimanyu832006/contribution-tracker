@@ -21,6 +21,59 @@ const MODULE_TILE_CLASS = {
   settings: "module-tile-settings",
 };
 
+const STATUS_META = {
+  pending: { label: "In Review", color: "var(--color-warning)", light: "var(--color-warning-light)" },
+  verified: { label: "Verified", color: "var(--color-success)", light: "var(--color-success-light)" },
+  approved: { label: "Verified", color: "var(--color-success)", light: "var(--color-success-light)" },
+  flagged: { label: "Flagged", color: "var(--color-danger)", light: "var(--color-danger-light)" },
+};
+
+function timeAgo(iso) {
+  const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+/** Compact comic-styled activity timeline, used only by the large
+ * Contributions tile — fills the space that used to just sit empty. */
+function ActivityStream({ items }) {
+  return (
+    <div className="flex-1 min-h-0 overflow-hidden flex flex-col justify-center gap-2 py-1">
+      {items.map((a) => {
+        const meta = STATUS_META[a.status] || STATUS_META.pending;
+        const isGithub = a.source === "github";
+        return (
+          <div key={a.id} className="flex items-center gap-2.5">
+            <span
+              className="w-2.5 h-2.5 rounded-full shrink-0 border border-[var(--color-border)]"
+              style={{ background: meta.color }}
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold truncate text-[var(--color-text-primary)]">
+                {a.description}
+              </p>
+              <p className="text-xs text-[var(--color-text-muted)] truncate">
+                {isGithub && a.commit_sha ? `#${a.commit_sha.slice(0, 7)}` : a.category} · {timeAgo(a.created_at)}
+              </p>
+            </div>
+            <span
+              className="shrink-0 text-xs font-bold uppercase px-1.5 py-0.5 rounded"
+              style={{ background: meta.light, color: meta.color }}
+            >
+              {meta.label}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function ModuleTile({ tile, onClick }) {
   if (tile.cta) {
     return (
@@ -96,6 +149,7 @@ export default function ModuleTile({ tile, onClick }) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </div>
+      {tile.activity?.length > 0 && <ActivityStream items={tile.activity} />}
       <div>
         {tile.stat !== null && (
           <p className="stat-num text-3xl sm:text-4xl" style={{ color: tile.accent }}>
