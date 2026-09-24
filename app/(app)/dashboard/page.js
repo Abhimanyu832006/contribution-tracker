@@ -18,6 +18,7 @@ export default async function DashboardPage() {
     { rows: countRows },
     { rows: topCategory },
     { rows: recentActivity },
+    { rows: dailyCounts },
   ] = await Promise.all([
     pool.query(
       "SELECT name, repo_owner, repo_name FROM projects WHERE id = $1",
@@ -63,12 +64,29 @@ export default async function DashboardPage() {
        LIMIT 3`,
       [projectId]
     ),
+    pool.query(
+      `SELECT DATE(created_at) AS day, COUNT(*)::int AS count
+       FROM contributions
+       WHERE project_id = $1 AND created_at >= NOW() - INTERVAL '6 days'
+       GROUP BY day`,
+      [projectId]
+    ),
   ]);
   const project = projectRows[0];
   const counts = countRows[0];
 
   const totalHours = members.reduce((sum, m) => sum + m.total_hours, 0);
   const topMember = members[0];
+
+  const countByDay = new Map(
+    dailyCounts.map((r) => [new Date(r.day).toISOString().slice(0, 10), r.count])
+  );
+  const streak = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - (6 - i));
+    const key = d.toISOString().slice(0, 10);
+    return { date: key, count: countByDay.get(key) || 0 };
+  });
 
   const tiles = [
     {
@@ -82,6 +100,7 @@ export default async function DashboardPage() {
       statLabel: "logged total",
       sub: `${counts.github} via GitHub · ${counts.manual} manual`,
       activity: recentActivity,
+      streak,
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
       ),

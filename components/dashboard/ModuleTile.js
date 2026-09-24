@@ -39,6 +39,25 @@ function timeAgo(iso) {
   return `${days}d ago`;
 }
 
+/** A 7-day mini streak strip — GitHub-heatmap-flavored, comic-sized.
+ * Each square's fill intensity reflects that day's contribution count. */
+function StreakRow({ days, accent, accentLight }) {
+  return (
+    <div className="flex items-center gap-1" title="Last 7 days">
+      {days.map((d) => (
+        <span
+          key={d.date}
+          title={`${d.date}: ${d.count} contribution${d.count === 1 ? "" : "s"}`}
+          className="w-2.5 h-2.5 rounded-sm border border-[var(--color-border)]"
+          style={{
+            background: d.count === 0 ? "transparent" : d.count === 1 ? accentLight : accent,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /** Compact comic-styled activity timeline, used only by the large
  * Contributions tile — fills the space that used to just sit empty. */
 function ActivityStream({ items }) {
@@ -139,6 +158,9 @@ export default function ModuleTile({ tile, onClick }) {
             {tile.icon}
           </svg>
         </span>
+        {tile.streak?.length > 0 && (
+          <StreakRow days={tile.streak} accent={tile.accent} accentLight={tile.accentLight} />
+        )}
         <svg
           className="w-4 h-4 text-[var(--color-text-muted)]"
           fill="none"
