@@ -98,105 +98,108 @@
    variable set on purpose — CSS has no mixin to share it between a
    media-query-guarded selector and a plain attribute selector. */
 @media (prefers-color-scheme: dark) {
+  /* Cyberpunk / neon-comic dark mode — deep ink-black base, crisp
+     off-white borders, and vivid electric accents per module instead
+     of the previous muted "everything's the same navy" palette. */
   :root:not([data-theme="light"]) {
-    --color-bg: #0e0e13;
-    --color-surface: #1b1b22;
-    --color-border: #f5f5f0;
+    --color-bg: #0d1117;
+    --color-surface: #161b22;
+    --color-border: #f0f6fc;
     --color-border-strong: #ffffff;
 
-    --color-text-primary: #f5f5f0;
-    --color-text-secondary: #c7c7d1;
-    --color-text-muted: #8b8b96;
+    --color-text-primary: #f0f6fc;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
 
-    --color-primary: #5b9dff;
-    --color-primary-hover: #85b7ff;
-    --color-primary-light: #16283f;
+    --color-primary: #38bdf8;
+    --color-primary-hover: #7dd3fc;
+    --color-primary-light: #123049;
 
-    --color-contributions: #5b9dff;
-    --color-contributions-light: #16283f;
-    --color-contributions-surface: #1c2130;
-    --color-verification: #3ddc94;
-    --color-verification-light: #0f3324;
-    --color-verification-surface: #182620;
-    --color-reports: #ffab40;
-    --color-reports-light: #3f2a0a;
-    --color-reports-surface: #251d14;
-    --color-settings: #c084fc;
-    --color-settings-light: #2f1f47;
-    --color-settings-surface: #201a2c;
-    --color-team: #ff6f91;
-    --color-team-light: #3f1826;
-    --color-team-surface: #251821;
+    --color-contributions: #38bdf8;
+    --color-contributions-light: #123049;
+    --color-contributions-surface: #151d2c;
+    --color-verification: #00f59b;
+    --color-verification-light: #0b3326;
+    --color-verification-surface: #12211c;
+    --color-reports: #ffa000;
+    --color-reports-light: #402a06;
+    --color-reports-surface: #241c12;
+    --color-settings: #a855f7;
+    --color-settings-light: #2e1a47;
+    --color-settings-surface: #1d1830;
+    --color-team: #ff3366;
+    --color-team-light: #401020;
+    --color-team-surface: #241520;
 
-    --color-github: #5b9dff;
-    --color-github-light: #16283f;
-    --color-manual: #ff6f91;
-    --color-manual-light: #3f1826;
+    --color-github: #38bdf8;
+    --color-github-light: #123049;
+    --color-manual: #ff3366;
+    --color-manual-light: #401020;
 
-    --color-success: #3ddc94;
-    --color-success-light: #0f3324;
-    --color-warning: #ffab40;
-    --color-warning-light: #3f2a0a;
-    --color-danger: #ff5c72;
-    --color-danger-light: #3f1620;
+    --color-success: #00f59b;
+    --color-success-light: #0b3326;
+    --color-warning: #ffa000;
+    --color-warning-light: #402a06;
+    --color-danger: #ff2e93;
+    --color-danger-light: #40102a;
 
-    --color-ink-block: #ffde00;
-    --color-ink-fg: #14141a;
+    --color-ink-block: #ffe600;
+    --color-ink-fg: #050505;
 
-    --shadow-brutal-sm: 2px 2px 0 0 rgba(255, 255, 255, 0.85);
-    --shadow-brutal: 4px 4px 0 0 rgba(255, 255, 255, 0.85);
-    --shadow-brutal-lg: 7px 7px 0 0 rgba(255, 255, 255, 0.85);
+    --shadow-brutal-sm: 2px 2px 0 0 rgba(240, 246, 252, 0.85);
+    --shadow-brutal: 4px 4px 0 0 rgba(240, 246, 252, 0.85);
+    --shadow-brutal-lg: 7px 7px 0 0 rgba(240, 246, 252, 0.85);
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #0e0e13;
-  --color-surface: #1b1b22;
-  --color-border: #f5f5f0;
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-border: #f0f6fc;
   --color-border-strong: #ffffff;
 
-  --color-text-primary: #f5f5f0;
-  --color-text-secondary: #c7c7d1;
-  --color-text-muted: #8b8b96;
+  --color-text-primary: #f0f6fc;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
 
-  --color-primary: #5b9dff;
-  --color-primary-hover: #85b7ff;
-  --color-primary-light: #16283f;
+  --color-primary: #38bdf8;
+  --color-primary-hover: #7dd3fc;
+  --color-primary-light: #123049;
 
-  --color-contributions: #5b9dff;
-  --color-contributions-light: #16283f;
-  --color-contributions-surface: #1c2130;
-  --color-verification: #3ddc94;
-  --color-verification-light: #0f3324;
-  --color-verification-surface: #182620;
-  --color-reports: #ffab40;
-  --color-reports-light: #3f2a0a;
-  --color-reports-surface: #251d14;
-  --color-settings: #c084fc;
-  --color-settings-light: #2f1f47;
-  --color-settings-surface: #201a2c;
-  --color-team: #ff6f91;
-  --color-team-light: #3f1826;
-  --color-team-surface: #251821;
+  --color-contributions: #38bdf8;
+  --color-contributions-light: #123049;
+  --color-contributions-surface: #151d2c;
+  --color-verification: #00f59b;
+  --color-verification-light: #0b3326;
+  --color-verification-surface: #12211c;
+  --color-reports: #ffa000;
+  --color-reports-light: #402a06;
+  --color-reports-surface: #241c12;
+  --color-settings: #a855f7;
+  --color-settings-light: #2e1a47;
+  --color-settings-surface: #1d1830;
+  --color-team: #ff3366;
+  --color-team-light: #401020;
+  --color-team-surface: #241520;
 
-  --color-github: #5b9dff;
-  --color-github-light: #16283f;
-  --color-manual: #ff6f91;
-  --color-manual-light: #3f1826;
+  --color-github: #38bdf8;
+  --color-github-light: #123049;
+  --color-manual: #ff3366;
+  --color-manual-light: #401020;
 
-  --color-success: #3ddc94;
-  --color-success-light: #0f3324;
-  --color-warning: #ffab40;
-  --color-warning-light: #3f2a0a;
-  --color-danger: #ff5c72;
-  --color-danger-light: #3f1620;
+  --color-success: #00f59b;
+  --color-success-light: #0b3326;
+  --color-warning: #ffa000;
+  --color-warning-light: #402a06;
+  --color-danger: #ff2e93;
+  --color-danger-light: #40102a;
 
-  --color-ink-block: #ffde00;
-  --color-ink-fg: #14141a;
+  --color-ink-block: #ffe600;
+  --color-ink-fg: #050505;
 
-  --shadow-brutal-sm: 2px 2px 0 0 rgba(255, 255, 255, 0.85);
-  --shadow-brutal: 4px 4px 0 0 rgba(255, 255, 255, 0.85);
-  --shadow-brutal-lg: 7px 7px 0 0 rgba(255, 255, 255, 0.85);
+  --shadow-brutal-sm: 2px 2px 0 0 rgba(240, 246, 252, 0.85);
+  --shadow-brutal: 4px 4px 0 0 rgba(240, 246, 252, 0.85);
+  --shadow-brutal-lg: 7px 7px 0 0 rgba(240, 246, 252, 0.85);
 }
 
 @theme inline {
