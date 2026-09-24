@@ -66,8 +66,8 @@ export default async function PeerVerificationPage() {
         </p>
 
         {/* Info guide card */}
-        <div className="mt-4 flex items-start gap-3 rounded border-2 border-[var(--color-border)] bg-[var(--color-verification-light)] p-4">
-          <div className="p-1.5 bg-[var(--color-surface)] border-2 border-[var(--color-border)] text-[var(--color-verification)] rounded shrink-0 mt-0.5">
+        <div className="mt-4 flex items-start gap-3 rounded border border-[var(--color-border)] bg-[var(--color-verification-light)] p-4">
+          <div className="p-1.5 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-verification)] rounded shrink-0 mt-0.5">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>

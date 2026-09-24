@@ -19,7 +19,7 @@ export default function Input({
       )}
       <input
         id={id}
-        className={`w-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 rounded focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)] ${className}`}
+        className={`w-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 rounded focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)] ${className}`}
         {...props}
       />
     </div>

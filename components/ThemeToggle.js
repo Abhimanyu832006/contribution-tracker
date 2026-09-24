@@ -59,7 +59,7 @@ export default function ThemeToggle({ className = "" }) {
   return (
     <button
       onClick={toggle}
-      className={`p-2 border-2 border-transparent hover:border-[var(--color-border)] rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] ${className}`}
+      className={`p-2 border border-transparent hover:border-[var(--color-border)] rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] ${className}`}
       title={resolved === null ? "Toggle theme" : isDark ? "Switch to light mode" : "Switch to dark mode"}
       aria-label="Toggle light/dark theme"
     >

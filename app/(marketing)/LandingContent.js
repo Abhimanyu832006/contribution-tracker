@@ -34,10 +34,10 @@ export default function LandingContent() {
   return (
     <main className="min-h-screen bg-[var(--color-bg)] flex flex-col">
       {/* ── Navbar ──────────────────────────────────────────── */}
-      <nav className="w-full border-b-2 border-[var(--color-border)] bg-[var(--color-bg)] sticky top-0 z-50">
+      <nav className="w-full border-b border-[var(--color-border)] bg-[var(--color-bg)] sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded flex items-center justify-center border-2 border-[var(--color-border)] brutal-shadow-sm" style={{ background: "var(--color-primary)" }}>
+            <div className="w-9 h-9 rounded flex items-center justify-center border border-[var(--color-border)] brutal-shadow-sm" style={{ background: "var(--color-primary)" }}>
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -61,7 +61,7 @@ export default function LandingContent() {
       {/* ── Hero ────────────────────────────────────────────── */}
       <section className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-4xl mx-auto text-center py-20 sm:py-28 animate-fade-in">
-          <div className="inline-flex items-center gap-2 border-2 border-[var(--color-border)] bg-[var(--color-reports)] text-black px-4 py-1.5 text-xs font-black uppercase tracking-wide mb-8 rounded brutal-shadow-sm">
+          <div className="inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-reports)] text-black px-4 py-1.5 text-xs font-black uppercase tracking-wide mb-8 rounded brutal-shadow-sm">
             <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
             Built for student teams
           </div>
@@ -99,7 +99,7 @@ export default function LandingContent() {
       </section>
 
       {/* ── Features (bento-style) ─────────────────────────────── */}
-      <section className="border-t-2 border-[var(--color-border)] bg-[var(--color-surface)]">
+      <section className="border-t border-[var(--color-border)] bg-[var(--color-surface)]">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <p className="label-mono text-center mb-2">What you get</p>
           <h2 className="text-3xl sm:text-4xl font-black text-center tracking-tight mb-12">
@@ -109,7 +109,7 @@ export default function LandingContent() {
             {FEATURES.map((f) => (
               <div key={f.title} className="brutal-tile p-6 flex flex-col gap-4">
                 <div
-                  className="w-12 h-12 rounded flex items-center justify-center border-2 border-[var(--color-border)]"
+                  className="w-12 h-12 rounded flex items-center justify-center border border-[var(--color-border)]"
                   style={{ background: f.accent }}
                 >
                   <svg
@@ -135,7 +135,7 @@ export default function LandingContent() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="border-t-2 border-[var(--color-border)] bg-[var(--color-bg)]">
+      <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg)]">
         <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
           <p className="text-xs font-bold text-[var(--color-text-muted)]">
             © {new Date().getFullYear()} Contribution Tracker

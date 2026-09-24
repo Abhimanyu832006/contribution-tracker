@@ -50,7 +50,7 @@ export default function ContributionList({ contributions = [] }) {
         return (
           <div
             key={c.id}
-            className="bg-[var(--color-surface)] rounded border-2 border-[var(--color-border)] brutal-shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:brutal-shadow"
+            className="bg-[var(--color-surface)] rounded border border-[var(--color-border)] brutal-shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:brutal-shadow"
             style={{ borderLeft: `6px solid ${isGithub ? "var(--color-github)" : "var(--color-manual)"}` }}
           >
             {/* Avatar */}

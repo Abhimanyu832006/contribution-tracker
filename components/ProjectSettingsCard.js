@@ -90,7 +90,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] rounded px-4 py-3 border-2 border-[var(--color-border)]">
+        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] rounded px-4 py-3 border border-[var(--color-border)]">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
           </svg>
@@ -109,7 +109,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t-2 border-[var(--color-border)]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[var(--color-border)]">
           <div>
             <p className="label-mono">Project Name</p>
             <p className="text-base font-bold text-[var(--color-text-primary)] mt-1">
@@ -129,7 +129,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
           <div>
             <p className="label-mono">Invite Code</p>
             <div className="flex items-center gap-3 mt-1">
-              <span className="font-mono font-bold text-[var(--color-text-primary)] tracking-wider bg-[var(--color-bg)] border-2 border-[var(--color-border)] px-2 py-0.5 rounded">
+              <span className="font-mono font-bold text-[var(--color-text-primary)] tracking-wider bg-[var(--color-bg)] border border-[var(--color-border)] px-2 py-0.5 rounded">
                 {project.invite_code}
               </span>
               <button
@@ -198,8 +198,8 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
       {/* Delete Project Confirmation Modal */}
       {deleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border-2 border-[var(--color-border)] animate-scale-in">
-            <div className="w-12 h-12 rounded border-2 border-[var(--color-border)] bg-[var(--color-danger-light)] text-[var(--color-danger)] flex items-center justify-center mb-4">
+          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
+            <div className="w-12 h-12 rounded border border-[var(--color-border)] bg-[var(--color-danger-light)] text-[var(--color-danger)] flex items-center justify-center mb-4">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
@@ -235,7 +235,7 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
       {/* Leave Project Confirmation Modal */}
       {leaveModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border-2 border-[var(--color-border)] animate-scale-in">
+          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
             <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
               Leave &quot;{project.name}&quot;?
             </h3>

@@ -125,7 +125,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
   return (
     <div className="space-y-4">
       {error && (
-        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
+        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
           </svg>
@@ -134,8 +134,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
       )}
 
       {pendingCount > 0 && (
-        <div className="flex items-center gap-3 bg-[var(--color-warning-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 brutal-shadow-sm">
-          <span className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-warning)] stat-num text-base shrink-0">
+        <div className="flex items-center gap-3 bg-[var(--color-warning-light)] border border-[var(--color-border)] rounded px-4 py-3 brutal-shadow-sm">
+          <span className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-warning)] stat-num text-base shrink-0">
             {pendingCount}
           </span>
           <span className="text-sm font-bold text-[var(--color-text-primary)]">
@@ -146,7 +146,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div className="flex items-center gap-1 p-1 border-2 border-[var(--color-border)] bg-[var(--color-bg)] rounded w-fit">
+        <div className="flex items-center gap-1 p-1 border border-[var(--color-border)] bg-[var(--color-bg)] rounded w-fit">
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.value}
@@ -167,7 +167,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search description or contributor…"
-          className="sm:w-72 rounded border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
+          className="sm:w-72 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-shadow duration-150 focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
         />
       </div>
 
@@ -250,7 +250,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                   )}
 
                   {historyOpenId === c.id && (c.votes?.length || 0) > 0 && (
-                    <div className="space-y-2 pt-1 pl-1 border-l-2 border-[var(--color-border)] animate-scale-in">
+                    <div className="space-y-2 pt-1 pl-1 border-l border-[var(--color-border)] animate-scale-in">
                       {c.votes.map((v, i) => (
                         <div key={i} className="flex items-start gap-2 pl-3">
                           <Avatar src={v.avatar_url} name={v.username} size="xs" />
@@ -287,7 +287,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         target="_blank"
                         rel="noopener noreferrer"
                         download={c.attachment_name || true}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary-light)] border-2 border-[var(--color-border)] rounded hover:brutal-shadow-sm transition-all group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary-light)] border border-[var(--color-border)] rounded hover:brutal-shadow-sm transition-all group"
                         title="Download and inspect supporting document"
                       >
                         <svg className="w-4 h-4 text-[var(--color-primary)] group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -345,7 +345,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                 {/* Vote Action Buttons */}
                 <div className="flex flex-col items-end gap-2">
                   {isOwnContribution ? (
-                    <span className="text-xs font-bold text-[var(--color-text-muted)] italic px-2 py-1 border-2 border-dashed border-[var(--color-border)] rounded">
+                    <span className="text-xs font-bold text-[var(--color-text-muted)] italic px-2 py-1 border border-dashed border-[var(--color-border)] rounded">
                       Your contribution
                     </span>
                   ) : (
@@ -358,7 +358,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         }
                         placeholder="Optional comment (visible to the team)…"
                         maxLength={280}
-                        className="w-full sm:w-56 text-xs rounded border-2 border-[var(--color-border)] px-2.5 py-1.5 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
+                        className="w-full sm:w-56 text-xs rounded border border-[var(--color-border)] px-2.5 py-1.5 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:shadow-[3px_3px_0_0_var(--color-primary)]"
                       />
                       <div className="flex items-center gap-2">
                         <Button

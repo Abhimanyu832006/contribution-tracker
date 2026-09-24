@@ -189,7 +189,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-[var(--color-text-secondary)]">{topCategory[0].count} entries</p>
           </div>
           <div
-            className="w-14 h-14 shrink-0 border-2 border-[var(--color-border)] rounded flex items-center justify-center"
+            className="w-14 h-14 shrink-0 border border-[var(--color-border)] rounded flex items-center justify-center"
             style={{ background: "var(--color-reports)" }}
           >
             <span className="stat-num text-xl">{topCategory[0].count}</span>

@@ -59,8 +59,8 @@ export default function TopBar({
 
   return (
     <header
-      className="sticky top-0 z-30 border-b-2 border-[var(--color-border)] bg-[var(--color-bg)]"
-      style={{ boxShadow: "0 4px 0 0 var(--color-border)" }}
+      className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
+      style={{ boxShadow: "var(--shadow-brutal-sm)" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3">
         <Link
@@ -70,7 +70,7 @@ export default function TopBar({
           data-nav-label="Dashboard"
         >
           <span
-            className="w-9 h-9 rounded flex items-center justify-center border-2 border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
+            className="w-9 h-9 rounded flex items-center justify-center border border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
             style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
           >
             <svg className="w-4.5 h-4.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -85,7 +85,7 @@ export default function TopBar({
         <div className="relative flex-1 max-w-xs" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen((p) => !p)}
-            className="w-full flex items-center justify-between gap-2 px-3 py-2 border-2 border-[var(--color-border)] bg-[var(--color-surface)] rounded text-left"
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 border border-[var(--color-border)] bg-[var(--color-surface)] rounded text-left"
             title="Switch project"
           >
             <span className="min-w-0 flex-1">
@@ -97,7 +97,7 @@ export default function TopBar({
               </span>
             </span>
             {switching ? (
-              <span className="w-3.5 h-3.5 border-2 border-[var(--color-border)] border-t-transparent rounded-full animate-spin shrink-0" />
+              <span className="w-3.5 h-3.5 border border-[var(--color-border)] border-t-transparent rounded-full animate-spin shrink-0" />
             ) : (
               <svg className={`w-4 h-4 shrink-0 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -106,7 +106,7 @@ export default function TopBar({
           </button>
 
           {dropdownOpen && (
-            <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 border-2 border-[var(--color-border)] bg-[var(--color-surface)] rounded p-1.5" style={{ boxShadow: "var(--shadow-brutal)" }}>
+            <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 border border-[var(--color-border)] bg-[var(--color-surface)] rounded p-1.5" style={{ boxShadow: "var(--shadow-brutal)" }}>
               <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--color-text-muted)]">
                 Your projects ({projects.length})
               </div>
@@ -117,7 +117,7 @@ export default function TopBar({
                     <button
                       key={p.id}
                       onClick={() => handleSwitchProject(p.id)}
-                      className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded text-xs font-bold text-left border-2 ${
+                      className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded text-xs font-bold text-left border ${
                         isActive
                           ? "border-[var(--color-border)] bg-[var(--color-primary)] text-white"
                           : "border-transparent hover:border-[var(--color-border)]"
@@ -133,7 +133,7 @@ export default function TopBar({
                   );
                 })}
               </div>
-              <div className="border-t-2 border-[var(--color-border)] mt-1.5 pt-1.5">
+              <div className="border-t border-[var(--color-border)] mt-1.5 pt-1.5">
                 <Link
                   href="/onboarding"
                   onClick={() => setDropdownOpen(false)}
@@ -151,7 +151,7 @@ export default function TopBar({
           <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="sm" />
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="p-2 border-2 border-transparent hover:border-[var(--color-border)] rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+            className="p-2 border border-transparent hover:border-[var(--color-border)] rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
             title="Sign out"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

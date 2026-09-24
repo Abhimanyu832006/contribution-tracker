@@ -103,7 +103,7 @@ export default function ScoresReport({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b-2 border-[var(--color-border)] bg-[var(--color-primary)]">
+              <tr className="border-b border-[var(--color-border)] bg-[var(--color-primary)]">
                 <th className="text-left font-black text-white text-xs uppercase tracking-wide px-5 py-3">
                   Member
                 </th>
@@ -173,7 +173,7 @@ export default function ScoresReport({
         </div>
       </Card>
 
-      <p className="text-xs font-medium text-[var(--color-text-muted)] border-l-2 border-[var(--color-border)] pl-3">
+      <p className="text-xs font-medium text-[var(--color-text-muted)] border-l border-[var(--color-border)] pl-3">
         Figures are computed directly from logged contributions and peer verification votes.
         No weighting or scoring formula is applied.
       </p>

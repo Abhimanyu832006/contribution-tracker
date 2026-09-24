@@ -146,7 +146,7 @@ export default function ContributionForm({ onSuccess }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
+        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
           </svg>
@@ -155,7 +155,7 @@ export default function ContributionForm({ onSuccess }) {
       )}
 
       {success && (
-        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-success)] bg-[var(--color-success-light)] border-2 border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
+        <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-success)] bg-[var(--color-success-light)] border border-[var(--color-border)] rounded px-4 py-3 animate-scale-in">
           <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
           </svg>
@@ -216,7 +216,7 @@ export default function ContributionForm({ onSuccess }) {
         </div>
 
         {selectedFile ? (
-          <div className="flex items-center justify-between p-3.5 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded animate-scale-in">
+          <div className="flex items-center justify-between p-3.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded animate-scale-in">
             <div className="flex items-center gap-3 min-w-0">
               {getFileIcon(selectedFile.name)}
               <div className="min-w-0">
@@ -231,7 +231,7 @@ export default function ContributionForm({ onSuccess }) {
             <button
               type="button"
               onClick={removeFile}
-              className="p-1.5 text-[var(--color-text-muted)] hover:text-[var(--color-danger)] rounded border-2 border-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-danger-light)] transition-colors ml-2"
+              className="p-1.5 text-[var(--color-text-muted)] hover:text-[var(--color-danger)] rounded border border-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-danger-light)] transition-colors ml-2"
               title="Remove file"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -242,7 +242,7 @@ export default function ContributionForm({ onSuccess }) {
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded p-4 text-center cursor-pointer transition-colors ${
+            className={`border border-dashed rounded p-4 text-center cursor-pointer transition-colors ${
               isDoc || isResearch
                 ? "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
                 : "border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-primary-light)]"

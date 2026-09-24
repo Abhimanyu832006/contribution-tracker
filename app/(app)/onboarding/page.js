@@ -76,7 +76,7 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 mx-auto rounded border-2 border-[var(--color-border)] bg-[var(--color-primary)] flex items-center justify-center brutal-shadow mb-5">
+          <div className="w-14 h-14 mx-auto rounded border border-[var(--color-border)] bg-[var(--color-primary)] flex items-center justify-center brutal-shadow mb-5">
             <svg
               className="w-7 h-7 text-white"
               fill="none"
@@ -167,7 +167,7 @@ export default function OnboardingPage() {
               Create a Project
             </h3>
             {error && (
-              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
+              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}
@@ -203,7 +203,7 @@ export default function OnboardingPage() {
               Join a Project
             </h3>
             {error && (
-              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border-2 border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
+              <p className="text-sm font-bold text-[var(--color-danger)] bg-[var(--color-danger-light)] border border-[var(--color-border)] rounded px-4 py-2.5 mb-4">
                 {error}
               </p>
             )}

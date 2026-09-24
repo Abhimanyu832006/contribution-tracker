@@ -37,7 +37,7 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
       <div className="brutal-card p-6 sm:p-7" style={{ width: "min(90vw, 360px)" }}>
         <div className="flex items-center gap-3">
           <span
-            className="w-11 h-11 shrink-0 flex items-center justify-center border-2 border-[var(--color-border)] rounded-xl"
+            className="w-11 h-11 shrink-0 flex items-center justify-center border border-[var(--color-border)] rounded-xl"
             style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
           >
             <svg
@@ -60,7 +60,7 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
           {WAVE_BAR_DELAYS.map((delay, i) => (
             <div
               key={i}
-              className="audio-wave-bar w-2 h-full border-2 border-[var(--color-border)]"
+              className="audio-wave-bar w-2 h-full border border-[var(--color-border)]"
               style={{ background: accent, animationDelay: `${delay}s` }}
             />
           ))}
