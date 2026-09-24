@@ -18,6 +18,13 @@
   --color-surface: #ffffff;
   --color-border: #14141a;
   --color-border-strong: #000000;
+  /* Dedicated outline/shadow color for comic text (stat numbers, the
+     project-name headline) — stays dark ink in BOTH themes. --color-
+     border correctly flips to near-white in dark mode for card
+     borders, but a white stroke around already-bright accent-colored
+     digits just glows and washes the fill color out; a dark outline
+     reads as "ink" and lets the fill color stay legible. */
+  --color-comic-ink: #14141a;
 
   --color-text-primary: #14141a;
   --color-text-secondary: #1e293b;
@@ -101,6 +108,7 @@
     --color-surface: #161b22;
     --color-border: #f0f6fc;
     --color-border-strong: #ffffff;
+    --color-comic-ink: #050505;
 
     --color-text-primary: #f0f6fc;
     --color-text-secondary: #e2e8f0;
@@ -147,6 +155,7 @@
   --color-surface: #161b22;
   --color-border: #f0f6fc;
   --color-border-strong: #ffffff;
+  --color-comic-ink: #050505;
 
   --color-text-primary: #f0f6fc;
   --color-text-secondary: #e2e8f0;
@@ -229,9 +238,12 @@ body {
   /* Unlike a full word, a lone digit (1, 0, 1.0) has no adjacent
      letterforms to blob into — a stroke here reads as comic-sticker
      definition against colored card backgrounds instead of destroying
-     legibility the way it did on hero-display's whole words. */
-  -webkit-text-stroke: 1.5px var(--color-border);
-  text-shadow: 2px 2px 0 var(--color-border);
+     legibility the way it did on hero-display's whole words.
+     --color-comic-ink (always dark, never flips to white in dark mode
+     like --color-border does) so the outline reads as ink, not a glow
+     that washes out the bright accent fill color. */
+  -webkit-text-stroke: 1.5px var(--color-comic-ink);
+  text-shadow: 2px 2px 0 var(--color-comic-ink);
 }
 
 /* Small solid status chip — used only for resolved verification state */
@@ -448,9 +460,12 @@ body {
      logo, rather than a flat brutalist headline. */
   transform: rotate(-3deg);
   color: var(--color-danger);
-  -webkit-text-stroke: 1.25px var(--color-border);
+  /* --color-comic-ink stays dark ink in both themes — a white outline
+     in dark mode would glow and wash the hot fill color out instead of
+     reading as a defining edge. */
+  -webkit-text-stroke: 1.25px var(--color-comic-ink);
   text-shadow:
-    3px 3px 0 var(--color-border),
+    3px 3px 0 var(--color-comic-ink),
     6px 6px 0 var(--color-warning);
 }
 
