@@ -1,68 +1,70 @@
 @import "tailwindcss";
 
 /* ── Design tokens ──────────────────────────────────────────────
-   Built from a single 5-color palette — Taupe #493b2a, Vintage Grape
-   #593f62, Dusty Lavender #7b6d8d, Cool Steel #8499b1, Pale Sky
-   #a5c4d4 — a cohesive dark-warm-to-light-cool gradient. Module accent
-   beyond the five given swatches (team) is mixed FROM Taupe (lightened
-   toward a usable accent) rather than picked independently, so the
-   six-module set still reads as one family. */
+   Built from a single 5-color palette — Ash Grey #cad2c5, Muted Teal
+   #84a98c, Deep Teal #52796f, Dark Slate Grey #354f52, Charcoal Blue
+   #2f3e46 — a monochromatic sage-to-charcoal gradient, all one cool
+   green/teal/blue-gray family. With no distinct warm hue among the
+   five, modules are differentiated mostly by TONE within that family;
+   settings and team are mixed FROM the given swatches (a cooler slate
+   for settings, a warmed khaki tint for team) rather than picked
+   independently, so all six still read as one quiet, tonal set. */
 :root {
   --font-sans-ui: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono-ui: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
 
   /* Paper + ink */
-  --color-bg: #eef4f7;
-  --color-surface: #fbfdfe;
-  --color-border: #493b2a;
-  --color-border-strong: #493b2a;
+  --color-bg: #cad2c5;
+  --color-surface: #f0f3ee;
+  --color-border: #2f3e46;
+  --color-border-strong: #2f3e46;
 
-  --color-text-primary: #493b2a;
-  --color-text-secondary: #6b5c4d;
-  --color-text-muted: #93887c;
+  --color-text-primary: #2f3e46;
+  --color-text-secondary: #46595c;
+  --color-text-muted: #7c8a86;
 
   /* Signature accent (primary actions) */
-  --color-primary: #8499b1;
-  --color-primary-hover: #6c81a0;
-  --color-primary-light: #dde6ee;
+  --color-primary: #52796f;
+  --color-primary-hover: #416059;
+  --color-primary-light: #dce8e4;
 
-  --color-sidebar: #493b2a;
-  --color-sidebar-hover: #5c4c38;
+  --color-sidebar: #2f3e46;
+  --color-sidebar-hover: #354f52;
 
   /* Module accent blocks — all mixed from the same 5-color palette */
-  --color-contributions: #8499b1;
-  --color-contributions-light: #dde6ee;
-  --color-verification: #593f62;
-  --color-verification-light: #e3dbe6;
-  --color-reports: #a5c4d4;
-  --color-reports-light: #e9f2f6;
-  --color-settings: #7b6d8d;
-  --color-settings-light: #e5e2e9;
-  --color-team: #b8895a;
-  --color-team-light: #f2e3d3;
+  --color-contributions: #52796f;
+  --color-contributions-light: #dce8e4;
+  --color-verification: #354f52;
+  --color-verification-light: #dde6e6;
+  --color-reports: #84a98c;
+  --color-reports-light: #e6efe8;
+  --color-settings: #5f7a7c;
+  --color-settings-light: #e1e9e9;
+  --color-team: #a8a58c;
+  --color-team-light: #eeece2;
 
   /* Source colors — used sparingly, as small tags/dots, not full blocks */
-  --color-github: #8499b1;
-  --color-github-light: #dde6ee;
-  --color-manual: #b8895a;
-  --color-manual-light: #f2e3d3;
+  --color-github: #52796f;
+  --color-github-light: #dce8e4;
+  --color-manual: #a8a58c;
+  --color-manual-light: #eeece2;
 
   /* Status */
-  --color-success: #6b8a6f;
-  --color-success-light: #e0ebe1;
-  --color-warning: #b8923f;
-  --color-warning-light: #f2e8d3;
-  --color-danger: #96504f;
-  --color-danger-light: #ecdcdb;
+  --color-success: #5c8a5f;
+  --color-success-light: #dcebdd;
+  --color-warning: #a8923f;
+  --color-warning-light: #f0e8d0;
+  --color-danger: #a35648;
+  --color-danger-light: #ecdbd7;
 
   /* The "Log Contribution" tile's ink block — flips in dark mode */
-  --color-ink-block: #493b2a;
-  --color-ink-fg: #a5c4d4;
+  --color-ink-block: #2f3e46;
+  --color-ink-fg: #cad2c5;
 
   /* Soft elevation shadows — gentle blur, not a hard offset block */
-  --shadow-brutal-sm: 0 1px 3px rgba(73, 59, 42, 0.10), 0 1px 2px rgba(73, 59, 42, 0.08);
-  --shadow-brutal: 0 4px 12px rgba(73, 59, 42, 0.12), 0 2px 4px rgba(73, 59, 42, 0.08);
-  --shadow-brutal-lg: 0 10px 26px rgba(73, 59, 42, 0.16), 0 4px 8px rgba(73, 59, 42, 0.10);
+  --shadow-brutal-sm: 0 1px 3px rgba(47, 62, 70, 0.10), 0 1px 2px rgba(47, 62, 70, 0.08);
+  --shadow-brutal: 0 4px 12px rgba(47, 62, 70, 0.12), 0 2px 4px rgba(47, 62, 70, 0.08);
+  --shadow-brutal-lg: 0 10px 26px rgba(47, 62, 70, 0.16), 0 4px 8px rgba(47, 62, 70, 0.10);
 
   /* Legacy aliases */
   --color-accent: var(--color-primary);
@@ -73,11 +75,11 @@
 }
 
 /* ── Dark mode — OS-driven by default, manually overridable ────
-   Uses Taupe itself as the card surface (the palette's own darkest
-   swatch, put to direct use rather than synthesized) against an even
-   darker page background, with Pale Sky as the cool light ink. Module
-   accents are the same light-mode hues lifted in lightness — standard
-   dark-mode adaptation, not a different set.
+   Uses Charcoal Blue itself as the card surface (the palette's own
+   darkest swatch, put to direct use rather than synthesized) against
+   an even darker synthesized page background, with Ash Grey as the
+   light ink. Module accents are the same light-mode tones lifted in
+   lightness — standard dark-mode adaptation, not a different set.
 
    Applies automatically when the OS prefers dark UNLESS the user has
    explicitly picked light (data-theme="light" — see ThemeToggle), and
@@ -87,86 +89,86 @@
    media-query-guarded selector and a plain attribute selector. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #17120c;
-    --color-surface: #493b2a;
-    --color-border: #a5c4d4;
-    --color-border-strong: #c3dae5;
+    --color-bg: #1a2226;
+    --color-surface: #2f3e46;
+    --color-border: #cad2c5;
+    --color-border-strong: #d9e0d5;
 
-    --color-text-primary: #c3dae5;
-    --color-text-secondary: #9fb3bd;
-    --color-text-muted: #7c8b93;
+    --color-text-primary: #d9e0d5;
+    --color-text-secondary: #a8b3ac;
+    --color-text-muted: #7f8a84;
 
-    --color-primary: #a3b8cc;
-    --color-primary-hover: #b7c8d8;
-    --color-primary-light: #2b3a47;
+    --color-primary: #7fa198;
+    --color-primary-hover: #93b1a9;
+    --color-primary-light: #24352f;
 
-    --color-contributions: #a3b8cc;
-    --color-contributions-light: #2b3a47;
-    --color-verification: #8a6b93;
-    --color-verification-light: #362a3a;
-    --color-reports: #b7d5e2;
-    --color-reports-light: #223339;
-    --color-settings: #9d92ac;
-    --color-settings-light: #2e2938;
-    --color-team: #c9a374;
-    --color-team-light: #3a2c1a;
+    --color-contributions: #7fa198;
+    --color-contributions-light: #24352f;
+    --color-verification: #5f7a7d;
+    --color-verification-light: #253538;
+    --color-reports: #a0c2a8;
+    --color-reports-light: #2a3a2d;
+    --color-settings: #82a1a3;
+    --color-settings-light: #253939;
+    --color-team: #c4c1a6;
+    --color-team-light: #3a3829;
 
-    --color-github: #a3b8cc;
-    --color-github-light: #2b3a47;
-    --color-manual: #c9a374;
-    --color-manual-light: #3a2c1a;
+    --color-github: #7fa198;
+    --color-github-light: #24352f;
+    --color-manual: #c4c1a6;
+    --color-manual-light: #3a3829;
 
-    --color-success: #7fa384;
-    --color-success-light: #1e3324;
-    --color-warning: #d1ad5e;
+    --color-success: #7cae7f;
+    --color-success-light: #1e3320;
+    --color-warning: #d1b563;
     --color-warning-light: #3a2e10;
-    --color-danger: #b17372;
-    --color-danger-light: #3a1e1e;
+    --color-danger: #c17b6c;
+    --color-danger-light: #3a201a;
 
-    --color-ink-block: #a5c4d4;
-    --color-ink-fg: #493b2a;
+    --color-ink-block: #cad2c5;
+    --color-ink-fg: #2f3e46;
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #17120c;
-  --color-surface: #493b2a;
-  --color-border: #a5c4d4;
-  --color-border-strong: #c3dae5;
+  --color-bg: #1a2226;
+  --color-surface: #2f3e46;
+  --color-border: #cad2c5;
+  --color-border-strong: #d9e0d5;
 
-  --color-text-primary: #c3dae5;
-  --color-text-secondary: #9fb3bd;
-  --color-text-muted: #7c8b93;
+  --color-text-primary: #d9e0d5;
+  --color-text-secondary: #a8b3ac;
+  --color-text-muted: #7f8a84;
 
-  --color-primary: #a3b8cc;
-  --color-primary-hover: #b7c8d8;
-  --color-primary-light: #2b3a47;
+  --color-primary: #7fa198;
+  --color-primary-hover: #93b1a9;
+  --color-primary-light: #24352f;
 
-  --color-contributions: #a3b8cc;
-  --color-contributions-light: #2b3a47;
-  --color-verification: #8a6b93;
-  --color-verification-light: #362a3a;
-  --color-reports: #b7d5e2;
-  --color-reports-light: #223339;
-  --color-settings: #9d92ac;
-  --color-settings-light: #2e2938;
-  --color-team: #c9a374;
-  --color-team-light: #3a2c1a;
+  --color-contributions: #7fa198;
+  --color-contributions-light: #24352f;
+  --color-verification: #5f7a7d;
+  --color-verification-light: #253538;
+  --color-reports: #a0c2a8;
+  --color-reports-light: #2a3a2d;
+  --color-settings: #82a1a3;
+  --color-settings-light: #253939;
+  --color-team: #c4c1a6;
+  --color-team-light: #3a3829;
 
-  --color-github: #a3b8cc;
-  --color-github-light: #2b3a47;
-  --color-manual: #c9a374;
-  --color-manual-light: #3a2c1a;
+  --color-github: #7fa198;
+  --color-github-light: #24352f;
+  --color-manual: #c4c1a6;
+  --color-manual-light: #3a3829;
 
-  --color-success: #7fa384;
-  --color-success-light: #1e3324;
-  --color-warning: #d1ad5e;
+  --color-success: #7cae7f;
+  --color-success-light: #1e3320;
+  --color-warning: #d1b563;
   --color-warning-light: #3a2e10;
-  --color-danger: #b17372;
-  --color-danger-light: #3a1e1e;
+  --color-danger: #c17b6c;
+  --color-danger-light: #3a201a;
 
-  --color-ink-block: #a5c4d4;
-  --color-ink-fg: #493b2a;
+  --color-ink-block: #cad2c5;
+  --color-ink-fg: #2f3e46;
 }
 
 @theme inline {
