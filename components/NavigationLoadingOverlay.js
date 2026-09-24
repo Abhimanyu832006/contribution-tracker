@@ -14,8 +14,9 @@
 
 // Staggered start times across the audio-wave bars — a symmetric
 // ripple (outer bars lag the center) reads as a smoother, more natural
-// "wave" than a straight left-to-right sweep.
-const WAVE_BAR_DELAYS = [0.3, 0.15, 0, 0.15, 0.3];
+// "wave" than a straight left-to-right sweep. Proportioned to the
+// 1.6s cycle in globals.css (~25% of the cycle length).
+const WAVE_BAR_DELAYS = [0.4, 0.2, 0, 0.2, 0.4];
 
 export function NavigationLoadingOverlay({ label, icon, accent, textLight, overlayRef }) {
   const textClass = textLight ? "text-[var(--color-ink-fg)]" : "text-black";

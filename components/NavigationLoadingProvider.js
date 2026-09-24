@@ -18,9 +18,11 @@ import { NavigationLoadingOverlay } from "@/components/NavigationLoadingOverlay"
  * destination is already ready (e.g. a prefetched route resolving
  * near-instantly). Without this, a fast navigation would flash the
  * overlay on and immediately off — a genuine loading indicator needs to
- * be perceivable, not just technically correct.
+ * be perceivable, not just technically correct. Long enough to let the
+ * (now slower, 1.6s-cycle) audio-wave actually read as a wave rather
+ * than getting cut off mid-breath.
  */
-const MIN_DISPLAY_MS = 450;
+const MIN_DISPLAY_MS = 700;
 
 const REVEAL_FADE_MS = 200;
 
