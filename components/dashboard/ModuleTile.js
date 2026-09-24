@@ -41,8 +41,11 @@ function timeAgo(iso) {
 }
 
 /** A 7-day mini streak strip — GitHub-heatmap-flavored, comic-sized.
- * Each square's fill intensity reflects that day's contribution count. */
-function StreakRow({ days, accent, accentLight }) {
+ * Each square's fill intensity reflects that day's contribution count.
+ * Uses --color-surface (not accentLight) for the "some" tier since the
+ * tile's own resting background is accentLight now — filling a square
+ * with the same color as the card behind it would make it invisible. */
+function StreakRow({ days, accent }) {
   return (
     <div className="flex items-center gap-1" title="Last 7 days">
       {days.map((d) => (
@@ -51,7 +54,7 @@ function StreakRow({ days, accent, accentLight }) {
           title={`${d.date}: ${d.count} contribution${d.count === 1 ? "" : "s"}`}
           className="w-2.5 h-2.5 rounded-sm border border-[var(--color-border)]"
           style={{
-            background: d.count === 0 ? "transparent" : d.count === 1 ? accentLight : accent,
+            background: d.count === 0 ? "transparent" : d.count === 1 ? "var(--color-surface)" : accent,
           }}
         />
       ))}
@@ -191,8 +194,8 @@ export default function ModuleTile({ tile, onClick }) {
     >
       <div className="flex items-center justify-between">
         <span
-          className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center"
-          style={{ background: tile.accentLight }}
+          className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center border border-[var(--color-border)]"
+          style={{ background: "var(--color-surface)" }}
         >
           <svg
             className="w-5 h-5"
@@ -205,7 +208,7 @@ export default function ModuleTile({ tile, onClick }) {
           </svg>
         </span>
         {tile.streak?.length > 0 && (
-          <StreakRow days={tile.streak} accent={tile.accent} accentLight={tile.accentLight} />
+          <StreakRow days={tile.streak} accent={tile.accent} />
         )}
         <svg
           className="w-4 h-4 text-[var(--color-text-muted)]"
@@ -236,8 +239,8 @@ export default function ModuleTile({ tile, onClick }) {
         {tile.miniBar && <MiniBar segments={tile.miniBar} />}
         {tile.badge && (
           <span
-            className="inline-block mt-2 text-xs font-bold px-1.5 py-0.5 rounded"
-            style={{ background: tile.accentLight, color: tile.accent }}
+            className="inline-block mt-2 text-xs font-bold px-1.5 py-0.5 rounded border border-[var(--color-border)]"
+            style={{ background: "var(--color-surface)", color: tile.accent }}
           >
             {tile.badge}
           </span>
