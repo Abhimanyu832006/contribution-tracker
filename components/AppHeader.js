@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Avatar from "@/components/ui/Avatar";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -14,7 +14,12 @@ import ThemeToggle from "@/components/ThemeToggle";
  * while every other page used a "Home" back-link + centered project
  * switcher. Same geometry and the same three zones everywhere now:
  *
- *   [LEFT: app identity, links home] [CENTER: project switcher] [RIGHT: theme/avatar/sign out]
+ *   [LEFT: back button (non-home) + app identity, links home] [CENTER: project switcher] [RIGHT: theme/avatar/sign out]
+ *
+ * Rendered as a floating rounded card (the same brutal-card language as
+ * every other surface in the app) with a gap around it, rather than a
+ * flat, hard-edged strip glued to the very top of the viewport — that
+ * read as a disconnected bar rather than part of the page.
  *
  * Page-specific content (the dashboard's title card, a module's own
  * heading) lives below this, in the page itself — this component only
@@ -28,6 +33,8 @@ export default function AppHeader({
   accent = "var(--color-primary)",
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/dashboard";
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const dropdownRef = useRef(null);
@@ -66,29 +73,40 @@ export default function AppHeader({
   }
 
   return (
-    <header
-      className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-bg)]"
-      style={{ boxShadow: "var(--shadow-brutal-sm)" }}
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2.5 shrink-0 group"
-          aria-label="Contribution Tracker — home"
-          data-nav-label="Dashboard"
-        >
-          <span
-            className="w-9 h-9 rounded flex items-center justify-center border border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
-            style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
+    <div className="sticky top-3 sm:top-4 z-30 px-4 sm:px-8 pt-3 sm:pt-4">
+      <header className="brutal-card max-w-6xl mx-auto h-16 flex items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="flex items-center gap-2 min-w-0">
+          {!isHome && (
+            <Link
+              href="/dashboard"
+              aria-label="Back to dashboard"
+              data-nav-label="Dashboard"
+              className="w-9 h-9 shrink-0 rounded flex items-center justify-center border border-[var(--color-border)] bg-[var(--color-surface)] hover:bg-[var(--color-primary-light)] transition-colors"
+              style={{ boxShadow: "var(--shadow-brutal-sm)" }}
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+            </Link>
+          )}
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2.5 min-w-0 group"
+            aria-label="Contribution Tracker — home"
           >
-            <svg className="w-4.5 h-4.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-          </span>
-          <span className="hidden sm:inline text-sm font-bold uppercase tracking-wide">
-            Contribution Tracker
-          </span>
-        </Link>
+            <span
+              className="w-9 h-9 shrink-0 rounded flex items-center justify-center border border-[var(--color-border)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
+              style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
+            >
+              <svg className="w-4.5 h-4.5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </span>
+            <span className="hidden sm:inline text-sm font-bold uppercase tracking-wide truncate">
+              Contribution Tracker
+            </span>
+          </Link>
+        </div>
 
         <div className="relative flex-1 max-w-xs" ref={dropdownRef}>
           <button
@@ -167,7 +185,7 @@ export default function AppHeader({
             </svg>
           </button>
         </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }
