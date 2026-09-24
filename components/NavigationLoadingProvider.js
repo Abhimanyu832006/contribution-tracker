@@ -27,6 +27,7 @@ const MIN_DISPLAY_MS = 700;
 const REVEAL_FADE_MS = 200;
 
 const DEFAULT_ACCENT = "var(--color-primary)";
+const DEFAULT_ACCENT_LIGHT = "var(--color-primary-light)";
 const DEFAULT_LABEL = "Loading";
 const DEFAULT_ICON = (
   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -108,7 +109,7 @@ export default function NavigationLoadingProvider({ children }) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const [active, setActive] = useState(null); // { label, icon, accent, textLight } | null
+  const [active, setActive] = useState(null); // { label, icon, accent, accentLight } | null
   const [phase, setPhase] = useState("idle"); // idle | waiting-for-ready
 
   const busyRef = useRef(false);
@@ -194,7 +195,7 @@ export default function NavigationLoadingProvider({ children }) {
   }, [phase, pathname, isPending, revealDestination]);
 
   const beginTransition = useCallback(
-    ({ href, label, icon, accent, textLight }) => {
+    ({ href, label, icon, accent, accentLight }) => {
       if (busyRef.current) return;
 
       if (prefersReducedMotion()) {
@@ -210,7 +211,7 @@ export default function NavigationLoadingProvider({ children }) {
         label: label || DEFAULT_LABEL,
         icon: icon || DEFAULT_ICON,
         accent: accent || DEFAULT_ACCENT,
-        textLight: !!textLight,
+        accentLight: accentLight || DEFAULT_ACCENT_LIGHT,
       });
       setPhase("waiting-for-ready");
 
@@ -323,7 +324,7 @@ export default function NavigationLoadingProvider({ children }) {
         label: labelForPath(newPath),
         icon: DEFAULT_ICON,
         accent: DEFAULT_ACCENT,
-        textLight: false,
+        accentLight: DEFAULT_ACCENT_LIGHT,
       });
       setPhase("waiting-for-ready");
     }
@@ -342,7 +343,7 @@ export default function NavigationLoadingProvider({ children }) {
             label={active.label}
             icon={active.icon}
             accent={active.accent}
-            textLight={active.textLight}
+            accentLight={active.accentLight}
             overlayRef={overlayRef}
           />,
           document.body,

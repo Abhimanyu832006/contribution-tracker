@@ -30,7 +30,7 @@ export default function ModuleTransitionController({ tiles, header, statStrip, b
         label: tile.label,
         icon: tile.icon,
         accent: tile.accent,
-        textLight: tile.textLight,
+        accentLight: tile.accentLight,
       });
     },
     [router, beginTransition],

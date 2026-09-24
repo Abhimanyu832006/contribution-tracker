@@ -1,26 +1,23 @@
 "use client";
 
 /**
- * Neo-brutalist loading screen shown for EVERY in-app navigation —
- * thick borders, hard offset shadow, flat color blocks, no blur,
- * matching the rest of the app's design system. Dashboard tile clicks
- * pass their own icon/accent/label for a richer, module-specific look;
- * every other in-app link (caught by the global click listener in
- * NavigationLoadingProvider.js) gets a generic icon and the app's
- * primary accent. No shared-element illusion here: the overlay just
- * covers the screen immediately and gets out of the way once the
- * destination is actually ready.
+ * Modern loading screen shown for EVERY in-app navigation — a neutral
+ * card with a small tinted icon badge, soft shadow, matching the rest
+ * of the app's restrained, contemporary design system. Dashboard tile
+ * clicks pass their own icon/accent/accentLight/label for a richer,
+ * module-specific look; every other in-app link (caught by the global
+ * click listener in NavigationLoadingProvider.js) gets a generic icon
+ * and the app's primary accent. No shared-element illusion here: the
+ * overlay just covers the screen immediately and gets out of the way
+ * once the destination is actually ready.
  */
 
 // Staggered start times across the audio-wave bars — a symmetric
 // ripple (outer bars lag the center) reads as a smoother, more natural
-// "wave" than a straight left-to-right sweep. Proportioned to the
-// 1.6s cycle in globals.css (~25% of the cycle length).
+// "wave" than a straight left-to-right sweep.
 const WAVE_BAR_DELAYS = [0.4, 0.2, 0, 0.2, 0.4];
 
-export function NavigationLoadingOverlay({ label, icon, accent, textLight, overlayRef }) {
-  const textClass = textLight ? "text-[var(--color-ink-fg)]" : "text-black";
-
+export function NavigationLoadingOverlay({ label, icon, accent, accentLight, overlayRef }) {
   return (
     <div
       ref={overlayRef}
@@ -37,14 +34,14 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
       <div className="brutal-card p-6 sm:p-7" style={{ width: "min(90vw, 360px)" }}>
         <div className="flex items-center gap-3">
           <span
-            className="w-11 h-11 shrink-0 flex items-center justify-center border border-[var(--color-border)] rounded-xl"
-            style={{ background: accent, boxShadow: "var(--shadow-brutal-sm)" }}
+            className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl"
+            style={{ background: accentLight }}
           >
             <svg
-              className={`w-5.5 h-5.5 ${textClass}`}
+              className="w-5.5 h-5.5"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke={accent}
               strokeWidth={1.75}
             >
               {icon}
@@ -52,7 +49,7 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
           </span>
           <div className="min-w-0">
             <p className="label-mono text-[var(--color-text-muted)]">Opening</p>
-            <p className="text-lg font-black uppercase tracking-tight truncate">{label}</p>
+            <p className="text-lg font-bold text-[var(--color-text-primary)] truncate">{label}</p>
           </div>
         </div>
 
@@ -60,7 +57,7 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
           {WAVE_BAR_DELAYS.map((delay, i) => (
             <div
               key={i}
-              className="audio-wave-bar w-2 h-full border border-[var(--color-border)]"
+              className="audio-wave-bar w-2 h-full"
               style={{ background: accent, animationDelay: `${delay}s` }}
             />
           ))}
