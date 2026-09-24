@@ -11,11 +11,46 @@ import ThemeToggle from "@/components/ThemeToggle";
  */
 export default function HomeHeader({ projectName, repoOwner, repoName, user }) {
   return (
-    <header className="relative border-b border-[var(--color-border)] dot-bg overflow-hidden">
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 flex items-end justify-between gap-4">
-        <div className="min-w-0 animate-rise-in">
-          <p className="label-mono text-[var(--color-primary)]">Contribution Tracker</p>
-          <h1 className="hero-display text-4xl sm:text-6xl truncate mt-1 text-[var(--color-text-primary)]">
+    <header className="relative border-b border-[var(--color-border)] overflow-hidden">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 pt-6 pb-8 sm:pt-8 sm:pb-12">
+        {/* Brand row — the actual product name, unambiguous and legible
+            on its own line, decoupled from the stylized project-name
+            headline below it (which used to double as the only "title"
+            on the page and crowded the product name out entirely). */}
+        <div className="flex items-center justify-between gap-4 animate-rise-in">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span
+              className="w-8 h-8 shrink-0 rounded flex items-center justify-center border border-[var(--color-border)]"
+              style={{ background: "var(--color-primary)", boxShadow: "var(--shadow-brutal-sm)" }}
+            >
+              <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </span>
+            <p className="text-sm sm:text-base font-bold uppercase tracking-wide truncate text-[var(--color-text-primary)]">
+              Contribution Tracker
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <ThemeToggle />
+            <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="md" />
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="p-2 border border-transparent hover:border-[var(--color-border)] rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+              title="Sign out"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Project name — still the big stylized headline, now with room
+            of its own instead of competing with the brand row above it. */}
+        <div className="mt-6 sm:mt-8 animate-rise-in" style={{ animationDelay: "60ms" }}>
+          <h1 className="hero-display text-4xl sm:text-5xl truncate text-[var(--color-text-primary)]">
             {projectName || "Your project"}
           </h1>
           {repoOwner && repoName ? (
@@ -35,20 +70,6 @@ export default function HomeHeader({ projectName, repoOwner, repoName, user }) {
               No repository linked — connect one in Settings
             </a>
           )}
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 animate-rise-in" style={{ animationDelay: "80ms" }}>
-          <ThemeToggle />
-          <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="md" />
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="p-2 border border-transparent hover:border-[var(--color-border)] rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-            title="Sign out"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-            </svg>
-          </button>
         </div>
       </div>
     </header>

@@ -14,7 +14,7 @@ export default async function AppLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen dot-bg">
+    <div className="min-h-screen">
       <AppChrome
         user={{
           githubUsername: session.user.githubUsername,

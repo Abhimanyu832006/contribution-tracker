@@ -187,31 +187,14 @@
 }
 
 /* ── Base ──────────────────────────────────────────────────── */
-/* Halftone paper texture — shared by body and any full-bleed section
-   (headers, sticky bars, page wrappers) that would otherwise paint an
-   opaque flat color over it and hide the dots. Kept sparse (28px grid,
-   small faint dot) so it reads as paper grain, not a busy pattern. */
-body,
-.dot-bg {
-  background-color: var(--color-bg);
-  background-image: radial-gradient(var(--color-border) 0.9px, transparent 1px);
-  background-size: 28px 28px;
-}
+/* The scattered, cursor-reactive dot paper texture is painted by the
+   <DotField> canvas (components/DotField.js) — a fixed, full-viewport
+   layer behind everything (z-index: -1). body keeps a flat fallback
+   fill in case JS hasn't run yet / is disabled. */
 body {
+  background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-sans-ui);
-}
-:root:not([data-theme="light"]) body,
-:root:not([data-theme="light"]) .dot-bg,
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] .dot-bg {
-  background-image: radial-gradient(rgba(245, 245, 240, 0.14) 0.9px, transparent 1px);
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) body,
-  :root:not([data-theme="dark"]) .dot-bg {
-    background-image: radial-gradient(var(--color-border) 0.9px, transparent 1px);
-  }
 }
 
 /* ── Utilities ─────────────────────────────────────────────── */

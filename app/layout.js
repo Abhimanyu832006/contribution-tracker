@@ -1,5 +1,6 @@
 import { Bangers, Comic_Neue } from "next/font/google";
 import SessionProvider from "@/components/SessionProvider";
+import DotField from "@/components/DotField";
 import "./globals.css";
 
 const comicNeue = Comic_Neue({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col font-sans">
+        <DotField />
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
