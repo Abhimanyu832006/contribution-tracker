@@ -7,7 +7,7 @@ import ModuleTile from "./ModuleTile";
  * doesn't do shared-element positioning. */
 export default function ModuleGrid({ tiles, onTileClick }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-[140px] sm:auto-rows-[160px] gap-3 sm:gap-4 stagger-children">
+    <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-[168px] sm:auto-rows-[188px] gap-3 sm:gap-4 stagger-children">
       {tiles.map((tile) => (
         <ModuleTile key={tile.href} tile={tile} onClick={(e) => onTileClick(e, tile)} />
       ))}

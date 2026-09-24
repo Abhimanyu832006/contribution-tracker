@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Avatar from "@/components/ui/Avatar";
 
 /**
  * A single bento tile — pure presentation. No ref forwarding needed;
@@ -58,11 +59,57 @@ function StreakRow({ days, accent, accentLight }) {
   );
 }
 
+/** Small overlapping avatar stack — used by the Team tile so its
+ * generous row-span-1 footprint shows real faces, not just a count. */
+function AvatarStack({ members, overflow }) {
+  return (
+    <div className="flex items-center -space-x-2 mt-2">
+      {members.map((m) => (
+        <Avatar
+          key={m.id}
+          src={m.avatar_url}
+          name={m.github_username}
+          size="xs"
+          className="ring-2 ring-[var(--color-surface)]"
+        />
+      ))}
+      {overflow > 0 && (
+        <span
+          className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ring-2 ring-[var(--color-surface)] border border-[var(--color-border)]"
+          style={{ background: "var(--color-team-light)", color: "var(--color-team)" }}
+        >
+          +{overflow}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** A thin segmented proportion bar — used by the Peer Verification tile
+ * to show the pending/verified/flagged split at a glance instead of
+ * just the pending count sitting alone in a mostly-empty card. */
+function MiniBar({ segments }) {
+  const total = segments.reduce((sum, s) => sum + s.value, 0);
+  if (total === 0) {
+    return <div className="h-1.5 rounded-full mt-2.5 border border-[var(--color-border)]" />;
+  }
+  return (
+    <div className="h-1.5 rounded-full overflow-hidden flex mt-2.5 border border-[var(--color-border)]">
+      {segments.map(
+        (s, i) =>
+          s.value > 0 && (
+            <span key={i} style={{ width: `${(s.value / total) * 100}%`, background: s.color }} />
+          )
+      )}
+    </div>
+  );
+}
+
 /** Compact comic-styled activity timeline, used only by the large
  * Contributions tile — fills the space that used to just sit empty. */
 function ActivityStream({ items }) {
   return (
-    <div className="flex-1 min-h-0 overflow-hidden flex flex-col justify-center gap-2 py-1">
+    <div className="flex-1 min-h-0 overflow-hidden flex flex-col justify-start pt-2 gap-2.5">
       {items.map((a) => {
         const meta = STATUS_META[a.status] || STATUS_META.pending;
         const isGithub = a.source === "github";
@@ -184,6 +231,18 @@ export default function ModuleTile({ tile, onClick }) {
         <p className="text-sm font-semibold mt-0.5 truncate text-[var(--color-text-muted)]">
           {tile.sub || tile.statLabel}
         </p>
+        {tile.avatars?.length > 0 && (
+          <AvatarStack members={tile.avatars} overflow={tile.avatarOverflow || 0} />
+        )}
+        {tile.miniBar && <MiniBar segments={tile.miniBar} />}
+        {tile.badge && (
+          <span
+            className="inline-block mt-2 text-xs font-bold px-1.5 py-0.5 rounded"
+            style={{ background: tile.accentLight, color: tile.accent }}
+          >
+            {tile.badge}
+          </span>
+        )}
       </div>
     </Link>
   );
