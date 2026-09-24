@@ -442,14 +442,22 @@ body {
   font-family: var(--font-comic-display);
   font-weight: 400;
   /* Bangers' counters are tight enough that a 4-letter project name
-     blobbed together even with a hairline stroke — this time the fix
-     is generous tracking instead of a stroke, so letters get real
-     separation without an outline thickening them back together. */
+     blobbed together even with a hairline stroke on tight tracking —
+     the wide 0.09em tracking here gives each letter enough of its own
+     room that a stroke no longer fuses them back together. */
   letter-spacing: 0.09em;
   line-height: 1.05;
   text-transform: uppercase;
-  color: var(--color-text-primary);
-  text-shadow: 2px 2px 0 var(--color-border);
+  /* Action-comic title treatment: a slight dynamic tilt, a bold "hot"
+     fill instead of plain ink, and a layered black-outline-plus-color
+     shadow — the classic two-tone comic-explosion look on a POW/BAM
+     logo, rather than a flat brutalist headline. */
+  transform: rotate(-3deg);
+  color: var(--color-danger);
+  -webkit-text-stroke: 1.25px var(--color-border);
+  text-shadow:
+    3px 3px 0 var(--color-border),
+    6px 6px 0 var(--color-warning);
 }
 
 .link-sweep {

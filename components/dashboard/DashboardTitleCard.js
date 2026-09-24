@@ -10,7 +10,7 @@ export default function DashboardTitleCard({ projectName, repoOwner, repoName })
   return (
     <div className="brutal-card inline-block max-w-full px-5 py-4 sm:px-6 sm:py-5 mb-4 sm:mb-6 animate-rise-in">
       <p className="label-mono text-[var(--color-primary)]">Contribution Tracker</p>
-      <h1 className="hero-display text-2xl sm:text-3xl mt-1 max-w-full truncate">
+      <h1 className="hero-display text-2xl sm:text-3xl mt-2 mb-3 pr-3 pb-2 max-w-full truncate">
         {projectName || "Your project"}
       </h1>
       {repoOwner && repoName ? (
