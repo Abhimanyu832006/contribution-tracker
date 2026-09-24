@@ -1,10 +1,17 @@
-import { Inter } from "next/font/google";
+import { Bangers, Comic_Neue } from "next/font/google";
 import SessionProvider from "@/components/SessionProvider";
 import "./globals.css";
 
-const inter = Inter({
+const comicNeue = Comic_Neue({
   subsets: ["latin"],
+  weight: ["400", "700"],
   variable: "--font-sans-ui",
+});
+
+const bangers = Bangers({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-comic-display",
 });
 
 const siteUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
@@ -47,7 +54,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${comicNeue.variable} ${bangers.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

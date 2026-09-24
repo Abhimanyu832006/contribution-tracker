@@ -1,70 +1,71 @@
 @import "tailwindcss";
 
 /* ── Design tokens ──────────────────────────────────────────────
-   Modern SaaS dashboard system — neutral gray/white surfaces (near-
-   black/dark-gray in dark mode), hairline borders, soft barely-there
-   elevation. Color is used sparingly and deliberately: each module
-   gets a small tinted icon badge (accent-light background, accent
-   foreground), not a full-bleed colored tile — the kind of restrained,
-   confident color use seen in contemporary tools like Linear, Vercel,
-   and Stripe's dashboard, rather than a colorful "poster" layout. */
+   Comic-book system — thick black ink outlines, hard offset "pow"
+   shadows (no blur, solid color), a halftone-dot paper background,
+   punchy primary-color accents, and a display font (Bangers) for
+   headlines/stats that reads like comic lettering. Every module
+   keeps its own bold accent, now used as a real ink color rather
+   than a muted tint. */
 :root {
-  --font-sans-ui: "Inter", system-ui, -apple-system, sans-serif;
+  /* --font-sans-ui and --font-comic-display are supplied by next/font
+     (Comic Neue / Bangers) via the variable classes on <html> in
+     layout.js — not redeclared here. */
   --font-mono-ui: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
 
-  /* Neutral surfaces + ink */
-  --color-bg: #f6f7f8;
+  /* Paper + ink */
+  --color-bg: #fdf6e3;
   --color-surface: #ffffff;
-  --color-border: #e5e7eb;
-  --color-border-strong: #d1d5db;
+  --color-border: #14141a;
+  --color-border-strong: #000000;
 
-  --color-text-primary: #18181b;
-  --color-text-secondary: #52525b;
-  --color-text-muted: #8b8b93;
+  --color-text-primary: #14141a;
+  --color-text-secondary: #3f3f46;
+  --color-text-muted: #6b6b76;
 
-  /* Signature accent (primary actions) */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-primary-light: #eef2ff;
+  /* Signature accent (primary actions) — comic blue */
+  --color-primary: #1e6fff;
+  --color-primary-hover: #0f52d9;
+  --color-primary-light: #d9e9ff;
 
-  --color-sidebar: #18181b;
-  --color-sidebar-hover: #27272a;
+  --color-sidebar: #14141a;
+  --color-sidebar-hover: #2a2a33;
 
-  /* Module accent — a small tinted badge per module, not a tile fill */
-  --color-contributions: #4f46e5;
-  --color-contributions-light: #eef2ff;
-  --color-verification: #059669;
-  --color-verification-light: #ecfdf5;
-  --color-reports: #d97706;
-  --color-reports-light: #fffbeb;
-  --color-settings: #7c3aed;
-  --color-settings-light: #f5f3ff;
-  --color-team: #e11d48;
-  --color-team-light: #fff1f2;
+  /* Module accent — bold comic-panel colors, used as real ink now */
+  --color-contributions: #1e6fff;
+  --color-contributions-light: #d9e9ff;
+  --color-verification: #12b76a;
+  --color-verification-light: #d3f8e4;
+  --color-reports: #ff8a00;
+  --color-reports-light: #ffe6c2;
+  --color-settings: #9a3dff;
+  --color-settings-light: #ecdcff;
+  --color-team: #ff3366;
+  --color-team-light: #ffdce6;
 
   /* Source colors — used sparingly, as small tags/dots, not full blocks */
-  --color-github: #4f46e5;
-  --color-github-light: #eef2ff;
-  --color-manual: #e11d48;
-  --color-manual-light: #fff1f2;
+  --color-github: #1e6fff;
+  --color-github-light: #d9e9ff;
+  --color-manual: #ff3366;
+  --color-manual-light: #ffdce6;
 
   /* Status */
-  --color-success: #16a34a;
-  --color-success-light: #f0fdf4;
-  --color-warning: #d97706;
-  --color-warning-light: #fffbeb;
-  --color-danger: #dc2626;
-  --color-danger-light: #fef2f2;
+  --color-success: #12b76a;
+  --color-success-light: #d3f8e4;
+  --color-warning: #ff8a00;
+  --color-warning-light: #ffe6c2;
+  --color-danger: #ff2d4c;
+  --color-danger-light: #ffdde2;
 
   /* The "Log Contribution" tile is the one bold, filled CTA card among
-     otherwise neutral cards — flips in dark mode */
-  --color-ink-block: #4f46e5;
-  --color-ink-fg: #ffffff;
+     otherwise neutral cards — a comic "POW" yellow burst */
+  --color-ink-block: #ffde00;
+  --color-ink-fg: #14141a;
 
-  /* Soft, barely-there elevation — not a poster shadow */
-  --shadow-brutal-sm: 0 1px 2px rgba(24, 24, 27, 0.04);
-  --shadow-brutal: 0 1px 3px rgba(24, 24, 27, 0.06), 0 4px 8px rgba(24, 24, 27, 0.04);
-  --shadow-brutal-lg: 0 4px 12px rgba(24, 24, 27, 0.08), 0 12px 24px rgba(24, 24, 27, 0.06);
+  /* Hard offset comic shadows — solid, no blur */
+  --shadow-brutal-sm: 2px 2px 0 0 var(--color-border);
+  --shadow-brutal: 4px 4px 0 0 var(--color-border);
+  --shadow-brutal-lg: 7px 7px 0 0 var(--color-border);
 
   /* Legacy aliases */
   --color-accent: var(--color-primary);
@@ -88,86 +89,94 @@
    media-query-guarded selector and a plain attribute selector. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #0a0a0b;
-    --color-surface: #18181b;
-    --color-border: #27272a;
-    --color-border-strong: #3f3f46;
+    --color-bg: #0e0e13;
+    --color-surface: #1b1b22;
+    --color-border: #f5f5f0;
+    --color-border-strong: #ffffff;
 
-    --color-text-primary: #f4f4f5;
-    --color-text-secondary: #a1a1aa;
-    --color-text-muted: #71717a;
+    --color-text-primary: #f5f5f0;
+    --color-text-secondary: #c7c7d1;
+    --color-text-muted: #8b8b96;
 
-    --color-primary: #818cf8;
-    --color-primary-hover: #a5b4fc;
-    --color-primary-light: #1e1b4b;
+    --color-primary: #5b9dff;
+    --color-primary-hover: #85b7ff;
+    --color-primary-light: #16283f;
 
-    --color-contributions: #818cf8;
-    --color-contributions-light: #1e1b4b;
-    --color-verification: #34d399;
-    --color-verification-light: #052e1f;
-    --color-reports: #fbbf24;
-    --color-reports-light: #3d2c06;
-    --color-settings: #a78bfa;
-    --color-settings-light: #2e1a4d;
-    --color-team: #fb7185;
-    --color-team-light: #3d1420;
+    --color-contributions: #5b9dff;
+    --color-contributions-light: #16283f;
+    --color-verification: #3ddc94;
+    --color-verification-light: #0f3324;
+    --color-reports: #ffab40;
+    --color-reports-light: #3f2a0a;
+    --color-settings: #c084fc;
+    --color-settings-light: #2f1f47;
+    --color-team: #ff6f91;
+    --color-team-light: #3f1826;
 
-    --color-github: #818cf8;
-    --color-github-light: #1e1b4b;
-    --color-manual: #fb7185;
-    --color-manual-light: #3d1420;
+    --color-github: #5b9dff;
+    --color-github-light: #16283f;
+    --color-manual: #ff6f91;
+    --color-manual-light: #3f1826;
 
-    --color-success: #4ade80;
-    --color-success-light: #0d2818;
-    --color-warning: #fbbf24;
-    --color-warning-light: #3d2c06;
-    --color-danger: #f87171;
-    --color-danger-light: #3d1414;
+    --color-success: #3ddc94;
+    --color-success-light: #0f3324;
+    --color-warning: #ffab40;
+    --color-warning-light: #3f2a0a;
+    --color-danger: #ff5c72;
+    --color-danger-light: #3f1620;
 
-    --color-ink-block: #6366f1;
-    --color-ink-fg: #f4f4f5;
+    --color-ink-block: #ffde00;
+    --color-ink-fg: #14141a;
+
+    --shadow-brutal-sm: 2px 2px 0 0 rgba(255, 255, 255, 0.85);
+    --shadow-brutal: 4px 4px 0 0 rgba(255, 255, 255, 0.85);
+    --shadow-brutal-lg: 7px 7px 0 0 rgba(255, 255, 255, 0.85);
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #0a0a0b;
-  --color-surface: #18181b;
-  --color-border: #27272a;
-  --color-border-strong: #3f3f46;
+  --color-bg: #0e0e13;
+  --color-surface: #1b1b22;
+  --color-border: #f5f5f0;
+  --color-border-strong: #ffffff;
 
-  --color-text-primary: #f4f4f5;
-  --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
+  --color-text-primary: #f5f5f0;
+  --color-text-secondary: #c7c7d1;
+  --color-text-muted: #8b8b96;
 
-  --color-primary: #818cf8;
-  --color-primary-hover: #a5b4fc;
-  --color-primary-light: #1e1b4b;
+  --color-primary: #5b9dff;
+  --color-primary-hover: #85b7ff;
+  --color-primary-light: #16283f;
 
-  --color-contributions: #818cf8;
-  --color-contributions-light: #1e1b4b;
-  --color-verification: #34d399;
-  --color-verification-light: #052e1f;
-  --color-reports: #fbbf24;
-  --color-reports-light: #3d2c06;
-  --color-settings: #a78bfa;
-  --color-settings-light: #2e1a4d;
-  --color-team: #fb7185;
-  --color-team-light: #3d1420;
+  --color-contributions: #5b9dff;
+  --color-contributions-light: #16283f;
+  --color-verification: #3ddc94;
+  --color-verification-light: #0f3324;
+  --color-reports: #ffab40;
+  --color-reports-light: #3f2a0a;
+  --color-settings: #c084fc;
+  --color-settings-light: #2f1f47;
+  --color-team: #ff6f91;
+  --color-team-light: #3f1826;
 
-  --color-github: #818cf8;
-  --color-github-light: #1e1b4b;
-  --color-manual: #fb7185;
-  --color-manual-light: #3d1420;
+  --color-github: #5b9dff;
+  --color-github-light: #16283f;
+  --color-manual: #ff6f91;
+  --color-manual-light: #3f1826;
 
-  --color-success: #4ade80;
-  --color-success-light: #0d2818;
-  --color-warning: #fbbf24;
-  --color-warning-light: #3d2c06;
-  --color-danger: #f87171;
-  --color-danger-light: #3d1414;
+  --color-success: #3ddc94;
+  --color-success-light: #0f3324;
+  --color-warning: #ffab40;
+  --color-warning-light: #3f2a0a;
+  --color-danger: #ff5c72;
+  --color-danger-light: #3f1620;
 
-  --color-ink-block: #6366f1;
-  --color-ink-fg: #f4f4f5;
+  --color-ink-block: #ffde00;
+  --color-ink-fg: #14141a;
+
+  --shadow-brutal-sm: 2px 2px 0 0 rgba(255, 255, 255, 0.85);
+  --shadow-brutal: 4px 4px 0 0 rgba(255, 255, 255, 0.85);
+  --shadow-brutal-lg: 7px 7px 0 0 rgba(255, 255, 255, 0.85);
 }
 
 @theme inline {
@@ -179,32 +188,45 @@
 
 /* ── Base ──────────────────────────────────────────────────── */
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: radial-gradient(var(--color-border) 1.1px, transparent 1.1px);
+  background-size: 16px 16px;
   color: var(--color-text-primary);
   font-family: var(--font-sans-ui);
 }
+:root:not([data-theme="light"]) body,
+:root[data-theme="dark"] body {
+  background-image: radial-gradient(rgba(245, 245, 240, 0.16) 1.1px, transparent 1.1px);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) body {
+    background-image: radial-gradient(var(--color-border) 1.1px, transparent 1.1px);
+  }
+}
 
 /* ── Utilities ─────────────────────────────────────────────── */
-.rule-t { border-top: 1px solid var(--color-border); }
-.rule-b { border-bottom: 1px solid var(--color-border); }
-.rule-l { border-left: 1px solid var(--color-border); }
-.rule-r { border-right: 1px solid var(--color-border); }
-.rule-strong-b { border-bottom: 1px solid var(--color-border-strong); }
+.rule-t { border-top: 2px solid var(--color-border); }
+.rule-b { border-bottom: 2px solid var(--color-border); }
+.rule-l { border-left: 2px solid var(--color-border); }
+.rule-r { border-right: 2px solid var(--color-border); }
+.rule-strong-b { border-bottom: 2px solid var(--color-border-strong); }
 
 .label-mono {
-  font-family: var(--font-mono-ui);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
+  font-family: var(--font-comic-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
 .stat-num {
-  font-family: var(--font-sans-ui);
-  font-weight: 700;
+  font-family: var(--font-comic-display);
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
+  -webkit-text-stroke: 0.75px var(--color-border);
+  text-shadow: 1.5px 1.5px 0 var(--color-border);
 }
 
 /* Small solid status chip — used only for resolved verification state */
@@ -212,64 +234,68 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-family: var(--font-comic-display);
+  font-size: 0.8rem;
+  font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0.25em 0.65em;
+  padding: 0.2em 0.75em;
   border-radius: 9999px;
+  border: 2px solid var(--color-border);
 }
 
 /* ── Card/tile/button primitives ────────────────────────────────
-   Thin hairline borders + soft blurred elevation, rounded corners —
-   deliberately NOT the earlier thick-border/hard-offset-shadow look.
-   Class names kept as .brutal-* to avoid touching every call site;
-   only their visual implementation changed. */
+   Comic-panel look: thick black ink border, hard offset "pow" shadow
+   (no blur), and a bouncy hover/press that reads like a panel popping
+   off the page. Class names kept as .brutal-* to avoid touching every
+   call site; only their visual implementation changed. */
 .brutal-border {
-  border: 1px solid var(--color-border);
+  border: 2.5px solid var(--color-border);
 }
 
 .brutal-card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 2.5px solid var(--color-border);
   box-shadow: var(--shadow-brutal-sm);
-  border-radius: 16px;
+  border-radius: 14px;
 }
 
 .brutal-tile {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-brutal-sm);
-  border-radius: 16px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  border: 2.5px solid var(--color-border);
+  box-shadow: var(--shadow-brutal);
+  border-radius: 14px;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
 }
 
 .brutal-tile:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-brutal);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-lg);
 }
 
 .brutal-tile:active {
-  transform: translateY(0);
+  transform: translate(2px, 2px);
   box-shadow: var(--shadow-brutal-sm);
 }
 
 .brutal-btn {
-  border: 1px solid var(--color-border);
-  box-shadow: none;
+  border: 2.5px solid var(--color-border);
+  box-shadow: var(--shadow-brutal-sm);
   border-radius: 10px;
-  font-weight: 600;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  font-family: var(--font-comic-display);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
 }
 
 .brutal-btn:hover {
-  border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-brutal-sm);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-brutal);
 }
 
 .brutal-btn:active {
-  transform: translateY(1px);
+  transform: translate(2px, 2px);
   box-shadow: none;
 }
 
@@ -278,26 +304,26 @@ body {
 .brutal-shadow-lg { box-shadow: var(--shadow-brutal-lg); }
 
 .brutal-tile-hover {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
 }
 .brutal-tile-hover:hover {
-  transform: translateY(-2px);
+  transform: translate(-2px, -2px);
   box-shadow: var(--shadow-brutal);
 }
 
 /* ── Animations ────────────────────────────────────────────── */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-10px); }
+  from { opacity: 0; transform: translateX(-14px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: scale(0.85); }
   to   { opacity: 1; transform: scale(1); }
 }
 
@@ -315,19 +341,20 @@ body {
 .audio-wave-bar {
   transform-origin: bottom;
   border-radius: 3px;
+  border: 2px solid var(--color-border);
   animation: audio-wave 1.6s ease-in-out infinite;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.35s ease-out both;
+  animation: fade-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .animate-slide-in {
-  animation: slide-in-left 0.3s ease-out both;
+  animation: slide-in-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .animate-scale-in {
-  animation: scale-in 0.25s ease-out both;
+  animation: scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* Staggered children animation */
@@ -362,30 +389,24 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--color-border) 0,
-    var(--color-border) 1px,
-    transparent 1px,
-    transparent 33.33%
-  );
-  opacity: 0.6;
+  background-image: radial-gradient(var(--color-border) 1.6px, transparent 1.8px);
+  background-size: 20px 20px;
+  opacity: 0.5;
 }
 .brand-grid::after {
-  background-image: repeating-linear-gradient(
-    0deg,
-    var(--color-border) 0,
-    var(--color-border) 1px,
-    transparent 1px,
-    transparent 100%
-  );
-  opacity: 0.5;
+  background-size: 20px 20px;
+  background-position: 10px 10px;
+  opacity: 0.35;
 }
 
 .hero-display {
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 0.95;
+  font-family: var(--font-comic-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1.5px var(--color-border);
+  text-shadow: 3px 3px 0 var(--color-border);
 }
 
 .link-sweep {
@@ -396,24 +417,24 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -2px;
+  bottom: -3px;
   width: 100%;
-  height: 1.5px;
+  height: 2.5px;
   background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .link-sweep:hover::after {
   transform: scaleX(1);
 }
 
 @keyframes rise-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px) rotate(-1deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); }
 }
 .animate-rise-in {
-  animation: rise-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: rise-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* ── Scrollbar styling ─────────────────────────────────────── */
