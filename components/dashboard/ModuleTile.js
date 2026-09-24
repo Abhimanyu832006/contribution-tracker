@@ -7,12 +7,10 @@ import Avatar from "@/components/ui/Avatar";
  * A single bento tile — pure presentation. No ref forwarding needed;
  * the loading-overlay transition model doesn't measure tile geometry.
  *
- * Each module gets a barely-there tinted surface of its own accent
- * (see .module-tile-* in globals.css) rather than a full-bleed colored
- * fill — color used as an identity, not a background. The one
- * exception is a `cta` tile (Log Contribution), which stays a bold
- * filled card since it's meant to read as the dashboard's one primary
- * action among otherwise neutral-surfaced info cards.
+ * Every tile — including Log Contribution — gets the same tinted-
+ * surface treatment (see .module-tile-* in globals.css): color used as
+ * an identity via the resting tint, icon badge, and accent stat, never
+ * a full-bleed filled card.
  */
 const MODULE_TILE_CLASS = {
   contributions: "module-tile-contributions",
@@ -20,6 +18,7 @@ const MODULE_TILE_CLASS = {
   reports: "module-tile-reports",
   team: "module-tile-team",
   settings: "module-tile-settings",
+  log: "module-tile-log",
 };
 
 const STATUS_META = {
@@ -144,46 +143,6 @@ function ActivityStream({ items }) {
 }
 
 export default function ModuleTile({ tile, onClick }) {
-  if (tile.cta) {
-    return (
-      <Link
-        href={tile.href}
-        onClick={onClick}
-        className={`brutal-tile overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${tile.big}`}
-        style={{ background: tile.accent, borderColor: "transparent" }}
-      >
-        <div className="flex items-start justify-between">
-          {/* One action icon, not two — a solid ink-colored badge (not
-              a bare stroked "+") so it reads as a real button glyph. */}
-          <span
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center"
-            style={{ background: "var(--color-ink-fg)" }}
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke={tile.accent} strokeWidth={2.25}>
-              {tile.icon}
-            </svg>
-          </span>
-          {/* High-contrast circular arrow badge instead of a low-contrast
-              stroked arrow floating directly on the yellow fill. */}
-          <span
-            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center"
-            style={{ background: "var(--color-ink-fg)" }}
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke={tile.accent} strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </span>
-        </div>
-        <div>
-          <p className="text-lg sm:text-xl font-bold text-[var(--color-ink-fg)]">{tile.label}</p>
-          <p className="text-sm font-semibold mt-1 text-[var(--color-ink-fg)]/80">
-            {tile.sub || tile.statLabel}
-          </p>
-        </div>
-      </Link>
-    );
-  }
-
   const moduleClass = MODULE_TILE_CLASS[tile.key] || "";
 
   return (

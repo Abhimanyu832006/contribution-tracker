@@ -60,12 +60,12 @@
   --color-danger: #ff2d4c;
   --color-danger-light: #ffdde2;
 
-  /* The "Log Contribution" tile is the one bold, filled CTA card among
-     otherwise neutral cards — a warm goldenrod/amber, not stark neon
-     yellow, so it reads as a calibrated hero action rather than an
-     ungrounded highlighter shock against the rest of the palette. */
+  /* Log Contribution's own accent — a warm goldenrod/amber, kept
+     distinct from Reports' orange. Styled like every other module tile
+     now (tinted resting bg, icon badge, accent stat) rather than a
+     full-bleed filled card. */
   --color-ink-block: #fbbf24;
-  --color-ink-fg: #14141a;
+  --color-ink-block-light: #fff3c4;
 
   /* Hard offset comic shadows — solid, no blur */
   --shadow-brutal-sm: 2px 2px 0 0 var(--color-border);
@@ -134,7 +134,7 @@
     --color-danger-light: #40102a;
 
     --color-ink-block: #f59e0b;
-    --color-ink-fg: #050505;
+    --color-ink-block-light: #3d2f06;
 
     --shadow-brutal-sm: 2px 2px 0 0 rgba(240, 246, 252, 0.85);
     --shadow-brutal: 4px 4px 0 0 rgba(240, 246, 252, 0.85);
@@ -180,7 +180,7 @@
   --color-danger-light: #40102a;
 
   --color-ink-block: #f59e0b;
-  --color-ink-fg: #050505;
+  --color-ink-block-light: #3d2f06;
 
   --shadow-brutal-sm: 2px 2px 0 0 rgba(240, 246, 252, 0.85);
   --shadow-brutal: 4px 4px 0 0 rgba(240, 246, 252, 0.85);
@@ -326,6 +326,13 @@ body {
 .brutal-tile.module-tile-settings:active {
   background: color-mix(in srgb, var(--color-settings) 35%, var(--color-settings-light));
   border-color: var(--color-settings);
+}
+
+.module-tile-log { background: var(--color-ink-block-light); }
+.brutal-tile.module-tile-log:hover,
+.brutal-tile.module-tile-log:active {
+  background: color-mix(in srgb, var(--color-ink-block) 35%, var(--color-ink-block-light));
+  border-color: var(--color-ink-block);
 }
 
 .brutal-btn {

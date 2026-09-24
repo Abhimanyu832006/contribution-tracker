@@ -173,7 +173,7 @@ export default async function DashboardPage() {
       href: "/log",
       label: "Log Contribution",
       accent: "var(--color-ink-block)",
-      cta: true,
+      accentLight: "var(--color-ink-block-light)",
       big: "col-span-1 row-span-1",
       stat: null,
       statLabel: "Code, docs, meetings & more",
