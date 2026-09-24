@@ -152,7 +152,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
               key={tab.value}
               type="button"
               onClick={() => setStatusFilter(tab.value)}
-              className={`px-3.5 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 statusFilter === tab.value
                   ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -217,7 +217,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       {timeAgo(c.created_at)}
                     </span>
                     {isOwnContribution && (
-                      <Badge variant="default" className="!text-[10px]">
+                      <Badge variant="default" className="!text-xs">
                         You
                       </Badge>
                     )}
@@ -317,7 +317,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     </span>
                     <Badge
                       variant={isVerified ? "green" : isFlagged ? "red" : "yellow"}
-                      className="!text-[10px] uppercase font-bold"
+                      className="!text-xs uppercase font-bold"
                     >
                       {isVerified ? "verified" : c.status || "pending"}
                     </Badge>

@@ -86,7 +86,7 @@ export default async function ContributionDetailPage({ params }) {
       <div>
         <Link
           href="/contributions"
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />

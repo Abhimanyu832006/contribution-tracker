@@ -199,7 +199,7 @@ export default function ContributionsPage() {
           <button
             type="button"
             onClick={() => setFilter("mine")}
-            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
               filter === "mine"
                 ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
                 : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
@@ -210,7 +210,7 @@ export default function ContributionsPage() {
           <button
             type="button"
             onClick={() => setFilter("everyone")}
-            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wide transition-all duration-200 ${
+            className={`px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
               filter === "everyone"
                 ? "bg-[var(--color-primary)] text-white brutal-shadow-sm"
                 : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"

@@ -96,7 +96,7 @@ export default function ContributionList({ contributions = [] }) {
                 <p className="text-xs text-[var(--color-text-muted)]">
                   {c.github_username || c.user_name}
                 </p>
-                <Badge variant={isGithub ? "blue" : "yellow"} className="!text-[10px] !px-1.5 !py-0">
+                <Badge variant={isGithub ? "blue" : "yellow"} className="!text-xs !px-1.5 !py-0">
                   {isGithub ? "GitHub" : "Manual"}
                 </Badge>
                 {c.status && (
@@ -108,7 +108,7 @@ export default function ContributionList({ contributions = [] }) {
                         ? "red"
                         : "yellow"
                     }
-                    className="!text-[10px] !px-1.5 !py-0 capitalize"
+                    className="!text-xs !px-1.5 !py-0 capitalize"
                   >
                     {c.status === "approved" ? "verified" : c.status}
                   </Badge>

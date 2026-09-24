@@ -104,28 +104,28 @@ export default function ScoresReport({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-primary)]">
-                <th className="text-left font-black text-white text-xs uppercase tracking-wide px-5 py-3">
+                <th className="text-left font-black text-white text-xs uppercase tracking-wider px-5 py-3">
                   Member
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Hours
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   GitHub
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Manual
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Verified
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Pending
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-4 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Flagged
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wide px-5 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-5 py-3">
                   % of Hours
                 </th>
               </tr>
@@ -140,7 +140,7 @@ export default function ScoresReport({
                         <Avatar src={m.avatar_url} name={m.github_username} size="sm" />
                         <div>
                           <p className="font-bold text-[var(--color-text-primary)]">{m.github_username}</p>
-                          <Badge variant={m.role === "leader" ? "indigo" : "default"} className="!text-[10px] mt-0.5">
+                          <Badge variant={m.role === "leader" ? "indigo" : "default"} className="!text-xs mt-0.5">
                             {m.role === "leader" ? "Leader" : "Member"}
                           </Badge>
                         </div>

@@ -8,7 +8,7 @@ export default function Badge({
   variant = "default",
   className = "",
 }) {
-  const base = "inline-flex items-center border border-[var(--color-border)] px-2 py-0.5 text-xs font-bold uppercase tracking-wide";
+  const base = "inline-flex items-center border border-[var(--color-border)] px-2 py-0.5 text-xs font-bold uppercase tracking-wider";
 
   const variants = {
     default: "bg-[var(--color-bg)] text-[var(--color-text-primary)]",

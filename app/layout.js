@@ -1,4 +1,4 @@
-import { Bangers, Comic_Neue } from "next/font/google";
+import { Titan_One, Comic_Neue } from "next/font/google";
 import SessionProvider from "@/components/SessionProvider";
 import DotField from "@/components/DotField";
 import "./globals.css";
@@ -9,7 +9,12 @@ const comicNeue = Comic_Neue({
   variable: "--font-sans-ui",
 });
 
-const bangers = Bangers({
+// Bangers' tight, compressed counters (the hollow centers in letters
+// like A/B/H) collapsed into an illegible blob at display sizes even
+// after tuning stroke/shadow — Titan One is the same chunky, punchy
+// comic-poster weight but with wide open counters, so it stays
+// decipherable at both headline and small-label sizes.
+const titanOne = Titan_One({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-comic-display",
@@ -55,7 +60,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${comicNeue.variable} ${bangers.variable} h-full antialiased`}
+      className={`${comicNeue.variable} ${titanOne.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

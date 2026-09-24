@@ -61,7 +61,7 @@ export default function LandingContent() {
       {/* ── Hero ────────────────────────────────────────────── */}
       <section className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-4xl mx-auto text-center py-20 sm:py-28 animate-fade-in">
-          <div className="inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-reports)] text-black px-4 py-1.5 text-xs font-black uppercase tracking-wide mb-8 rounded brutal-shadow-sm">
+          <div className="inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-reports)] text-black px-4 py-1.5 text-xs font-black uppercase tracking-wider mb-8 rounded brutal-shadow-sm">
             <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
             Built for student teams
           </div>

@@ -13,7 +13,7 @@ export default function Select({
       {label && (
         <label
           htmlFor={id}
-          className="text-xs font-bold uppercase tracking-wide text-[var(--color-text-secondary)]"
+          className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)]"
         >
           {label}
         </label>

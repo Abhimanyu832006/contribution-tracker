@@ -102,7 +102,7 @@ export default function AppHeader({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </span>
-            <span className="hidden sm:inline text-sm font-bold uppercase tracking-wide truncate">
+            <span className="hidden sm:inline text-sm font-bold uppercase tracking-wider truncate">
               Contribution Tracker
             </span>
           </Link>
@@ -115,7 +115,7 @@ export default function AppHeader({
             title="Switch project"
           >
             <span className="min-w-0 flex-1">
-              <span className="block text-[10px] font-bold uppercase tracking-wide text-[var(--color-text-muted)]">
+              <span className="block text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                 Project
               </span>
               <span className="block text-sm font-bold truncate">
@@ -133,7 +133,7 @@ export default function AppHeader({
 
           {dropdownOpen && (
             <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 border border-[var(--color-border)] bg-[var(--color-surface)] rounded p-1.5" style={{ boxShadow: "var(--shadow-brutal)" }}>
-              <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--color-text-muted)]">
+              <div className="px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
                 Your projects ({projects.length})
               </div>
               <div className="max-h-48 overflow-y-auto space-y-1">
