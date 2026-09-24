@@ -149,32 +149,31 @@ export default function ModuleTile({ tile, onClick }) {
         className={`brutal-tile overflow-hidden flex flex-col justify-between p-4 sm:p-5 ${tile.big}`}
         style={{ background: tile.accent, borderColor: "transparent" }}
       >
-        <div className="flex items-center justify-between">
-          <svg
-            className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--color-ink-fg)]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.75}
+        <div className="flex items-start justify-between">
+          {/* One action icon, not two — a solid ink-colored badge (not
+              a bare stroked "+") so it reads as a real button glyph. */}
+          <span
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center"
+            style={{ background: "var(--color-ink-fg)" }}
           >
-            {tile.icon}
-          </svg>
-          <svg
-            className="w-4 h-4 text-[var(--color-ink-fg)]/60"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke={tile.accent} strokeWidth={2.25}>
+              {tile.icon}
+            </svg>
+          </span>
+          {/* High-contrast circular arrow badge instead of a low-contrast
+              stroked arrow floating directly on the yellow fill. */}
+          <span
+            className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center"
+            style={{ background: "var(--color-ink-fg)" }}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke={tile.accent} strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </span>
         </div>
         <div>
-          {tile.stat !== null && (
-            <p className="stat-num text-3xl sm:text-4xl text-[var(--color-ink-fg)]">{tile.stat}</p>
-          )}
-          <p className="text-sm font-semibold text-[var(--color-ink-fg)] mt-0.5">{tile.label}</p>
-          <p className="text-sm font-semibold mt-0.5 truncate text-[var(--color-ink-fg)]/80">
+          <p className="text-lg sm:text-xl font-bold text-[var(--color-ink-fg)]">{tile.label}</p>
+          <p className="text-sm font-semibold mt-1 text-[var(--color-ink-fg)]/80">
             {tile.sub || tile.statLabel}
           </p>
         </div>

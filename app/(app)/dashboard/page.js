@@ -175,8 +175,8 @@ export default async function DashboardPage() {
       accent: "var(--color-ink-block)",
       cta: true,
       big: "col-span-1 row-span-1",
-      stat: "+",
-      statLabel: "quick action",
+      stat: null,
+      statLabel: "Code, docs, meetings & more",
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
       ),
