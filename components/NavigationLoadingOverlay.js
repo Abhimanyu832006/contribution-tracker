@@ -11,6 +11,12 @@
  * covers the screen immediately and gets out of the way once the
  * destination is actually ready.
  */
+
+// Staggered start times across the audio-wave bars — a symmetric
+// ripple (outer bars lag the center) reads as a smoother, more natural
+// "wave" than a straight left-to-right sweep.
+const WAVE_BAR_DELAYS = [0.3, 0.15, 0, 0.15, 0.3];
+
 export function NavigationLoadingOverlay({ label, icon, accent, textLight, overlayRef }) {
   const textClass = textLight ? "text-[var(--color-ink-fg)]" : "text-black";
 
@@ -49,14 +55,14 @@ export function NavigationLoadingOverlay({ label, icon, accent, textLight, overl
           </div>
         </div>
 
-        <div
-          className="mt-5 relative overflow-hidden border-2 border-[var(--color-border)]"
-          style={{ height: 18, background: "var(--color-surface)", borderRadius: 8 }}
-        >
-          <div
-            className="loading-bar-sweep absolute top-0 bottom-0 border-r-2 border-[var(--color-border)]"
-            style={{ width: "38%", background: accent }}
-          />
+        <div className="mt-5 flex items-end justify-center gap-1.5 h-6">
+          {WAVE_BAR_DELAYS.map((delay, i) => (
+            <div
+              key={i}
+              className="audio-wave-bar w-2 h-full border-2 border-[var(--color-border)]"
+              style={{ background: accent, animationDelay: `${delay}s` }}
+            />
+          ))}
         </div>
       </div>
     </div>

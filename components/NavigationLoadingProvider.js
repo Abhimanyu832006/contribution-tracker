@@ -115,6 +115,22 @@ export default function NavigationLoadingProvider({ children }) {
   const overlayRef = useRef(null);
 
   const revealDestination = useCallback(() => {
+    // Kill the destination page's own CSS mount-in animations (tile
+    // stagger fade-ins, card fade/slide/scale-ins) before uncovering
+    // it — otherwise the user sees our loading screen fade away only to
+    // watch the actual content ALSO fade/slide in on top of that,
+    // reading as "buffering that never got hidden" rather than a clean
+    // reveal. Removing `animation` snaps each element straight to its
+    // un-animated (fully visible) state; these classes carry no static
+    // opacity/transform of their own, only via the @keyframes, so this
+    // is a pure "stop animating, show final state" — never a flash of
+    // hidden content.
+    document
+      .querySelectorAll(".stagger-children > *, .animate-fade-in, .animate-slide-in, .animate-scale-in")
+      .forEach((node) => {
+        node.style.animation = "none";
+      });
+
     const el = overlayRef.current;
     if (!el) {
       setActive(null);
