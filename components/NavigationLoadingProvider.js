@@ -30,6 +30,25 @@ const DEFAULT_ICON = (
   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
 );
 
+// Browser back/forward (popstate) has no link element to read a label
+// from — the browser has already changed the URL by the time we hear
+// about it — so known routes get a friendly name from their pathname.
+const ROUTE_LABELS = {
+  "/dashboard": "Dashboard",
+  "/contributions": "Contributions",
+  "/peer-verification": "Peer Verification",
+  "/scores": "Reports",
+  "/team": "Team",
+  "/settings": "Settings",
+  "/log": "Log Contribution",
+};
+
+function labelForPath(path) {
+  if (ROUTE_LABELS[path]) return ROUTE_LABELS[path];
+  if (path.startsWith("/contributions/")) return "Contribution";
+  return DEFAULT_LABEL;
+}
+
 function prefersReducedMotion() {
   return (
     typeof window !== "undefined" &&
@@ -66,6 +85,9 @@ export function useNavigationLoading() {
  *     derived from the link's own text — so "every navigation" (the
  *     TopBar's back-to-dashboard link, any other in-app link) gets the
  *     same treatment without every caller having to wire it up by hand.
+ *   - Browser back/forward is caught via the Navigation API (see below
+ *     for why not `popstate`) — it mounts the same overlay directly
+ *     with a route-derived label and reuses the same readiness watcher.
  *
  * Lifecycle, either way:
  *   1. the overlay mounts immediately, covering the screen;
@@ -238,6 +260,59 @@ export default function NavigationLoadingProvider({ children }) {
     document.addEventListener("click", handleDocumentClick);
     return () => document.removeEventListener("click", handleDocumentClick);
   }, [pathname, router, beginTransition]);
+
+  // Browser back/forward — can't be prevented or wrapped in
+  // beginTransition's own router.push (the browser's already committed
+  // to the new history entry by the time we hear about it, and pushing
+  // again would corrupt history). Instead this mounts the same overlay
+  // directly and reuses the same readiness watcher above to reveal once
+  // the route Next's router lands on actually settles — no navigation
+  // call of our own is needed here, only tracking.
+  //
+  // Uses the Navigation API (`window.navigation`'s `navigate` event,
+  // filtered to `navigationType === "traverse"`) rather than the legacy
+  // `popstate` event — empirically, a `popstate` listener attached from
+  // inside a React effect never actually ran for a back/forward
+  // navigation in this app (confirmed via debug logging: Next's own
+  // router-driven pathname update happened every time with zero calls
+  // to our handler), while `window.navigation`'s `navigate` event fired
+  // reliably and carries a `destination.url` we can read the target
+  // route from before Next.js finishes rendering it. Feature-detected
+  // since the Navigation API isn't supported everywhere (e.g. Firefox,
+  // Safari) — those browsers simply don't get this specific enhancement
+  // and back/forward behaves like a plain navigation with no overlay.
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.navigation) return undefined;
+
+    function handleNavigate(e) {
+      if (e.navigationType !== "traverse") return; // only back/forward
+      if (busyRef.current) return;
+      if (prefersReducedMotion()) return;
+
+      let newPath;
+      try {
+        newPath = new URL(e.destination.url).pathname;
+      } catch {
+        return;
+      }
+      if (newPath === pathname) return; // hash-only or no-op change
+
+      busyRef.current = true;
+      startPathnameRef.current = pathname;
+      shownAtRef.current = Date.now();
+
+      setActive({
+        label: labelForPath(newPath),
+        icon: DEFAULT_ICON,
+        accent: DEFAULT_ACCENT,
+        textLight: false,
+      });
+      setPhase("waiting-for-ready");
+    }
+
+    window.navigation.addEventListener("navigate", handleNavigate);
+    return () => window.navigation.removeEventListener("navigate", handleNavigate);
+  }, [pathname]);
 
   return (
     <NavigationLoadingContext.Provider value={{ beginTransition }}>
