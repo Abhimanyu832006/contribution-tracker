@@ -246,7 +246,7 @@ body {
      definition against colored card backgrounds instead of destroying
      legibility the way it did on hero-display's whole words. */
   -webkit-text-stroke: 1.5px var(--color-border);
-  text-shadow: 1.5px 1.5px 0 var(--color-border);
+  text-shadow: 2px 2px 0 var(--color-border);
 }
 
 /* Small solid status chip — used only for resolved verification state */
