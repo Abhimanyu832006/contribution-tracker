@@ -230,7 +230,7 @@ body {
 .label-mono {
   font-family: var(--font-comic-display);
   font-size: 0.8125rem;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
@@ -257,7 +257,7 @@ body {
   font-family: var(--font-comic-display);
   font-size: 0.8rem;
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   padding: 0.2em 0.75em;
   border-radius: 9999px;
@@ -347,7 +347,7 @@ body {
   border-radius: 10px;
   font-family: var(--font-comic-display);
   font-weight: 400;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
 }
@@ -441,14 +441,14 @@ body {
 .hero-display {
   font-family: var(--font-comic-display);
   font-weight: 400;
-  letter-spacing: 0.02em;
+  /* Bangers' counters are tight enough that a 4-letter project name
+     blobbed together even with a hairline stroke — this time the fix
+     is generous tracking instead of a stroke, so letters get real
+     separation without an outline thickening them back together. */
+  letter-spacing: 0.09em;
   line-height: 1.05;
   text-transform: uppercase;
   color: var(--color-text-primary);
-  /* Titan One (open counters, built for this kind of display use) —
-     Bangers' compressed counters collapsed short words like a 4-letter
-     project name into an illegible blob even with a hairline stroke.
-     No stroke needed here; Titan One is solid/heavy on its own. */
   text-shadow: 2px 2px 0 var(--color-border);
 }
 

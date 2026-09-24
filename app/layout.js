@@ -1,4 +1,4 @@
-import { Titan_One, Plus_Jakarta_Sans } from "next/font/google";
+import { Bangers, Plus_Jakarta_Sans } from "next/font/google";
 import SessionProvider from "@/components/SessionProvider";
 import DotField from "@/components/DotField";
 import "./globals.css";
@@ -13,12 +13,13 @@ const interfaceFont = Plus_Jakarta_Sans({
   variable: "--font-sans-ui",
 });
 
-// Bangers' tight, compressed counters (the hollow centers in letters
-// like A/B/H) collapsed into an illegible blob at display sizes even
-// after tuning stroke/shadow — Titan One is the same chunky, punchy
-// comic-poster weight but with wide open counters, so it stays
-// decipherable at both headline and small-label sizes.
-const titanOne = Titan_One({
+// Bangers, take two: its tight counters caused the original legibility
+// problem, so this time it leans entirely on wide letter-spacing (see
+// .hero-display/.label-mono/.stamp-solid/.brutal-btn in globals.css)
+// instead of a stroke to keep letters from touching — no -webkit-
+// text-stroke on word-shaped text this time, only on solitary digits
+// (.stat-num), which have no neighboring letterform to blob into.
+const bangers = Bangers({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-comic-display",
@@ -64,7 +65,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${interfaceFont.variable} ${titanOne.variable} h-full antialiased`}
+      className={`${interfaceFont.variable} ${bangers.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
