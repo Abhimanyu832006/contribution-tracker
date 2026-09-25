@@ -41,10 +41,17 @@ export default function AppChrome({ user, projectName, activeProjectId, projects
         accent={accentFor(pathname)}
       />
       {isHome ? (
-        children
+        // Keyed on the active project: Contributions and Peer
+        // Verification fetch their own data client-side (no server
+        // parent re-supplying fresh props), so router.refresh() alone
+        // never reaches them after switching projects in the header —
+        // changing this key forces React to unmount and remount the
+        // whole page subtree, which re-runs their fetch-on-mount effects
+        // against the newly active project instead of showing stale data.
+        <div key={activeProjectId}>{children}</div>
       ) : (
         <main>
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
+          <div key={activeProjectId} className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-10">{children}</div>
         </main>
       )}
     </NavigationLoadingProvider>

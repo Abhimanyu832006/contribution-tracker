@@ -28,7 +28,7 @@ export default async function PeerVerificationPage() {
        c.attachment_size,
        c.attachment_type,
        COALESCE(u.display_name, u.github_username) AS github_username,
-       u.avatar_url,
+       COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
        MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote,
@@ -36,7 +36,7 @@ export default async function PeerVerificationPage() {
          json_agg(
            jsonb_build_object(
              'username', COALESCE(vu.display_name, vu.github_username),
-             'avatar_url', vu.avatar_url,
+             'avatar_url', COALESCE(vu.custom_avatar_url, vu.avatar_url),
              'vote', v.vote,
              'comment', v.comment,
              'created_at', v.created_at

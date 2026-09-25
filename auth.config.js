@@ -70,6 +70,7 @@ export const authConfig = {
         token.role = session.role ?? token.role;
         if (session.projectId) token.hasProjects = true;
         if (session.githubUsername) token.githubUsername = session.githubUsername;
+        if (session.avatarUrl) token.avatarUrl = session.avatarUrl;
       }
 
       return token;

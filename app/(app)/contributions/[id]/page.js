@@ -42,14 +42,15 @@ export default async function ContributionDetailPage({ params }) {
        c.id, c.user_id, c.category, c.description, c.time_estimate, c.status,
        c.source, c.commit_sha, c.commit_url, c.doc_url, c.attachment_url, c.attachment_name,
        c.attachment_size, c.attachment_type, c.created_at, c.project_id,
-       COALESCE(u.display_name, u.github_username) AS github_username, u.avatar_url,
+       COALESCE(u.display_name, u.github_username) AS github_username,
+       COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
        COALESCE(
          json_agg(
            jsonb_build_object(
              'username', COALESCE(vu.display_name, vu.github_username),
-             'avatar_url', vu.avatar_url,
+             'avatar_url', COALESCE(vu.custom_avatar_url, vu.avatar_url),
              'vote', v.vote,
              'comment', v.comment,
              'created_at', v.created_at
@@ -73,7 +74,8 @@ export default async function ContributionDetailPage({ params }) {
 
   const [{ rows: remarks }, { rows: attachments }] = await Promise.all([
     pool.query(
-      `SELECT r.remark, r.created_at, COALESCE(u.display_name, u.github_username) AS faculty_name, u.avatar_url
+      `SELECT r.remark, r.created_at, COALESCE(u.display_name, u.github_username) AS faculty_name,
+              COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url
        FROM contribution_remarks r
        JOIN users u ON u.id = r.faculty_user_id
        WHERE r.contribution_id = $1

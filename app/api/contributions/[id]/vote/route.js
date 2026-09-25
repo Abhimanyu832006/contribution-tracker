@@ -49,7 +49,8 @@ async function recomputeStatus(contributionId, projectId, contributorId) {
 
 async function fetchVoteHistory(contributionId) {
   const { rows } = await pool.query(
-    `SELECT v.vote, v.comment, v.created_at, COALESCE(u.display_name, u.github_username) AS username, u.avatar_url
+    `SELECT v.vote, v.comment, v.created_at, COALESCE(u.display_name, u.github_username) AS username,
+            COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url
      FROM contribution_votes v
      JOIN users u ON u.id = v.user_id
      WHERE v.contribution_id = $1

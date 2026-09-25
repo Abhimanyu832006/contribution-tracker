@@ -23,6 +23,7 @@ CREATE TABLE users (
   github_username       TEXT NOT NULL,
   display_name          TEXT,
   avatar_url            TEXT,
+  custom_avatar_url     TEXT,
   github_access_token   TEXT,
   google_access_token   TEXT,
   google_refresh_token  TEXT,
@@ -316,4 +317,10 @@ WHERE attachment_url IS NOT NULL
   AND NOT EXISTS (
     SELECT 1 FROM contribution_attachments a WHERE a.contribution_id = contributions.id
   );
+
+-- ============================================================
+-- SECTION K: In-Place Migration Script (v11 -> v12: Custom Avatar)
+-- Applied automatically by lib/db.js's ensureSchema() on first use.
+-- ============================================================
+ALTER TABLE users ADD COLUMN IF NOT EXISTS custom_avatar_url TEXT;
 

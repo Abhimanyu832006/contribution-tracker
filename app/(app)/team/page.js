@@ -21,7 +21,7 @@ export default async function TeamPage() {
       `SELECT
          u.id,
          COALESCE(u.display_name, u.github_username) AS github_username,
-         u.avatar_url,
+         COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url,
          pm.role,
          COALESCE(SUM(c.time_estimate), 0) AS total_hours
        FROM project_members pm

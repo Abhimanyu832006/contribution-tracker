@@ -36,7 +36,8 @@ export async function GET(request, context) {
     }
 
     const { rows } = await pool.query(
-      `SELECT r.id, r.remark, r.created_at, COALESCE(u.display_name, u.github_username) AS faculty_name, u.avatar_url
+      `SELECT r.id, r.remark, r.created_at, COALESCE(u.display_name, u.github_username) AS faculty_name,
+              COALESCE(u.custom_avatar_url, u.avatar_url) AS avatar_url
        FROM contribution_remarks r
        JOIN users u ON u.id = r.faculty_user_id
        WHERE r.contribution_id = $1
