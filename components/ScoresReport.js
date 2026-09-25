@@ -197,9 +197,12 @@ export default function ScoresReport({
           directly from logged contributions and peer verification votes.
         </p>
         <p>
-          <span className="font-bold text-[var(--color-settings)]">Score</span> is a disclosed formula over those
-          same columns — not a hidden or AI-judged rating: <span className="font-mono">hours×3 + GitHub×2 + docs×2
-          + (doc words÷100)×1 + verified×1 − flagged×2</span>, floored at 0.
+          <span className="font-bold text-[var(--color-settings)]">Score</span> is a disclosed formula, computed
+          per contribution and summed — not a hidden or AI-judged rating:{" "}
+          <span className="font-mono">
+            (hours×3 + GitHub×2 + docs×2 + (doc words÷100)×1) × verification multiplier
+          </span>{" "}
+          (verified ×1.0, pending ×0.5, flagged ×0), floored at 0.
         </p>
       </div>
     </div>

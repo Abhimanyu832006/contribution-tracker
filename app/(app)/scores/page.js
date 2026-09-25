@@ -19,7 +19,7 @@ export default async function ScoresPage() {
   // explicit, disclosed formula (see lib/scoring.js), not a hidden
   // weighting; the raw counts it's built from are shown right next to it
   // so nothing is hidden behind a single number.
-  const [{ rows: members }, { rows: projectRows }] = await Promise.all([
+  const [{ rows: members }, { rows: projectRows }, { rows: contributions }] = await Promise.all([
     pool.query(
       `SELECT
          u.id,
@@ -44,10 +44,32 @@ export default async function ScoresPage() {
       [projectId]
     ),
     pool.query("SELECT name FROM projects WHERE id = $1", [projectId]),
+    // Scored per-contribution (each one's own status determines its own
+    // verification multiplier), then summed per member below.
+    pool.query(
+      `SELECT user_id, source, time_estimate, word_count, status
+       FROM contributions WHERE project_id = $1`,
+      [projectId]
+    ),
   ]);
   const projectName = projectRows[0]?.name || "Project";
 
-  const membersWithScore = members.map((m) => ({ ...m, score: computeContributionScore(m) }));
+  const scoreByUser = new Map();
+  for (const c of contributions) {
+    const contributionScore = computeContributionScore({
+      hours: c.source === "manual" ? c.time_estimate : 0,
+      githubCount: c.source === "github" ? 1 : 0,
+      docsCount: c.source === "google_docs" ? 1 : 0,
+      docsWordCount: c.source === "google_docs" ? c.word_count : 0,
+      status: c.status,
+    });
+    scoreByUser.set(c.user_id, (scoreByUser.get(c.user_id) || 0) + contributionScore);
+  }
+
+  const membersWithScore = members.map((m) => ({
+    ...m,
+    score: Math.round((scoreByUser.get(m.id) || 0) * 10) / 10,
+  }));
 
   const teamTotalHours = members.reduce((sum, m) => sum + Number(m.total_hours), 0);
   const teamTotalContributions = members.reduce((sum, m) => sum + m.contribution_count, 0);
