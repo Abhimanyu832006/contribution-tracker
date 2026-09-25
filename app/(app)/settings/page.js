@@ -1,9 +1,10 @@
 import { requireProject } from "@/lib/auth";
-import pool from "@/lib/db";
+import pool, { ensureSchema } from "@/lib/db";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import InviteCodeCard from "@/components/InviteCodeCard";
 import TeamMemberCard from "@/components/TeamMemberCard";
 import GitHubRepoForm from "@/components/GitHubRepoForm";
+import GoogleDocsForm from "@/components/GoogleDocsForm";
 
 export const metadata = {
   title: "Project Settings — Contribution Tracker",
@@ -12,11 +13,13 @@ export const metadata = {
 export default async function SettingsPage() {
   const session = await requireProject();
   const projectId = session.user.projectId;
+  await ensureSchema();
 
   // Fetch project details + team members with hours in parallel — independent queries
-  const [{ rows: projects }, { rows: members }] = await Promise.all([
+  const [{ rows: projects }, { rows: members }, { rows: leaderRows }] = await Promise.all([
     pool.query(
-      "SELECT id, name, invite_code, repo_owner, repo_name, created_at FROM projects WHERE id = $1",
+      `SELECT id, name, invite_code, repo_owner, repo_name, google_folder_id, leader_id, created_at
+       FROM projects WHERE id = $1`,
       [projectId]
     ),
     pool.query(
@@ -34,9 +37,16 @@ export default async function SettingsPage() {
        ORDER BY pm.role DESC, total_hours DESC`,
       [projectId]
     ),
+    pool.query(
+      `SELECT u.google_refresh_token
+       FROM projects p JOIN users u ON u.id = p.leader_id
+       WHERE p.id = $1`,
+      [projectId]
+    ),
   ]);
   const project = projects[0];
   const memberCount = members.length;
+  const googleConnected = !!leaderRows[0]?.google_refresh_token;
 
   return (
     <div className="space-y-10 animate-fade-in">
@@ -53,6 +63,13 @@ export default async function SettingsPage() {
       <GitHubRepoForm
         initialRepo={project?.repo_owner && project?.repo_name ? `${project.repo_owner}/${project.repo_name}` : ""}
         isLeader={session.user.role === "leader"}
+      />
+
+      {/* ── Google Docs Integration ──────────────────────────────────── */}
+      <GoogleDocsForm
+        initialFolderId={project?.google_folder_id || ""}
+        isLeader={session.user.role === "leader"}
+        googleConnected={googleConnected}
       />
 
       {/* ── Team Management ─────────────────────────────────────────── */}

@@ -16,22 +16,26 @@ DROP TABLE IF EXISTS users CASCADE;
 
 -- 2. Users table (GitHub-backed, global user account)
 CREATE TABLE users (
-  id                  SERIAL PRIMARY KEY,
-  github_id           TEXT UNIQUE NOT NULL,
-  github_username     TEXT NOT NULL,
-  avatar_url          TEXT,
-  github_access_token TEXT
+  id                    SERIAL PRIMARY KEY,
+  github_id             TEXT UNIQUE NOT NULL,
+  github_username       TEXT NOT NULL,
+  avatar_url            TEXT,
+  github_access_token   TEXT,
+  google_access_token   TEXT,
+  google_refresh_token  TEXT,
+  google_token_expiry   BIGINT
 );
 
 -- 3. Projects table
 CREATE TABLE projects (
-  id          SERIAL PRIMARY KEY,
-  name        TEXT NOT NULL,
-  invite_code TEXT UNIQUE NOT NULL,
-  leader_id   INTEGER REFERENCES users(id) ON DELETE SET NULL,
-  repo_owner  TEXT,
-  repo_name   TEXT,
-  created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+  id               SERIAL PRIMARY KEY,
+  name             TEXT NOT NULL,
+  invite_code      TEXT UNIQUE NOT NULL,
+  leader_id        INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  repo_owner       TEXT,
+  repo_name        TEXT,
+  google_folder_id TEXT,
+  created_at       TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- 4. Project Members join table (Many-to-Many: Users <-> Projects)
@@ -56,6 +60,8 @@ CREATE TABLE contributions (
   status          TEXT    NOT NULL DEFAULT 'pending',
   commit_sha      TEXT,
   commit_url      TEXT,
+  doc_id          TEXT,
+  doc_url         TEXT,
   attachment_url  TEXT,
   attachment_name TEXT,
   attachment_size INTEGER,
@@ -63,8 +69,9 @@ CREATE TABLE contributions (
   created_at      TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Unique index to prevent duplicate commit syncs for a project
+-- Unique indexes to prevent duplicate commit/doc syncs for a project
 CREATE UNIQUE INDEX uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
+CREATE UNIQUE INDEX uq_project_doc ON contributions (project_id, doc_id) WHERE doc_id IS NOT NULL;
 
 -- Indexes for the hot filter/join columns used by dashboard, reports, and
 -- peer-verification queries (WHERE project_id = ..., GROUP BY status/category,
@@ -181,4 +188,23 @@ CREATE INDEX IF NOT EXISTS idx_contributions_project_category ON contributions (
 CREATE INDEX IF NOT EXISTS idx_project_members_project ON project_members (project_id);
 CREATE INDEX IF NOT EXISTS idx_project_members_user ON project_members (user_id);
 CREATE INDEX IF NOT EXISTS idx_contribution_votes_contribution ON contribution_votes (contribution_id);
+
+-- ============================================================
+-- SECTION F: In-Place Migration Script (v6 -> v7: Google Drive/Docs Integration)
+-- Applied automatically by lib/db.js's ensureSchema() on first use — these
+-- statements are also listed here for reference / manual application.
+-- ============================================================
+
+-- 1. Google OAuth tokens live on the connecting user (mirrors github_access_token)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS google_access_token TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS google_refresh_token TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS google_token_expiry BIGINT;
+
+-- 2. A project points at one Google Drive folder to sync Docs from
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS google_folder_id TEXT;
+
+-- 3. Synced docs get an identifying id/url pair (mirrors commit_sha/commit_url)
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS doc_id TEXT;
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS doc_url TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_project_doc ON contributions (project_id, doc_id) WHERE doc_id IS NOT NULL;
 

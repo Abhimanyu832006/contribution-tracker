@@ -201,8 +201,8 @@ export default function PeerVerificationList({ initialContributions = [], curren
                     <span className="text-sm font-semibold text-[var(--color-text-primary)]">
                       {c.github_username}
                     </span>
-                    <Badge variant={c.source === "github" ? "blue" : "yellow"}>
-                      {c.source === "github" ? "GitHub" : "Manual"}
+                    <Badge variant={c.source === "github" || c.source === "google_docs" ? "blue" : "yellow"}>
+                      {c.source === "github" ? "GitHub" : c.source === "google_docs" ? "Google Docs" : "Manual"}
                     </Badge>
                     <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>
                       {c.category}

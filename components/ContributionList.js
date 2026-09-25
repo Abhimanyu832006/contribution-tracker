@@ -43,6 +43,8 @@ export default function ContributionList({ contributions = [] }) {
     <div className="space-y-3 stagger-children">
       {contributions.map((c) => {
         const isGithub = c.source === "github";
+        const isGoogleDocs = c.source === "google_docs";
+        const sourceColor = isGithub ? "var(--color-github)" : isGoogleDocs ? "var(--color-contributions)" : "var(--color-manual)";
 
         // Row itself is a plain container — never an <a>/<Link>, since it may
         // contain the attachment link below and nested anchors are invalid HTML.
@@ -51,7 +53,7 @@ export default function ContributionList({ contributions = [] }) {
           <div
             key={c.id}
             className="bg-[var(--color-surface)] rounded border border-[var(--color-border)] brutal-shadow-sm px-5 py-4 flex items-center gap-4 transition-all duration-200 hover:brutal-shadow"
-            style={{ borderLeft: `6px solid ${isGithub ? "var(--color-github)" : "var(--color-manual)"}` }}
+            style={{ borderLeft: `6px solid ${sourceColor}` }}
           >
             {/* Avatar */}
             <Avatar
@@ -96,8 +98,8 @@ export default function ContributionList({ contributions = [] }) {
                 <p className="text-xs text-[var(--color-text-muted)]">
                   {c.github_username || c.user_name}
                 </p>
-                <Badge variant={isGithub ? "blue" : "yellow"} className="!text-xs !px-1.5 !py-0">
-                  {isGithub ? "GitHub" : "Manual"}
+                <Badge variant={isGithub ? "blue" : isGoogleDocs ? "blue" : "yellow"} className="!text-xs !px-1.5 !py-0">
+                  {isGithub ? "GitHub" : isGoogleDocs ? "Google Docs" : "Manual"}
                 </Badge>
                 {c.status && (
                   <Badge
@@ -118,7 +120,7 @@ export default function ContributionList({ contributions = [] }) {
 
             {/* Hours + time */}
             <div className="text-right shrink-0">
-              {!isGithub && (
+              {!isGithub && !isGoogleDocs && (
                 <p className="text-sm font-semibold text-[var(--color-primary)]">
                   {Number(c.time_estimate).toFixed(1)} hrs
                 </p>
@@ -136,6 +138,18 @@ export default function ContributionList({ contributions = [] }) {
                 rel="noopener noreferrer"
                 className="shrink-0 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
                 title="View commit on GitHub"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            ) : isGoogleDocs && c.doc_url ? (
+              <a
+                href={c.doc_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+                title="Open in Google Docs"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

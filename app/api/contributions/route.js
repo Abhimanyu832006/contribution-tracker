@@ -37,6 +37,7 @@ export async function GET(request) {
          c.status,
          c.source,
          c.commit_url,
+         c.doc_url,
          c.attachment_url,
          c.attachment_name,
          c.attachment_size,

@@ -40,7 +40,7 @@ export default async function ContributionDetailPage({ params }) {
   const { rows } = await pool.query(
     `SELECT
        c.id, c.user_id, c.category, c.description, c.time_estimate, c.status,
-       c.source, c.commit_sha, c.commit_url, c.attachment_url, c.attachment_name,
+       c.source, c.commit_sha, c.commit_url, c.doc_url, c.attachment_url, c.attachment_name,
        c.attachment_size, c.attachment_type, c.created_at, c.project_id,
        u.github_username, u.avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
@@ -72,6 +72,7 @@ export default async function ContributionDetailPage({ params }) {
   if (!c || c.project_id !== projectId) notFound();
 
   const isGithub = c.source === "github";
+  const isGoogleDocs = c.source === "google_docs";
   const statusVariant =
     c.status === "verified" || c.status === "approved"
       ? "green"
@@ -98,7 +99,7 @@ export default async function ContributionDetailPage({ params }) {
         </h1>
       </div>
 
-      <Card accent={isGithub ? "github" : "manual"} className="space-y-6">
+      <Card accent={isGithub ? "github" : isGoogleDocs ? "docs" : "manual"} className="space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3.5">
@@ -116,8 +117,8 @@ export default async function ContributionDetailPage({ params }) {
         {/* Category + Source */}
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant={CATEGORY_BADGE_MAP[c.category] || "default"}>{c.category}</Badge>
-          <Badge variant={isGithub ? "blue" : "yellow"}>
-            {isGithub ? "GitHub" : "Manual"}
+          <Badge variant={isGithub || isGoogleDocs ? "blue" : "yellow"}>
+            {isGithub ? "GitHub" : isGoogleDocs ? "Google Docs" : "Manual"}
           </Badge>
         </div>
 
@@ -160,6 +161,28 @@ export default async function ContributionDetailPage({ params }) {
                 <p className="text-sm text-[var(--color-text-muted)]">—</p>
               )}
             </div>
+          </div>
+        ) : isGoogleDocs ? (
+          /* Google Docs-specific fields */
+          <div className="pt-2 border-t border-[var(--color-border)]">
+            <p className="label-mono mb-1">
+              Document Link
+            </p>
+            {c.doc_url ? (
+              <a
+                href={c.doc_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary)] font-medium inline-flex items-center gap-1"
+              >
+                Open in Google Docs
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            ) : (
+              <p className="text-sm text-[var(--color-text-muted)]">—</p>
+            )}
           </div>
         ) : (
           /* Manual-specific fields */

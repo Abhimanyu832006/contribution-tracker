@@ -9,6 +9,7 @@ const ACCENTS = {
   success: "var(--color-success)",
   warning: "var(--color-warning)",
   danger: "var(--color-danger)",
+  docs: "var(--color-contributions)",
 };
 
 export default function Card({
