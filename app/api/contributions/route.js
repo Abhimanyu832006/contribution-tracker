@@ -43,12 +43,14 @@ export async function GET(request) {
          c.attachment_size,
          c.attachment_type,
          c.created_at,
-         COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
-         COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
-         MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote
+         COALESCE(COUNT(DISTINCT v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
+         COALESCE(COUNT(DISTINCT v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
+         MAX(CASE WHEN v.user_id = $2 THEN v.vote ELSE NULL END) AS my_vote,
+         COUNT(DISTINCT a.id)::int AS attachment_count
        FROM contributions c
        JOIN users u ON u.id = c.user_id
        LEFT JOIN contribution_votes v ON v.contribution_id = c.id
+       LEFT JOIN contribution_attachments a ON a.contribution_id = c.id
        WHERE c.project_id = $1
          ${mineOnly ? "AND c.user_id = $2" : ""}
        GROUP BY c.id, u.id, u.github_username, u.avatar_url
@@ -99,6 +101,7 @@ export async function POST(request) {
       attachment_name,
       attachment_size,
       attachment_type,
+      attachments,
     } = body;
 
     if (!category || !description || time_estimate == null) {
@@ -108,27 +111,65 @@ export async function POST(request) {
       );
     }
 
-    const { rows } = await pool.query(
-      `INSERT INTO contributions (
-         project_id, user_id, category, description, time_estimate,
-         attachment_url, attachment_name, attachment_size, attachment_type
-       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING *`,
-      [
-        membership.project_id,
-        session.user.dbId,
-        category,
-        description,
-        time_estimate,
-        attachment_url || null,
-        attachment_name || null,
-        attachment_size || null,
-        attachment_type || null,
-      ]
-    );
+    // Accept either the new multi-file `attachments` array or the legacy
+    // single attachment_* fields (kept for any older caller) — either
+    // way, the first file's metadata also lands in the legacy columns so
+    // components that only read those still show something.
+    const fileList = Array.isArray(attachments) && attachments.length > 0
+      ? attachments
+      : attachment_url
+      ? [{ url: attachment_url, name: attachment_name, size: attachment_size, type: attachment_type }]
+      : [];
+    const first = fileList[0];
 
-    return NextResponse.json(rows[0], { status: 201 });
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+
+      const { rows } = await client.query(
+        `INSERT INTO contributions (
+           project_id, user_id, category, description, time_estimate,
+           attachment_url, attachment_name, attachment_size, attachment_type
+         )
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         RETURNING *`,
+        [
+          membership.project_id,
+          session.user.dbId,
+          category,
+          description,
+          time_estimate,
+          first?.url || null,
+          first?.name || null,
+          first?.size || null,
+          first?.type || null,
+        ]
+      );
+      const contribution = rows[0];
+
+      if (fileList.length > 0) {
+        const cols = 5;
+        const values = [];
+        const placeholders = fileList.map((f, i) => {
+          values.push(contribution.id, f.url, f.name || null, f.size || null, f.type || null);
+          const base = i * cols;
+          return `(${Array.from({ length: cols }, (_, j) => `$${base + j + 1}`).join(", ")})`;
+        });
+        await client.query(
+          `INSERT INTO contribution_attachments (contribution_id, url, name, size, type)
+           VALUES ${placeholders.join(", ")}`,
+          values
+        );
+      }
+
+      await client.query("COMMIT");
+      return NextResponse.json({ ...contribution, attachments: fileList }, { status: 201 });
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
   } catch (err) {
     console.error("POST /api/contributions error:", err);
     return NextResponse.json(

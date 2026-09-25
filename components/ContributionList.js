@@ -78,7 +78,7 @@ export default function ContributionList({ contributions = [] }) {
                     </svg>
                   )}
                 </p>
-                {c.attachment_url && (
+                {c.attachment_url && (c.attachment_count || 1) <= 1 ? (
                   <a
                     href={c.attachment_url}
                     target="_blank"
@@ -92,7 +92,18 @@ export default function ContributionList({ contributions = [] }) {
                     </svg>
                     <span className="truncate max-w-[120px]">{c.attachment_name || "Attachment"}</span>
                   </a>
-                )}
+                ) : c.attachment_count > 1 ? (
+                  <Link
+                    href={`/contributions/${c.id}`}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold text-[var(--color-github)] bg-[var(--color-github-light)] border border-[var(--color-border)] rounded hover:brutal-shadow-sm transition-all shrink-0"
+                    title={`${c.attachment_count} supporting files`}
+                  >
+                    <svg className="w-3 h-3 text-[var(--color-github)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.373L8.559 18.32a1.5 1.5 0 01-2.122-2.122l8.76-8.76" />
+                    </svg>
+                    {c.attachment_count} files
+                  </Link>
+                ) : null}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-xs text-[var(--color-text-muted)]">

@@ -78,6 +78,19 @@ CREATE TABLE contributions (
 CREATE UNIQUE INDEX uq_project_commit ON contributions (project_id, commit_sha) WHERE commit_sha IS NOT NULL;
 CREATE UNIQUE INDEX uq_project_doc ON contributions (project_id, doc_id) WHERE doc_id IS NOT NULL;
 
+-- 5b. Multi-file attachments per contribution (the legacy attachment_*
+-- columns above still hold the first file for backward compatibility)
+CREATE TABLE contribution_attachments (
+  id              SERIAL PRIMARY KEY,
+  contribution_id INTEGER NOT NULL REFERENCES contributions(id) ON DELETE CASCADE,
+  url             TEXT NOT NULL,
+  name            TEXT,
+  size            INTEGER,
+  type            TEXT,
+  created_at      TIMESTAMP NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_contribution_attachments_contribution ON contribution_attachments (contribution_id);
+
 -- Indexes for the hot filter/join columns used by dashboard, reports, and
 -- peer-verification queries (WHERE project_id = ..., GROUP BY status/category,
 -- JOIN c.user_id = u.id AND c.project_id = pm.project_id).
@@ -280,4 +293,27 @@ WHERE faculty_invite_code IS NULL;
 -- Applied automatically by lib/db.js's ensureSchema() on first use.
 -- ============================================================
 ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT;
+
+-- ============================================================
+-- SECTION J: In-Place Migration Script (v10 -> v11: Multi-File Attachments)
+-- Applied automatically by lib/db.js's ensureSchema() on first use.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS contribution_attachments (
+  id              SERIAL PRIMARY KEY,
+  contribution_id INTEGER NOT NULL REFERENCES contributions(id) ON DELETE CASCADE,
+  url             TEXT NOT NULL,
+  name            TEXT,
+  size            INTEGER,
+  type            TEXT,
+  created_at      TIMESTAMP NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_contribution_attachments_contribution ON contribution_attachments (contribution_id);
+
+INSERT INTO contribution_attachments (contribution_id, url, name, size, type)
+SELECT id, attachment_url, attachment_name, attachment_size, attachment_type
+FROM contributions
+WHERE attachment_url IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1 FROM contribution_attachments a WHERE a.contribution_id = contributions.id
+  );
 

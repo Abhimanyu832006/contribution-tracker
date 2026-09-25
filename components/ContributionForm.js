@@ -37,13 +37,15 @@ function getFileIcon(filename = "") {
   );
 }
 
+const MAX_FILES = 10;
+
 export default function ContributionForm({ onSuccess }) {
   const [form, setForm] = useState({
     category: "",
     description: "",
     time_estimate: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -55,22 +57,32 @@ export default function ContributionForm({ onSuccess }) {
   }
 
   function handleFileChange(e) {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 25 * 1024 * 1024) {
-        setError("File exceeds 25 MB limit.");
-        return;
-      }
-      setSelectedFile(file);
-      setError("");
+    const incoming = Array.from(e.target.files || []);
+    if (incoming.length === 0) return;
+
+    const oversized = incoming.find((f) => f.size > 25 * 1024 * 1024);
+    if (oversized) {
+      setError(`"${oversized.name}" exceeds the 25 MB limit.`);
+      return;
     }
+
+    setSelectedFiles((prev) => {
+      const combined = [...prev, ...incoming];
+      if (combined.length > MAX_FILES) {
+        setError(`You can attach at most ${MAX_FILES} files.`);
+        return prev;
+      }
+      setError("");
+      return combined;
+    });
+
+    // Reset the input so selecting the same file again (after removing
+    // it) fires onChange again instead of being a no-op.
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function removeFile() {
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+  function removeFile(index) {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function handleSubmit(e) {
@@ -85,12 +97,12 @@ export default function ContributionForm({ onSuccess }) {
 
     setSubmitting(true);
     try {
-      let attachmentMetadata = {};
+      let attachments = [];
 
-      // 1. Upload file if selected
-      if (selectedFile) {
+      // 1. Upload all selected files in one request
+      if (selectedFiles.length > 0) {
         const uploadData = new FormData();
-        uploadData.append("file", selectedFile);
+        selectedFiles.forEach((f) => uploadData.append("file", f));
 
         const uploadRes = await fetch("/api/upload", {
           method: "POST",
@@ -99,15 +111,10 @@ export default function ContributionForm({ onSuccess }) {
 
         const uploadJson = await uploadRes.json();
         if (!uploadRes.ok) {
-          throw new Error(uploadJson.error || "Failed to upload supporting document.");
+          throw new Error(uploadJson.error || "Failed to upload supporting documents.");
         }
 
-        attachmentMetadata = {
-          attachment_url: uploadJson.url,
-          attachment_name: uploadJson.name,
-          attachment_size: uploadJson.size,
-          attachment_type: uploadJson.type,
-        };
+        attachments = uploadJson.files || [];
       }
 
       // 2. Submit contribution
@@ -118,7 +125,7 @@ export default function ContributionForm({ onSuccess }) {
           category: form.category,
           description: form.description,
           time_estimate: Number(form.time_estimate),
-          ...attachmentMetadata,
+          attachments,
         }),
       });
 
@@ -129,7 +136,8 @@ export default function ContributionForm({ onSuccess }) {
 
       setSuccess("Contribution logged successfully with supporting documents!");
       setForm({ category: "", description: "", time_estimate: "" });
-      removeFile();
+      setSelectedFiles([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
       onSuccess?.();
 
       setTimeout(() => setSuccess(""), 3000);
@@ -207,39 +215,48 @@ export default function ContributionForm({ onSuccess }) {
         <div className="flex items-center justify-between">
           <label className="block text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
             {isDoc
-              ? "Attach Documentation File (.docx, .doc, .pdf)"
+              ? "Attach Documentation Files (.docx, .doc, .pdf)"
               : isResearch
               ? "Attach Research Material (PDF, DOCX, datasets, slides, zip)"
-              : "Supporting Document (Optional)"}
+              : "Supporting Documents (Optional)"}
           </label>
-          <span className="text-xs text-[var(--color-text-muted)]">Max 25 MB</span>
+          <span className="text-xs text-[var(--color-text-muted)]">Max 25 MB each, up to {MAX_FILES} files</span>
         </div>
 
-        {selectedFile ? (
-          <div className="flex items-center justify-between p-3.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded animate-scale-in">
-            <div className="flex items-center gap-3 min-w-0">
-              {getFileIcon(selectedFile.name)}
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">
-                  {selectedFile.name}
-                </p>
-                <p className="text-xs text-[var(--color-text-muted)]">
-                  {formatBytes(selectedFile.size)}
-                </p>
+        {selectedFiles.length > 0 && (
+          <div className="space-y-2">
+            {selectedFiles.map((file, i) => (
+              <div
+                key={`${file.name}-${file.lastModified}-${i}`}
+                className="flex items-center justify-between p-3.5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded animate-scale-in"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  {getFileIcon(file.name)}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)]">
+                      {formatBytes(file.size)}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeFile(i)}
+                  className="p-1.5 text-[var(--color-text-muted)] hover:text-[var(--color-danger)] rounded border border-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-danger-light)] transition-colors ml-2"
+                  title="Remove file"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </div>
-            <button
-              type="button"
-              onClick={removeFile}
-              className="p-1.5 text-[var(--color-text-muted)] hover:text-[var(--color-danger)] rounded border border-transparent hover:border-[var(--color-border)] hover:bg-[var(--color-danger-light)] transition-colors ml-2"
-              title="Remove file"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            ))}
           </div>
-        ) : (
+        )}
+
+        {selectedFiles.length < MAX_FILES && (
           <div
             onClick={() => fileInputRef.current?.click()}
             className={`border border-dashed rounded p-4 text-center cursor-pointer transition-colors ${
@@ -251,6 +268,7 @@ export default function ContributionForm({ onSuccess }) {
             <input
               ref={fileInputRef}
               type="file"
+              multiple
               onChange={handleFileChange}
               className="hidden"
               accept={
@@ -266,7 +284,7 @@ export default function ContributionForm({ onSuccess }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
               </svg>
               <p className="text-xs font-medium text-[var(--color-text-secondary)]">
-                <span className="text-[var(--color-primary)] font-semibold hover:underline">Click to upload</span> or drag and drop
+                <span className="text-[var(--color-primary)] font-semibold hover:underline">Click to upload</span> or drag and drop — select multiple files at once
               </p>
               <p className="text-[11px] text-[var(--color-text-muted)]">
                 {isDoc

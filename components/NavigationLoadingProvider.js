@@ -18,13 +18,15 @@ import { NavigationLoadingOverlay } from "@/components/NavigationLoadingOverlay"
  * destination is already ready (e.g. a prefetched route resolving
  * near-instantly). Without this, a fast navigation would flash the
  * overlay on and immediately off — a genuine loading indicator needs to
- * be perceivable, not just technically correct. Long enough to let the
- * (now slower, 1.6s-cycle) audio-wave actually read as a wave rather
- * than getting cut off mid-breath.
+ * be perceivable, not just technically correct. Kept short (rather than
+ * the ~900ms this + the fade used to add up to) since most in-app routes
+ * — especially browser back/forward, already-prefetched pages — resolve
+ * almost instantly, and the floor was the dominant source of perceived
+ * lag rather than actual data loading.
  */
-const MIN_DISPLAY_MS = 700;
+const MIN_DISPLAY_MS = 200;
 
-const REVEAL_FADE_MS = 200;
+const REVEAL_FADE_MS = 120;
 
 const DEFAULT_ACCENT = "var(--color-primary)";
 const DEFAULT_ACCENT_LIGHT = "var(--color-primary-light)";
