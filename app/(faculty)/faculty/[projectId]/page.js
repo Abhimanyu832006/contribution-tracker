@@ -109,6 +109,18 @@ export default async function FacultyProjectPage({ params }) {
   const teamTotalHours = members.reduce((sum, m) => sum + Number(m.total_hours), 0);
   const teamTotalContributions = members.reduce((sum, m) => sum + m.contribution_count, 0);
 
+  // Flattened for the PDF report's faculty-remarks section — every
+  // remark on any contribution in this project, tagged with which
+  // contribution it's attached to.
+  const facultyRemarks = contributions.flatMap((c) =>
+    (c.remarks || []).map((r) => ({
+      contributionDescription: c.description,
+      remark: r.remark,
+      faculty_name: r.faculty_name,
+      created_at: r.created_at,
+    }))
+  );
+
   return (
     <div className="space-y-10 animate-fade-in">
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -136,6 +148,8 @@ export default async function FacultyProjectPage({ params }) {
           projectName={project.name}
           teamTotalHours={teamTotalHours}
           teamTotalContributions={teamTotalContributions}
+          isFacultyView
+          facultyRemarks={facultyRemarks}
         />
       )}
 

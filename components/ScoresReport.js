@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
@@ -18,7 +19,13 @@ export default function ScoresReport({
   projectName,
   teamTotalHours,
   teamTotalContributions,
+  // Only ever passed from the faculty dashboard — student/leader Reports
+  // never supplies these, which is what keeps the PDF's remarks section
+  // (see ContributionReportPDF) faculty-only without a separate prop.
+  isFacultyView = false,
+  facultyRemarks = [],
 }) {
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   function handleExportCsv() {
     const headers = [
       "GitHub Username",
@@ -69,6 +76,72 @@ export default function ScoresReport({
     URL.revokeObjectURL(url);
   }
 
+  async function handleExportPdf() {
+    setGeneratingPdf(true);
+    try {
+      // Dynamically imported so @react-pdf/renderer (a large, browser-only
+      // renderer) never ends up in the server bundle for this page.
+      const [{ pdf }, { default: ContributionReportPDF }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/reports/ContributionReportPDF"),
+      ]);
+
+      const teamTotals = members.reduce(
+        (acc, m) => ({
+          verified: acc.verified + (m.verified_count || 0),
+          pending: acc.pending + (m.pending_count || 0),
+          flagged: acc.flagged + (m.flagged_count || 0),
+        }),
+        { verified: 0, pending: 0, flagged: 0 }
+      );
+
+      const reportMembers = members.map((m) => ({
+        name: m.github_username,
+        hours: Number(m.total_hours).toFixed(1),
+        githubCount: m.github_count,
+        docsCount: m.docs_count ?? 0,
+        verifiedCount: m.verified_count,
+        pendingCount: m.pending_count,
+        flaggedCount: m.flagged_count,
+        pctOfHours: (teamTotalHours ? (m.total_hours / teamTotalHours) * 100 : 0).toFixed(1),
+        score: Number(m.score).toFixed(1),
+      }));
+
+      const remarks = facultyRemarks.map((r) => ({
+        contributionDescription: r.contributionDescription,
+        remark: r.remark,
+        facultyName: r.faculty_name,
+        createdAt: r.created_at,
+      }));
+
+      const blob = await pdf(
+        <ContributionReportPDF
+          projectName={projectName}
+          memberNames={members.map((m) => m.github_username)}
+          generatedAt={new Date()}
+          members={reportMembers}
+          teamTotals={teamTotals}
+          isFacultyView={isFacultyView}
+          remarks={remarks}
+        />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeName = projectName.replace(/[^a-zA-Z0-9_-]/g, "_");
+      a.download = `${safeName}_contribution_report_${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to generate PDF report:", err);
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Team summary */}
@@ -94,12 +167,20 @@ export default function ScoresReport({
         <h2 className="text-sm font-black uppercase tracking-tight">
           Per-Member Breakdown
         </h2>
-        <Button id="export-csv" variant="secondary" size="sm" onClick={handleExportCsv}>
-          <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-          </svg>
-          Export CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button id="export-csv" variant="secondary" size="sm" onClick={handleExportCsv}>
+            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            Export CSV
+          </Button>
+          <Button id="export-pdf" variant="secondary" size="sm" onClick={handleExportPdf} loading={generatingPdf}>
+            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            Download PDF
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
