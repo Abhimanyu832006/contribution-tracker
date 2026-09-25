@@ -3,6 +3,65 @@ import pool, { ensureSchema } from "@/lib/db";
 import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+// Shared by POST (cast/switch) and DELETE (retract) — recomputes the
+// majority-of-eligible-voters status from whatever's currently in
+// contribution_votes and persists + returns it, so both endpoints always
+// leave the contribution in a consistent state.
+async function recomputeStatus(contributionId, projectId, contributorId) {
+  const [{ rows: tallyRows }, { rows: eligibleRows }] = await Promise.all([
+    pool.query(
+      `SELECT
+         COALESCE(COUNT(id) FILTER (WHERE vote = 'approve'), 0)::int AS approves,
+         COALESCE(COUNT(id) FILTER (WHERE vote = 'flag'), 0)::int AS flags
+       FROM contribution_votes
+       WHERE contribution_id = $1`,
+      [contributionId]
+    ),
+    pool.query(
+      `SELECT COUNT(*) FILTER (WHERE user_id != $2)::int AS eligible
+       FROM project_members WHERE project_id = $1`,
+      [projectId, contributorId]
+    ),
+  ]);
+
+  const { approves, flags } = tallyRows[0];
+  const eligibleVoters = eligibleRows[0].eligible;
+  const majority = Math.floor(eligibleVoters / 2) + 1;
+  const totalVotes = approves + flags;
+
+  let newStatus;
+  if (eligibleVoters === 0) {
+    newStatus = "verified";
+  } else if (approves >= majority) {
+    newStatus = "verified";
+  } else if (flags >= majority) {
+    newStatus = "flagged";
+  } else if (totalVotes >= eligibleVoters && totalVotes > 0) {
+    newStatus = "contested";
+  } else {
+    newStatus = "pending";
+  }
+
+  await pool.query(`UPDATE contributions SET status = $1 WHERE id = $2`, [newStatus, contributionId]);
+
+  return { approves, flags, eligibleVoters, majority, newStatus };
+}
+
+async function fetchVoteHistory(contributionId) {
+  const { rows } = await pool.query(
+    `SELECT v.vote, v.comment, v.created_at, COALESCE(u.display_name, u.github_username) AS username, u.avatar_url
+     FROM contribution_votes v
+     JOIN users u ON u.id = v.user_id
+     WHERE v.contribution_id = $1
+     ORDER BY v.created_at DESC`,
+    [contributionId]
+  );
+  return rows;
+}
+
+// POST /api/contributions/[id]/vote — cast a vote, or switch an existing
+// one (approve -> flag or vice versa). To actually retract a vote
+// (returning to no vote at all), see DELETE below.
 export async function POST(request, context) {
   try {
     const session = await auth();
@@ -63,7 +122,8 @@ export async function POST(request, context) {
       );
     }
 
-    // 3. Upsert vote
+    // 3. Upsert vote — casts a new vote, or switches an existing one to
+    // the other type (approve <-> flag), same request either way.
     await pool.query(
       `INSERT INTO contribution_votes (contribution_id, user_id, vote, comment)
        VALUES ($1, $2, $3, $4)
@@ -72,75 +132,12 @@ export async function POST(request, context) {
       [contributionId, session.user.dbId, vote, comment || null]
     );
 
-    // 4. Calculate total tallies + how many teammates are actually
-    // eligible to vote on this (every current project member except the
-    // contributor themselves — a member who has since left doesn't count,
-    // and if the contributor has left, everyone currently on the project
-    // is eligible).
-    const [{ rows: tallyRows }, { rows: eligibleRows }] = await Promise.all([
-      pool.query(
-        `SELECT
-           COALESCE(COUNT(id) FILTER (WHERE vote = 'approve'), 0)::int AS approves,
-           COALESCE(COUNT(id) FILTER (WHERE vote = 'flag'), 0)::int AS flags
-         FROM contribution_votes
-         WHERE contribution_id = $1`,
-        [contributionId]
-      ),
-      pool.query(
-        `SELECT COUNT(*) FILTER (WHERE user_id != $2)::int AS eligible
-         FROM project_members WHERE project_id = $1`,
-        [contribution.project_id, contribution.user_id]
-      ),
-    ]);
-
-    const { approves, flags } = tallyRows[0];
-    const eligibleVoters = eligibleRows[0].eligible;
-
-    // Status logic — a majority of the team's ELIGIBLE voters, not a
-    // fixed "2 approvals" / "any single flag" rule, so that:
-    //   - a lone biased or rival vote can no longer unilaterally flag
-    //     someone's work (that used to be `flags > 0` -> flagged);
-    //   - small teams (e.g. exactly 2 people) can actually reach
-    //     'verified' at all — the old fixed threshold of 2 approvals was
-    //     literally unreachable when only 1 teammate could ever vote.
-    // A genuine tie among ALL eligible voters (nobody left to vote, and
-    // the split is even) becomes 'contested' instead of defaulting either
-    // way — the project leader breaks it via POST .../resolve.
-    const majority = Math.floor(eligibleVoters / 2) + 1;
-    const totalVotes = approves + flags;
-
-    let newStatus;
-    if (eligibleVoters === 0) {
-      // Nobody else on the project can ever vote on this (e.g. a
-      // solo project) — nothing to gate on, so it's accepted outright
-      // rather than stuck pending forever.
-      newStatus = "verified";
-    } else if (approves >= majority) {
-      newStatus = "verified";
-    } else if (flags >= majority) {
-      newStatus = "flagged";
-    } else if (totalVotes >= eligibleVoters) {
-      // Everyone eligible has voted and neither side reached a majority
-      // — only possible as an exact tie. Needs a human tie-break.
-      newStatus = "contested";
-    } else {
-      newStatus = "pending";
-    }
-
-    await pool.query(
-      `UPDATE contributions SET status = $1 WHERE id = $2`,
-      [newStatus, contributionId]
+    const { approves, flags, eligibleVoters, majority, newStatus } = await recomputeStatus(
+      contributionId,
+      contribution.project_id,
+      contribution.user_id
     );
-
-    // Fetch the full, updated verification history for this contribution
-    const { rows: voteRows } = await pool.query(
-      `SELECT v.vote, v.comment, v.created_at, COALESCE(u.display_name, u.github_username) AS username, u.avatar_url
-       FROM contribution_votes v
-       JOIN users u ON u.id = v.user_id
-       WHERE v.contribution_id = $1
-       ORDER BY v.created_at DESC`,
-      [contributionId]
-    );
+    const voteRows = await fetchVoteHistory(contributionId);
 
     return NextResponse.json({
       success: true,
@@ -157,6 +154,82 @@ export async function POST(request, context) {
     console.error("POST /api/contributions/[id]/vote error:", err);
     return NextResponse.json(
       { error: "Failed to record vote" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/contributions/[id]/vote — retract the signed-in user's own
+// vote entirely (back to no vote), rather than switching it to the other
+// type. Lets the Approve/Flag buttons act as a real toggle: clicking the
+// one you already picked undoes it instead of being a no-op re-submit.
+export async function DELETE(request, context) {
+  try {
+    const session = await auth();
+    if (!session?.user?.dbId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot vote on contributions." },
+        { status: 403 }
+      );
+    }
+
+    const membership = await getActiveMembership(session.user.dbId);
+    if (!membership) {
+      return NextResponse.json(
+        { error: "Forbidden: You must belong to a project to vote." },
+        { status: 403 }
+      );
+    }
+
+    const { id } = await context.params;
+    const contributionId = parseInt(id, 10);
+    if (isNaN(contributionId)) {
+      return NextResponse.json({ error: "Invalid contribution ID" }, { status: 400 });
+    }
+
+    const { rows: contribRows } = await pool.query(
+      `SELECT id, user_id, project_id, status FROM contributions WHERE id = $1`,
+      [contributionId]
+    );
+    if (contribRows.length === 0) {
+      return NextResponse.json({ error: "Contribution not found" }, { status: 404 });
+    }
+
+    const contribution = contribRows[0];
+    if (contribution.project_id !== membership.project_id) {
+      return NextResponse.json({ error: "Contribution belongs to another project" }, { status: 403 });
+    }
+
+    await pool.query(
+      `DELETE FROM contribution_votes WHERE contribution_id = $1 AND user_id = $2`,
+      [contributionId, session.user.dbId]
+    );
+
+    const { approves, flags, eligibleVoters, majority, newStatus } = await recomputeStatus(
+      contributionId,
+      contribution.project_id,
+      contribution.user_id
+    );
+    const voteRows = await fetchVoteHistory(contributionId);
+
+    return NextResponse.json({
+      success: true,
+      contributionId,
+      status: newStatus,
+      approves_count: approves,
+      flags_count: flags,
+      eligible_voters: eligibleVoters,
+      majority_needed: majority,
+      my_vote: null,
+      votes: voteRows,
+    });
+  } catch (err) {
+    console.error("DELETE /api/contributions/[id]/vote error:", err);
+    return NextResponse.json(
+      { error: "Failed to retract vote" },
       { status: 500 }
     );
   }
