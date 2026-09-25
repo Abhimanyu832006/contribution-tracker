@@ -5,6 +5,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Avatar from "@/components/ui/Avatar";
 import Button from "@/components/ui/Button";
+import { SCORE_WEIGHTS } from "@/lib/scoring";
 
 function csvEscape(value) {
   const str = String(value ?? "");
@@ -281,7 +282,8 @@ export default function ScoresReport({
           <span className="font-bold text-[var(--color-settings)]">Score</span> is a disclosed formula, computed
           per contribution and summed — not a hidden or AI-judged rating:{" "}
           <span className="font-mono">
-            (hours×3 + GitHub×2 + docs×2 + (doc words÷100)×1) × verification multiplier
+            (hours×{SCORE_WEIGHTS.perHour} + GitHub×{SCORE_WEIGHTS.perCommit} + docs×{SCORE_WEIGHTS.perDoc}{" "}
+            + (doc words÷100)×{SCORE_WEIGHTS.perHundredWords}) × verification multiplier
           </span>{" "}
           (verified ×1.0, pending ×0.5, flagged ×0), floored at 0.
         </p>

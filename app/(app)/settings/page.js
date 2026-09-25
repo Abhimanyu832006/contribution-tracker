@@ -2,6 +2,7 @@ import { requireProject } from "@/lib/auth";
 import pool, { ensureSchema } from "@/lib/db";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import GitHubRepoForm from "@/components/GitHubRepoForm";
+import GoogleDocsForm from "@/components/GoogleDocsForm";
 import FacultyInviteCodeCard from "@/components/FacultyInviteCodeCard";
 
 export const metadata = {
@@ -13,9 +14,9 @@ export default async function SettingsPage() {
   const projectId = session.user.projectId;
   await ensureSchema();
 
-  const [{ rows: projects }, { rows: memberCountRows }] = await Promise.all([
+  const [{ rows: projects }, { rows: memberCountRows }, { rows: leaderRows }] = await Promise.all([
     pool.query(
-      `SELECT id, name, invite_code, faculty_invite_code, repo_owner, repo_name, leader_id, created_at
+      `SELECT id, name, invite_code, faculty_invite_code, repo_owner, repo_name, google_folder_id, leader_id, created_at
        FROM projects WHERE id = $1`,
       [projectId]
     ),
@@ -23,9 +24,16 @@ export default async function SettingsPage() {
       `SELECT COUNT(*)::int AS count FROM project_members WHERE project_id = $1`,
       [projectId]
     ),
+    pool.query(
+      `SELECT u.google_refresh_token
+       FROM projects p JOIN users u ON u.id = p.leader_id
+       WHERE p.id = $1`,
+      [projectId]
+    ),
   ]);
   const project = projects[0];
   const memberCount = memberCountRows[0]?.count || 0;
+  const googleConnected = !!leaderRows[0]?.google_refresh_token;
 
   return (
     <div className="space-y-10 animate-fade-in">
@@ -46,6 +54,13 @@ export default async function SettingsPage() {
       <GitHubRepoForm
         initialRepo={project?.repo_owner && project?.repo_name ? `${project.repo_owner}/${project.repo_name}` : ""}
         isLeader={session.user.role === "leader"}
+      />
+
+      {/* ── Google Docs Integration ──────────────────────────────────── */}
+      <GoogleDocsForm
+        initialFolderId={project?.google_folder_id || ""}
+        isLeader={session.user.role === "leader"}
+        googleConnected={googleConnected}
       />
 
       {/* ── Faculty Invite (leader only) ─────────────────────────────── */}
