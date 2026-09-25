@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -195,74 +196,81 @@ export default function ProjectSettingsCard({ project, role, memberCount }) {
         </Card>
       )}
 
-      {/* Delete Project Confirmation Modal */}
-      {deleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
-            <div className="w-12 h-12 rounded border border-[var(--color-border)] bg-[var(--color-danger-light)] text-[var(--color-danger)] flex items-center justify-center mb-4">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-              </svg>
+      {/* Delete Project Confirmation Modal — portaled to document.body so
+          it's always pinned to the actual viewport. */}
+      {deleteModalOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+            <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
+              <div className="w-12 h-12 rounded border border-[var(--color-border)] bg-[var(--color-danger-light)] text-[var(--color-danger)] flex items-center justify-center mb-4">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                Delete &quot;{project.name}&quot;?
+              </h3>
+              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                This will permanently delete the project, all logged contributions, and remove all {memberCount} members.
+              </p>
+              <div className="mt-6 flex items-center justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setDeleteModalOpen(false)}
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="danger"
+                  onClick={handleDeleteProject}
+                  loading={loading}
+                >
+                  Delete Permanently
+                </Button>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
-              Delete &quot;{project.name}&quot;?
-            </h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-              This will permanently delete the project, all logged contributions, and remove all {memberCount} members.
-            </p>
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setDeleteModalOpen(false)}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                variant="danger"
-                onClick={handleDeleteProject}
-                loading={loading}
-              >
-                Delete Permanently
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
-      {/* Leave Project Confirmation Modal */}
-      {leaveModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
-            <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
-              Leave &quot;{project.name}&quot;?
-            </h3>
-            <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-              Are you sure you want to leave this project? You will lose access to its dashboard and team views until you are re-invited.
-            </p>
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setLeaveModalOpen(false)}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                variant="danger"
-                onClick={handleLeaveProject}
-                loading={loading}
-              >
-                Leave Project
-              </Button>
+      {/* Leave Project Confirmation Modal — same portal treatment */}
+      {leaveModalOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in">
+            <div className="w-full max-w-md rounded bg-[var(--color-surface)] p-6 brutal-shadow-lg border border-[var(--color-border)] animate-scale-in">
+              <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                Leave &quot;{project.name}&quot;?
+              </h3>
+              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                Are you sure you want to leave this project? You will lose access to its dashboard and team views until you are re-invited.
+              </p>
+              <div className="mt-6 flex items-center justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setLeaveModalOpen(false)}
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="danger"
+                  onClick={handleLeaveProject}
+                  loading={loading}
+                >
+                  Leave Project
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
