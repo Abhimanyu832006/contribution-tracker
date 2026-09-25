@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import pool, { ensureSchema } from "@/lib/db";
-import { getActiveMembership } from "@/lib/auth";
+import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request, context) {
@@ -9,8 +9,12 @@ export async function POST(request, context) {
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    await ensureSchema();
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot vote on contributions." },
+        { status: 403 }
+      );
+    }
 
     const membership = await getActiveMembership(session.user.dbId);
     if (!membership) {

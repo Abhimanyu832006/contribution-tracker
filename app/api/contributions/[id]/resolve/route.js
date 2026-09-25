@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
-import { getActiveMembership } from "@/lib/auth";
+import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 // POST /api/contributions/[id]/resolve — project-leader tie-break for a
@@ -15,6 +15,12 @@ export async function POST(request, context) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot resolve contributions." },
+        { status: 403 }
+      );
     }
 
     const membership = await getActiveMembership(session.user.dbId);

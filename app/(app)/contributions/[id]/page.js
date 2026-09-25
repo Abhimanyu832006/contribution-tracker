@@ -71,6 +71,15 @@ export default async function ContributionDetailPage({ params }) {
   // Not found, or belongs to a different project than the viewer's active one
   if (!c || c.project_id !== projectId) notFound();
 
+  const { rows: remarks } = await pool.query(
+    `SELECT r.remark, r.created_at, u.github_username AS faculty_name, u.avatar_url
+     FROM contribution_remarks r
+     JOIN users u ON u.id = r.faculty_user_id
+     WHERE r.contribution_id = $1
+     ORDER BY r.created_at DESC`,
+    [contributionId]
+  );
+
   const isGithub = c.source === "github";
   const isGoogleDocs = c.source === "google_docs";
   const statusVariant =
@@ -260,6 +269,29 @@ export default async function ContributionDetailPage({ params }) {
             </div>
           )}
         </div>
+
+        {/* Faculty remarks — read-only for students */}
+        {remarks.length > 0 && (
+          <div className="pt-2 border-t border-[var(--color-border)]">
+            <p className="label-mono mb-3">
+              Faculty Remarks ({remarks.length})
+            </p>
+            <div className="space-y-3">
+              {remarks.map((r, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <Avatar src={r.avatar_url} name={r.faculty_name} size="sm" />
+                  <div className="min-w-0">
+                    <p className="text-sm text-[var(--color-text-secondary)]">
+                      <span className="font-semibold">{r.faculty_name}</span>{" "}
+                      <span className="text-[var(--color-text-muted)] text-xs">{formatDate(r.created_at)}</span>
+                    </p>
+                    <p className="text-sm text-[var(--color-text-primary)] mt-0.5">{r.remark}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );

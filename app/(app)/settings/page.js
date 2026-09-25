@@ -2,9 +2,9 @@ import { requireProject } from "@/lib/auth";
 import pool, { ensureSchema } from "@/lib/db";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import InviteCodeCard from "@/components/InviteCodeCard";
+import FacultyInviteCodeCard from "@/components/FacultyInviteCodeCard";
 import TeamMemberCard from "@/components/TeamMemberCard";
 import GitHubRepoForm from "@/components/GitHubRepoForm";
-import GoogleDocsForm from "@/components/GoogleDocsForm";
 
 export const metadata = {
   title: "Project Settings — Contribution Tracker",
@@ -16,9 +16,9 @@ export default async function SettingsPage() {
   await ensureSchema();
 
   // Fetch project details + team members with hours in parallel — independent queries
-  const [{ rows: projects }, { rows: members }, { rows: leaderRows }] = await Promise.all([
+  const [{ rows: projects }, { rows: members }] = await Promise.all([
     pool.query(
-      `SELECT id, name, invite_code, repo_owner, repo_name, google_folder_id, leader_id, created_at
+      `SELECT id, name, invite_code, faculty_invite_code, repo_owner, repo_name, leader_id, created_at
        FROM projects WHERE id = $1`,
       [projectId]
     ),
@@ -37,26 +37,24 @@ export default async function SettingsPage() {
        ORDER BY pm.role DESC, total_hours DESC`,
       [projectId]
     ),
-    pool.query(
-      `SELECT u.google_refresh_token
-       FROM projects p JOIN users u ON u.id = p.leader_id
-       WHERE p.id = $1`,
-      [projectId]
-    ),
   ]);
   const project = projects[0];
   const memberCount = members.length;
-  const googleConnected = !!leaderRows[0]?.google_refresh_token;
 
   return (
     <div className="space-y-10 animate-fade-in">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Project Settings</h1>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">
-          Manage workspace details, team membership, and integrations for{" "}
-          {project?.name}
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Project Settings</h1>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">
+            Manage workspace details, team membership, and integrations for{" "}
+            {project?.name}
+          </p>
+        </div>
+        <span className="label-mono border border-[var(--color-border)] rounded px-2.5 py-1.5 bg-[var(--color-surface)]">
+          Account: Student
+        </span>
       </div>
 
       {/* ── GitHub Integration ────────────────────────────────────── */}
@@ -65,21 +63,19 @@ export default async function SettingsPage() {
         isLeader={session.user.role === "leader"}
       />
 
-      {/* ── Google Docs Integration ──────────────────────────────────── */}
-      <GoogleDocsForm
-        initialFolderId={project?.google_folder_id || ""}
-        isLeader={session.user.role === "leader"}
-        googleConnected={googleConnected}
-      />
-
       {/* ── Team Management ─────────────────────────────────────────── */}
       <section className="space-y-4">
         <h2 className="label-mono">
           Team Management
         </h2>
 
-        {/* Invite code */}
-        <InviteCodeCard inviteCode={project?.invite_code} />
+        {/* Invite codes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <InviteCodeCard inviteCode={project?.invite_code} />
+          {session.user.role === "leader" && (
+            <FacultyInviteCodeCard inviteCode={project?.faculty_invite_code} />
+          )}
+        </div>
 
         {/* Member roster */}
         <div>

@@ -28,12 +28,27 @@ export const authConfig = {
       // Protected routes require user to be logged in
       if (!isLoggedIn) return false;
 
-      // Authenticated user with no project memberships: redirect to /onboarding for all app routes except /onboarding
-      const hasProject = !!auth?.user?.hasProjects || !!auth?.user?.projectId;
+      const userType = auth.user.userType || "student";
+      const hasProject = !!auth.user.hasProjects || !!auth.user.projectId;
       const isOnboarding = pathname === "/onboarding";
-      const isApi = pathname.startsWith("/api");
+      const isFacultyRoute = pathname.startsWith("/faculty");
 
-      if (!hasProject && !isOnboarding && !isApi) {
+      // Faculty and students live in two completely separate route trees
+      // (Google-login faculty never see the student dashboard/log/vote
+      // pages, and vice versa) — this is the single central place that
+      // enforces the split, on every navigation.
+      if (userType === "faculty") {
+        if (!isFacultyRoute) {
+          return Response.redirect(new URL("/faculty", nextUrl));
+        }
+        return true;
+      }
+
+      // Student: keep existing behavior exactly, plus fence off /faculty.
+      if (isFacultyRoute) {
+        return Response.redirect(new URL(hasProject ? "/dashboard" : "/onboarding", nextUrl));
+      }
+      if (!hasProject && !isOnboarding) {
         return Response.redirect(new URL("/onboarding", nextUrl));
       }
 
@@ -42,6 +57,7 @@ export const authConfig = {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.dbId = user.dbId;
+        token.userType = user.userType;
         token.projectId = user.projectId;
         token.role = user.role;
         token.hasProjects = user.hasProjects;
@@ -59,6 +75,7 @@ export const authConfig = {
     },
     async session({ session, token }) {
       session.user.dbId = token.dbId;
+      session.user.userType = token.userType || "student";
       session.user.projectId = token.projectId;
       session.user.role = token.role;
       session.user.hasProjects = token.hasProjects;
@@ -67,5 +84,5 @@ export const authConfig = {
       return session;
     },
   },
-  providers: [], // Configured with GitHub in auth.js (Node runtime)
+  providers: [], // Configured with GitHub + Google in auth.js (Node runtime)
 };

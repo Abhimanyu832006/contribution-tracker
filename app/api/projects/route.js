@@ -1,9 +1,13 @@
 import { auth } from "@/auth";
 import pool, { ensureSchema } from "@/lib/db";
-import { getActiveMembership } from "@/lib/auth";
+import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+
+function generateCode() {
+  return crypto.randomBytes(6).toString("base64url").slice(0, 8).toUpperCase();
+}
 
 // POST /api/projects — create a new project
 export async function POST(request) {
@@ -11,6 +15,12 @@ export async function POST(request) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot create projects." },
+        { status: 403 }
+      );
     }
 
     const { name } = await request.json();
@@ -22,11 +32,8 @@ export async function POST(request) {
     }
 
     // Generate a short random invite code (8 chars, uppercase alphanumeric)
-    const inviteCode = crypto
-      .randomBytes(6)
-      .toString("base64url")
-      .slice(0, 8)
-      .toUpperCase();
+    const inviteCode = generateCode();
+    const facultyInviteCode = generateCode();
 
     const client = await pool.connect();
     try {
@@ -34,10 +41,10 @@ export async function POST(request) {
 
       // Create the project
       const { rows: projectRows } = await client.query(
-        `INSERT INTO projects (name, invite_code, leader_id)
-         VALUES ($1, $2, $3)
+        `INSERT INTO projects (name, invite_code, faculty_invite_code, leader_id)
+         VALUES ($1, $2, $3, $4)
          RETURNING id, invite_code`,
-        [name.trim(), inviteCode, session.user.dbId]
+        [name.trim(), inviteCode, facultyInviteCode, session.user.dbId]
       );
       const project = projectRows[0];
 
@@ -86,6 +93,12 @@ export async function DELETE() {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot modify projects." },
+        { status: 403 }
+      );
     }
 
     const membership = await getActiveMembership(session.user.dbId);
@@ -145,6 +158,12 @@ export async function PATCH(request) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot modify projects." },
+        { status: 403 }
+      );
     }
 
     const membership = await getActiveMembership(session.user.dbId);

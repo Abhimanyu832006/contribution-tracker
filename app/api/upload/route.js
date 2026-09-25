@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { isFaculty } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
@@ -25,6 +26,12 @@ export async function POST(request) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot upload attachments." },
+        { status: 403 }
+      );
     }
 
     const formData = await request.formData();

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
-import { getActiveMembership } from "@/lib/auth";
+import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 // POST /api/projects/sync-github — sync commits from configured GitHub repo
@@ -9,6 +9,12 @@ export async function POST() {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot trigger a GitHub sync." },
+        { status: 403 }
+      );
     }
 
     const membership = await getActiveMembership(session.user.dbId);

@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
-import { getActiveMembership } from "@/lib/auth";
+import { getActiveMembership, isFaculty } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -10,6 +10,12 @@ export async function DELETE(request) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts cannot modify project membership." },
+        { status: 403 }
+      );
     }
 
     const membership = await getActiveMembership(session.user.dbId);

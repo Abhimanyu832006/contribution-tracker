@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import pool from "@/lib/db";
+import { isFaculty } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -9,6 +10,12 @@ export async function POST(request) {
     const session = await auth();
     if (!session?.user?.dbId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (isFaculty(session)) {
+      return NextResponse.json(
+        { error: "Forbidden: Faculty accounts join projects via a faculty invite code instead." },
+        { status: 403 }
+      );
     }
 
     const { invite_code } = await request.json();
