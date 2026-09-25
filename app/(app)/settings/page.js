@@ -2,6 +2,7 @@ import { requireProject } from "@/lib/auth";
 import pool, { ensureSchema } from "@/lib/db";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
 import GitHubRepoForm from "@/components/GitHubRepoForm";
+import FacultyInviteCodeCard from "@/components/FacultyInviteCodeCard";
 
 export const metadata = {
   title: "Project Settings — Contribution Tracker",
@@ -14,7 +15,7 @@ export default async function SettingsPage() {
 
   const [{ rows: projects }, { rows: memberCountRows }] = await Promise.all([
     pool.query(
-      `SELECT id, name, invite_code, repo_owner, repo_name, leader_id, created_at
+      `SELECT id, name, invite_code, faculty_invite_code, repo_owner, repo_name, leader_id, created_at
        FROM projects WHERE id = $1`,
       [projectId]
     ),
@@ -46,6 +47,16 @@ export default async function SettingsPage() {
         initialRepo={project?.repo_owner && project?.repo_name ? `${project.repo_owner}/${project.repo_name}` : ""}
         isLeader={session.user.role === "leader"}
       />
+
+      {/* ── Faculty Invite (leader only) ─────────────────────────────── */}
+      {session.user.role === "leader" && (
+        <section className="space-y-4">
+          <h2 className="label-mono">
+            Faculty Supervision
+          </h2>
+          <FacultyInviteCodeCard inviteCode={project?.faculty_invite_code} />
+        </section>
+      )}
 
       {/* ── Project lifecycle (leave / delete) ──────────────────────── */}
       <section className="space-y-4">

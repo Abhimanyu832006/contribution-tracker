@@ -1,7 +1,6 @@
 import { requireProject } from "@/lib/auth";
 import pool, { ensureSchema } from "@/lib/db";
 import InviteCodeCard from "@/components/InviteCodeCard";
-import FacultyInviteCodeCard from "@/components/FacultyInviteCodeCard";
 import TeamMemberCard from "@/components/TeamMemberCard";
 
 export const metadata = {
@@ -15,7 +14,7 @@ export default async function TeamPage() {
 
   const [{ rows: projects }, { rows: members }] = await Promise.all([
     pool.query(
-      `SELECT id, name, invite_code, faculty_invite_code FROM projects WHERE id = $1`,
+      `SELECT id, name, invite_code FROM projects WHERE id = $1`,
       [projectId]
     ),
     pool.query(
@@ -43,15 +42,12 @@ export default async function TeamPage() {
       <div>
         <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Team</h1>
         <p className="text-sm text-[var(--color-text-muted)] mt-1">
-          Invite teammates and a faculty supervisor, and see who&apos;s on {project?.name}
+          Invite teammates and see who&apos;s on {project?.name}
         </p>
       </div>
 
-      {/* Invite codes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <InviteCodeCard inviteCode={project?.invite_code} />
-        {isLeader && <FacultyInviteCodeCard inviteCode={project?.faculty_invite_code} />}
-      </div>
+      {/* Invite code */}
+      <InviteCodeCard inviteCode={project?.invite_code} />
 
       {/* Member roster */}
       <div>
