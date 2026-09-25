@@ -1,7 +1,8 @@
 import { requireProject } from "@/lib/auth";
-import pool from "@/lib/db";
+import pool, { ensureSchema } from "@/lib/db";
 import Card from "@/components/ui/Card";
 import ScoresReport from "@/components/ScoresReport";
+import { computeContributionScore } from "@/lib/scoring";
 
 export const metadata = {
   title: "Reports — Contribution Tracker",
@@ -10,10 +11,14 @@ export const metadata = {
 export default async function ScoresPage() {
   const session = await requireProject();
   const projectId = session.user.projectId;
+  await ensureSchema();
 
   // Per-member breakdown: hours, contribution counts by source and status.
-  // All figures are computed directly from recorded contributions/votes —
-  // no invented weighting or scoring formula.
+  // Every raw figure below is computed directly from recorded
+  // contributions/votes. The one derived figure — `score` — is an
+  // explicit, disclosed formula (see lib/scoring.js), not a hidden
+  // weighting; the raw counts it's built from are shown right next to it
+  // so nothing is hidden behind a single number.
   const [{ rows: members }, { rows: projectRows }] = await Promise.all([
     pool.query(
       `SELECT
@@ -25,6 +30,8 @@ export default async function ScoresPage() {
          COUNT(c.id)::int AS contribution_count,
          COUNT(c.id) FILTER (WHERE c.source = 'github')::int AS github_count,
          COUNT(c.id) FILTER (WHERE c.source = 'manual')::int AS manual_count,
+         COUNT(c.id) FILTER (WHERE c.source = 'google_docs')::int AS docs_count,
+         COALESCE(SUM(c.word_count) FILTER (WHERE c.source = 'google_docs'), 0)::int AS docs_word_count,
          COUNT(c.id) FILTER (WHERE c.status = 'pending')::int AS pending_count,
          COUNT(c.id) FILTER (WHERE c.status IN ('verified', 'approved'))::int AS verified_count,
          COUNT(c.id) FILTER (WHERE c.status = 'flagged')::int AS flagged_count
@@ -39,6 +46,8 @@ export default async function ScoresPage() {
     pool.query("SELECT name FROM projects WHERE id = $1", [projectId]),
   ]);
   const projectName = projectRows[0]?.name || "Project";
+
+  const membersWithScore = members.map((m) => ({ ...m, score: computeContributionScore(m) }));
 
   const teamTotalHours = members.reduce((sum, m) => sum + Number(m.total_hours), 0);
   const teamTotalContributions = members.reduce((sum, m) => sum + m.contribution_count, 0);
@@ -62,7 +71,7 @@ export default async function ScoresPage() {
         </Card>
       ) : (
         <ScoresReport
-          members={members}
+          members={membersWithScore}
           projectName={projectName}
           teamTotalHours={teamTotalHours}
           teamTotalContributions={teamTotalContributions}

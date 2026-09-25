@@ -11,6 +11,7 @@ import { CATEGORY_BADGE_MAP } from "@/lib/constants";
 const STATUS_TABS = [
   { value: "", label: "All" },
   { value: "pending", label: "Pending" },
+  { value: "contested", label: "Contested" },
   { value: "verified", label: "Verified" },
   { value: "flagged", label: "Flagged" },
 ];
@@ -39,9 +40,10 @@ function formatBytes(bytes) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-export default function PeerVerificationList({ initialContributions = [], currentUserId }) {
+export default function PeerVerificationList({ initialContributions = [], currentUserId, isLeader = false }) {
   const [contributions, setContributions] = useState(initialContributions);
   const [votingId, setVotingId] = useState(null);
+  const [resolvingId, setResolvingId] = useState(null);
   const [error, setError] = useState("");
   const [historyOpenId, setHistoryOpenId] = useState(null);
   const [commentDraft, setCommentDraft] = useState({});
@@ -65,6 +67,33 @@ export default function PeerVerificationList({ initialContributions = [], curren
   }, [contributions, statusFilter, search]);
 
   const pendingCount = contributions.filter((c) => !c.status || c.status === "pending").length;
+  const contestedCount = contributions.filter((c) => c.status === "contested").length;
+
+  async function handleResolve(contributionId, decision) {
+    setResolvingId(contributionId);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/contributions/${contributionId}/resolve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to resolve contribution");
+      }
+
+      setContributions((prev) =>
+        prev.map((c) => (c.id === contributionId ? { ...c, status: data.status } : c))
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setResolvingId(null);
+    }
+  }
 
   async function handleVote(contributionId, voteType) {
     setVotingId(contributionId);
@@ -144,6 +173,17 @@ export default function PeerVerificationList({ initialContributions = [], curren
         </div>
       )}
 
+      {isLeader && contestedCount > 0 && (
+        <div className="flex items-center gap-3 bg-[var(--color-settings-light)] border border-[var(--color-border)] rounded px-4 py-3 brutal-shadow-sm">
+          <span className="flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-settings)] stat-num text-base shrink-0">
+            {contestedCount}
+          </span>
+          <span className="text-sm font-bold text-[var(--color-text-primary)]">
+            tied vote{contestedCount === 1 ? "" : "s"} need{contestedCount === 1 ? "s" : ""} your decision — the team split evenly and couldn&apos;t reach a majority
+          </span>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <div className="flex items-center gap-1 p-1 border border-[var(--color-border)] bg-[var(--color-bg)] rounded w-fit">
@@ -185,11 +225,13 @@ export default function PeerVerificationList({ initialContributions = [], curren
           const hasVotedFlag = c.my_vote === "flag";
           const isVerified = c.status === "verified" || c.status === "approved";
           const isFlagged = c.status === "flagged";
+          const isContested = c.status === "contested";
+          const isResolvingThis = resolvingId === c.id;
 
           return (
             <Card
               key={c.id}
-              accent={isFlagged ? "danger" : isVerified ? "success" : "warning"}
+              accent={isFlagged ? "danger" : isVerified ? "success" : isContested ? "contested" : "warning"}
               className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 hover:brutal-shadow"
             >
               {/* Left Info: Author, Category, Description, Attached File */}
@@ -316,10 +358,10 @@ export default function PeerVerificationList({ initialContributions = [], curren
                       {Number(c.time_estimate).toFixed(1)} hrs
                     </span>
                     <Badge
-                      variant={isVerified ? "green" : isFlagged ? "red" : "yellow"}
+                      variant={isVerified ? "green" : isFlagged ? "red" : isContested ? "purple" : "yellow"}
                       className="!text-xs uppercase font-bold"
                     >
-                      {isVerified ? "verified" : c.status || "pending"}
+                      {isVerified ? "verified" : isContested ? "contested" : c.status || "pending"}
                     </Badge>
                   </div>
 
@@ -400,6 +442,38 @@ export default function PeerVerificationList({ initialContributions = [], curren
                         </Button>
                       </div>
                     </>
+                  )}
+
+                  {isContested && isLeader && (
+                    <div className="mt-1 pt-2 border-t border-dashed border-[var(--color-border)] w-full flex flex-col items-end gap-1.5">
+                      <p className="text-[11px] font-bold text-[var(--color-settings)] uppercase tracking-wider">
+                        Tied vote — your call
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          id={`resolve-verify-${c.id}`}
+                          type="button"
+                          size="sm"
+                          disabled={isResolvingThis}
+                          onClick={() => handleResolve(c.id, "verified")}
+                          className="!bg-[var(--color-success-light)] text-[var(--color-success)]"
+                          title="Break the tie as verified"
+                        >
+                          Verify
+                        </Button>
+                        <Button
+                          id={`resolve-flag-${c.id}`}
+                          type="button"
+                          size="sm"
+                          disabled={isResolvingThis}
+                          onClick={() => handleResolve(c.id, "flagged")}
+                          className="!bg-[var(--color-danger-light)] text-[var(--color-danger)]"
+                          title="Break the tie as flagged"
+                        >
+                          Flag
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

@@ -26,11 +26,13 @@ export default function ScoresReport({
       "Total Hours",
       "Total Contributions",
       "GitHub Contributions",
+      "Docs Contributions",
       "Manual Contributions",
       "Pending",
       "Verified",
       "Flagged",
       "% of Team Hours",
+      "Contribution Score",
     ];
 
     const rows = members.map((m) => {
@@ -41,11 +43,13 @@ export default function ScoresReport({
         Number(m.total_hours).toFixed(1),
         m.contribution_count,
         m.github_count,
+        m.docs_count ?? 0,
         m.manual_count,
         m.pending_count,
         m.verified_count,
         m.flagged_count,
         `${pct}%`,
+        m.score,
       ];
     });
 
@@ -114,6 +118,9 @@ export default function ScoresReport({
                   GitHub
                 </th>
                 <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
+                  Docs
+                </th>
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Manual
                 </th>
                 <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
@@ -125,8 +132,11 @@ export default function ScoresReport({
                 <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   Flagged
                 </th>
-                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-5 py-3">
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-4 py-3">
                   % of Hours
+                </th>
+                <th className="text-right font-black text-white text-xs uppercase tracking-wider px-5 py-3">
+                  Score
                 </th>
               </tr>
             </thead>
@@ -150,11 +160,14 @@ export default function ScoresReport({
                       {Number(m.total_hours).toFixed(1)}
                     </td>
                     <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]">{m.github_count}</td>
+                    <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]" title={`${m.docs_word_count || 0} words total`}>
+                      {m.docs_count ?? 0}
+                    </td>
                     <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]">{m.manual_count}</td>
                     <td className="text-right px-4 py-3 text-[var(--color-success)] font-bold">{m.verified_count}</td>
                     <td className="text-right px-4 py-3 text-[var(--color-warning)] font-bold">{m.pending_count}</td>
                     <td className="text-right px-4 py-3 text-[var(--color-danger)] font-bold">{m.flagged_count}</td>
-                    <td className="text-right px-5 py-3">
+                    <td className="text-right px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <span className="text-[var(--color-text-muted)] text-xs font-bold w-10 text-right">{pct.toFixed(1)}%</span>
                         <span className="hidden sm:block w-14 h-2 border border-[var(--color-border)] overflow-hidden">
@@ -165,6 +178,11 @@ export default function ScoresReport({
                         </span>
                       </div>
                     </td>
+                    <td className="text-right px-5 py-3">
+                      <span className="stat-num text-base" style={{ color: "var(--color-settings)" }}>
+                        {Number(m.score).toFixed(1)}
+                      </span>
+                    </td>
                   </tr>
                 );
               })}
@@ -173,10 +191,17 @@ export default function ScoresReport({
         </div>
       </Card>
 
-      <p className="text-xs font-medium text-[var(--color-text-muted)] border-l border-[var(--color-border)] pl-3">
-        Figures are computed directly from logged contributions and peer verification votes.
-        No weighting or scoring formula is applied.
-      </p>
+      <div className="text-xs font-medium text-[var(--color-text-muted)] border-l border-[var(--color-border)] pl-3 space-y-1">
+        <p>
+          Every column except <span className="font-bold text-[var(--color-settings)]">Score</span> is computed
+          directly from logged contributions and peer verification votes.
+        </p>
+        <p>
+          <span className="font-bold text-[var(--color-settings)]">Score</span> is a disclosed formula over those
+          same columns — not a hidden or AI-judged rating: <span className="font-mono">hours×3 + GitHub×2 + docs×2
+          + (doc words÷100)×1 + verified×1 − flagged×2</span>, floored at 0.
+        </p>
+      </div>
     </div>
   );
 }

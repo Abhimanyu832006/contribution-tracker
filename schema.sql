@@ -62,6 +62,7 @@ CREATE TABLE contributions (
   commit_url      TEXT,
   doc_id          TEXT,
   doc_url         TEXT,
+  word_count      INTEGER,
   attachment_url  TEXT,
   attachment_name TEXT,
   attachment_size INTEGER,
@@ -207,4 +208,15 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS google_folder_id TEXT;
 ALTER TABLE contributions ADD COLUMN IF NOT EXISTS doc_id TEXT;
 ALTER TABLE contributions ADD COLUMN IF NOT EXISTS doc_url TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS uq_project_doc ON contributions (project_id, doc_id) WHERE doc_id IS NOT NULL;
+
+-- 4. Word count captured at sync time (for the Reports scoring system)
+ALTER TABLE contributions ADD COLUMN IF NOT EXISTS word_count INTEGER;
+
+-- ============================================================
+-- SECTION G: In-Place Migration Script (v7 -> v8: Voting Ties)
+-- No schema change needed — 'contested' is just a new value for the
+-- existing unconstrained `contributions.status` TEXT column, and the
+-- eligible-voter majority calculation reads project_members directly.
+-- Listed here only for the version history.
+-- ============================================================
 

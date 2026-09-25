@@ -10,6 +10,7 @@ const ACCENTS = {
   warning: "var(--color-warning)",
   danger: "var(--color-danger)",
   docs: "var(--color-contributions)",
+  contested: "var(--color-settings)",
 };
 
 export default function Card({

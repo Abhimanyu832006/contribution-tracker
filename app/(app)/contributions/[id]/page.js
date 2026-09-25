@@ -78,6 +78,8 @@ export default async function ContributionDetailPage({ params }) {
       ? "green"
       : c.status === "flagged"
       ? "red"
+      : c.status === "contested"
+      ? "purple"
       : "yellow";
   const statusLabel =
     c.status === "approved" ? "verified" : c.status || "pending";

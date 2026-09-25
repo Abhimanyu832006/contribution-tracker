@@ -4,6 +4,27 @@ import { getActiveMembership } from "@/lib/auth";
 import { refreshGoogleAccessToken } from "@/lib/googleAuth";
 import { NextResponse } from "next/server";
 
+// Best-effort word count for one doc, via Drive's plain-text export of a
+// Google Doc (works with the same drive.readonly scope already granted —
+// no separate Docs API scope needed). Feeds the Reports scoring system;
+// a failure here just means that doc scores as 0 words, not a sync
+// failure, since the doc itself still gets recorded either way.
+async function fetchDocWordCount(fileId, accessToken) {
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${fileId}/export?mimeType=text/plain`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (!res.ok) return null;
+    const text = await res.text();
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    return words.length;
+  } catch (err) {
+    console.error(`Failed to fetch word count for doc ${fileId}:`, err);
+    return null;
+  }
+}
+
 // POST /api/projects/sync-google-docs — sync Google Docs from the
 // project's configured Drive folder as contributions. Mirrors
 // sync-github's shape: resolve the leader's stored credentials, fetch
@@ -120,31 +141,41 @@ export async function POST() {
     // a given doc. Synced docs are attributed to whoever ran the sync,
     // same as any other member-triggered action in this app.
     let skipped = 0;
-    const toInsert = [];
+    const newFiles = [];
     for (const file of files) {
       if (!file.id) continue;
       if (existingIds.has(file.id)) {
         skipped++;
         continue;
       }
-
-      toInsert.push([
-        membership.project_id,
-        session.user.dbId,
-        "google_docs",
-        "Documentation",
-        (file.name || "Google Doc").substring(0, 255),
-        0.0, // 0.0 hours default per doc, same convention as synced commits
-        "approved", // Auto-approved for a verified Drive source, same as GitHub
-        file.id,
-        file.webViewLink || `https://docs.google.com/document/d/${file.id}/edit`,
-        file.modifiedTime || new Date().toISOString(),
-      ]);
+      newFiles.push(file);
     }
+
+    // One export request per new doc — sequential, not Promise.all, so a
+    // batch of many new docs doesn't fire dozens of concurrent requests
+    // against Drive at once.
+    const wordCounts = [];
+    for (const file of newFiles) {
+      wordCounts.push(await fetchDocWordCount(file.id, accessToken));
+    }
+
+    const toInsert = newFiles.map((file, i) => [
+      membership.project_id,
+      session.user.dbId,
+      "google_docs",
+      "Documentation",
+      (file.name || "Google Doc").substring(0, 255),
+      0.0, // 0.0 hours default per doc, same convention as synced commits
+      "approved", // Auto-approved for a verified Drive source, same as GitHub
+      file.id,
+      file.webViewLink || `https://docs.google.com/document/d/${file.id}/edit`,
+      file.modifiedTime || new Date().toISOString(),
+      wordCounts[i],
+    ]);
 
     let added = 0;
     if (toInsert.length > 0) {
-      const cols = 10;
+      const cols = 11;
       const values = [];
       const placeholders = toInsert.map((row, i) => {
         values.push(...row);
@@ -153,7 +184,7 @@ export async function POST() {
       });
 
       await pool.query(
-        `INSERT INTO contributions (project_id, user_id, source, category, description, time_estimate, status, doc_id, doc_url, created_at)
+        `INSERT INTO contributions (project_id, user_id, source, category, description, time_estimate, status, doc_id, doc_url, created_at, word_count)
          VALUES ${placeholders.join(", ")}`,
         values
       );

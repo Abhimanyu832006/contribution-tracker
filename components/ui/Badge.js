@@ -17,6 +17,10 @@ export default function Badge({
     yellow:  "bg-[var(--color-reports-light)] text-[#5a6b00]",
     red:     "bg-[var(--color-danger-light)] text-[var(--color-danger)]",
     blue:    "bg-[var(--color-contributions-light)] text-[var(--color-contributions)]",
+    // Deliberately distinct from yellow (pending)/red (flagged)/green
+    // (verified) — a "contested" tie needs to visually stand out as its
+    // own state, not read as a shade of one of the other three.
+    purple:  "bg-[var(--color-settings-light)] text-[var(--color-settings)]",
   };
 
   return (

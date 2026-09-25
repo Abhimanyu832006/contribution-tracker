@@ -90,6 +90,7 @@ export default async function PeerVerificationPage() {
       <PeerVerificationList
         initialContributions={contributions}
         currentUserId={currentUserId}
+        isLeader={session.user.role === "leader"}
       />
     </div>
   );
