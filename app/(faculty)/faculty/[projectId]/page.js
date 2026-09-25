@@ -4,6 +4,7 @@ import pool from "@/lib/db";
 import Card from "@/components/ui/Card";
 import ScoresReport from "@/components/ScoresReport";
 import FacultyContributionList from "@/components/FacultyContributionList";
+import FacultyLeaveButton from "@/components/FacultyLeaveButton";
 import { computeContributionScore } from "@/lib/scoring";
 
 export const metadata = {
@@ -109,14 +110,17 @@ export default async function FacultyProjectPage({ params }) {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">
-          {project.name}
-        </h1>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1 max-w-xl">
-          Read-only report — the same figures and formula students see, plus the ability to leave
-          remarks on individual contributions.
-        </p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">
+            {project.name}
+          </h1>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1 max-w-xl">
+            Read-only report — the same figures and formula students see, plus the ability to leave
+            remarks on individual contributions.
+          </p>
+        </div>
+        <FacultyLeaveButton projectId={project.id} projectName={project.name} />
       </div>
 
       {members.length === 0 || teamTotalContributions === 0 ? (
