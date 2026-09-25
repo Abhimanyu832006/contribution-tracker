@@ -217,7 +217,7 @@ export default async function DashboardPage() {
             className="w-14 h-14 shrink-0 border border-[var(--color-border)] rounded flex items-center justify-center"
             style={{ background: "var(--color-reports)" }}
           >
-            <span className="stat-num text-xl">{topCategory[0].count}</span>
+            <span className="text-2xl font-black text-black">{topCategory[0].count}</span>
           </div>
         </div>
       )}
