@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import Card from "@/components/ui/Card";
+import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
-import ContributionForm from "@/components/ContributionForm";
 import ContributionList from "@/components/ContributionList";
 import { CATEGORY_NAMES } from "@/lib/constants";
 
@@ -13,7 +12,6 @@ export default function ContributionsPage() {
   const [filter, setFilter] = useState("everyone"); // "mine" | "everyone"
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(true);
   const [activeProject, setActiveProject] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
@@ -106,33 +104,43 @@ export default function ContributionsPage() {
         <div>
           <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Contributions</h1>
           <p className="text-sm text-[var(--color-text-muted)] mt-1">
-            Log your work and browse everything the team has recorded
+            Browse everything the team has recorded
           </p>
         </div>
-        {activeProject?.repoOwner && activeProject?.repoName && (
-          <Button
-            id="sync-github-commits"
-            onClick={handleSync}
-            loading={syncing}
-            variant="secondary"
-            size="sm"
-          >
-            <svg
-              className="w-4 h-4 text-[var(--color-text-muted)] mr-1.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        <div className="flex items-center gap-2 shrink-0">
+          {activeProject?.repoOwner && activeProject?.repoName && (
+            <Button
+              id="sync-github-commits"
+              onClick={handleSync}
+              loading={syncing}
+              variant="secondary"
+              size="sm"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-              />
-            </svg>
-            Sync GitHub
-          </Button>
-        )}
+              <svg
+                className="w-4 h-4 text-[var(--color-text-muted)] mr-1.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+              Sync GitHub
+            </Button>
+          )}
+          <Link href="/log">
+            <Button id="log-contribution" size="sm">
+              <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Log Contribution
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {syncError && (
@@ -164,33 +172,6 @@ export default function ContributionsPage() {
           </button>
         </div>
       )}
-
-      {/* Log new contribution — always available, regardless of which
-          tab (Mine/Everyone's) is being browsed below */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="label-mono">
-            Log New Contribution
-          </h2>
-          <button
-            type="button"
-            onClick={() => setShowForm((p) => !p)}
-            className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
-          >
-            {showForm ? "Hide form" : "Show form"}
-          </button>
-        </div>
-
-        {showForm && (
-          <Card accent="manual">
-            <ContributionForm
-              onSuccess={() => {
-                fetchContributions();
-              }}
-            />
-          </Card>
-        )}
-      </div>
 
       {/* Filter toggle */}
       <div className="space-y-4">

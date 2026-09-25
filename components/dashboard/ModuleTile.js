@@ -39,28 +39,6 @@ function timeAgo(iso) {
   return `${days}d ago`;
 }
 
-/** A 7-day mini streak strip — GitHub-heatmap-flavored, comic-sized.
- * Each square's fill intensity reflects that day's contribution count.
- * Uses --color-surface (not accentLight) for the "some" tier since the
- * tile's own resting background is accentLight now — filling a square
- * with the same color as the card behind it would make it invisible. */
-function StreakRow({ days, accent }) {
-  return (
-    <div className="flex items-center gap-1" title="Last 7 days">
-      {days.map((d) => (
-        <span
-          key={d.date}
-          title={`${d.date}: ${d.count} contribution${d.count === 1 ? "" : "s"}`}
-          className="w-2.5 h-2.5 rounded-sm border border-[var(--color-border)]"
-          style={{
-            background: d.count === 0 ? "transparent" : d.count === 1 ? "var(--color-surface)" : accent,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /** Small overlapping avatar stack — used by the Team tile so its
  * generous row-span-1 footprint shows real faces, not just a count. */
 function AvatarStack({ members, overflow }) {
@@ -166,9 +144,6 @@ export default function ModuleTile({ tile, onClick }) {
             {tile.icon}
           </svg>
         </span>
-        {tile.streak?.length > 0 && (
-          <StreakRow days={tile.streak} accent={tile.accent} />
-        )}
         <svg
           className="w-4 h-4 text-[var(--color-text-muted)]"
           fill="none"
