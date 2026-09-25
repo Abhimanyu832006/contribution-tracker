@@ -102,7 +102,7 @@ export async function POST(request, context) {
 
     // 1. Verify contribution exists and belongs to the active project
     const { rows: contribRows } = await pool.query(
-      `SELECT id, user_id, project_id, status FROM contributions WHERE id = $1`,
+      `SELECT id, user_id, project_id, status, source FROM contributions WHERE id = $1`,
       [contributionId]
     );
 
@@ -113,6 +113,15 @@ export async function POST(request, context) {
     const contribution = contribRows[0];
     if (contribution.project_id !== membership.project_id) {
       return NextResponse.json({ error: "Contribution belongs to another project" }, { status: 403 });
+    }
+
+    // GitHub commits are auto-verified at sync time — peer voting on them
+    // isn't meaningful (there's no self-reported claim to check).
+    if (contribution.source === "github") {
+      return NextResponse.json(
+        { error: "GitHub commits are auto-verified and cannot be voted on." },
+        { status: 400 }
+      );
     }
 
     // 2. Prevent self-voting

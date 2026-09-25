@@ -228,6 +228,7 @@ export default function PeerVerificationList({ initialContributions = [], curren
       <div className="space-y-3 stagger-children">
         {filteredContributions.map((c) => {
           const isOwnContribution = c.user_id === currentUserId;
+          const isGithub = c.source === "github";
           const isVotingThis = votingId === c.id;
           const hasVotedApprove = c.my_vote === "approve";
           const hasVotedFlag = c.my_vote === "flag";
@@ -394,7 +395,11 @@ export default function PeerVerificationList({ initialContributions = [], curren
 
                 {/* Vote Action Buttons */}
                 <div className="flex flex-col items-end gap-2">
-                  {isOwnContribution ? (
+                  {isGithub ? (
+                    <span className="text-xs font-bold text-[var(--color-text-muted)] italic px-2 py-1 border border-dashed border-[var(--color-border)] rounded">
+                      Auto-verified via GitHub
+                    </span>
+                  ) : isOwnContribution ? (
                     <span className="text-xs font-bold text-[var(--color-text-muted)] italic px-2 py-1 border border-dashed border-[var(--color-border)] rounded">
                       Your contribution
                     </span>
