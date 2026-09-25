@@ -21,6 +21,7 @@ CREATE TABLE users (
   google_id             TEXT UNIQUE,
   user_type             TEXT NOT NULL DEFAULT 'student',
   github_username       TEXT NOT NULL,
+  display_name          TEXT,
   avatar_url            TEXT,
   github_access_token   TEXT,
   google_access_token   TEXT,
@@ -273,4 +274,10 @@ CREATE INDEX IF NOT EXISTS idx_contribution_remarks_contribution ON contribution
 UPDATE projects
 SET faculty_invite_code = UPPER(SUBSTRING(MD5(id::text || random()::text || clock_timestamp()::text) FOR 8))
 WHERE faculty_invite_code IS NULL;
+
+-- ============================================================
+-- SECTION I: In-Place Migration Script (v9 -> v10: Editable Display Name)
+-- Applied automatically by lib/db.js's ensureSchema() on first use.
+-- ============================================================
+ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT;
 

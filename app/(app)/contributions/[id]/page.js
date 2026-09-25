@@ -42,13 +42,13 @@ export default async function ContributionDetailPage({ params }) {
        c.id, c.user_id, c.category, c.description, c.time_estimate, c.status,
        c.source, c.commit_sha, c.commit_url, c.doc_url, c.attachment_url, c.attachment_name,
        c.attachment_size, c.attachment_type, c.created_at, c.project_id,
-       u.github_username, u.avatar_url,
+       COALESCE(u.display_name, u.github_username) AS github_username, u.avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
        COALESCE(
          json_agg(
            jsonb_build_object(
-             'username', vu.github_username,
+             'username', COALESCE(vu.display_name, vu.github_username),
              'avatar_url', vu.avatar_url,
              'vote', v.vote,
              'comment', v.comment,
@@ -62,7 +62,7 @@ export default async function ContributionDetailPage({ params }) {
      LEFT JOIN contribution_votes v ON v.contribution_id = c.id
      LEFT JOIN users vu ON vu.id = v.user_id
      WHERE c.id = $1
-     GROUP BY c.id, u.github_username, u.avatar_url`,
+     GROUP BY c.id, u.id, u.avatar_url`,
     [contributionId]
   );
 
@@ -72,7 +72,7 @@ export default async function ContributionDetailPage({ params }) {
   if (!c || c.project_id !== projectId) notFound();
 
   const { rows: remarks } = await pool.query(
-    `SELECT r.remark, r.created_at, u.github_username AS faculty_name, u.avatar_url
+    `SELECT r.remark, r.created_at, COALESCE(u.display_name, u.github_username) AS faculty_name, u.avatar_url
      FROM contribution_remarks r
      JOIN users u ON u.id = r.faculty_user_id
      WHERE r.contribution_id = $1

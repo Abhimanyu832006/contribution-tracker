@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import Avatar from "@/components/ui/Avatar";
+import ProfileMenu from "@/components/ProfileMenu";
 import ThemeToggle from "@/components/ThemeToggle";
 
 /**
@@ -174,7 +174,7 @@ export default function AppHeader({
 
         <div className="flex items-center gap-2 shrink-0">
           <ThemeToggle />
-          <Avatar src={user?.avatarUrl} name={user?.githubUsername} size="sm" />
+          <ProfileMenu user={user} />
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="p-2 border border-transparent hover:border-[var(--color-border)] rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"

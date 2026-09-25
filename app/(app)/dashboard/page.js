@@ -26,7 +26,7 @@ export default async function DashboardPage() {
     ),
     pool.query(
       `SELECT
-         u.id, u.github_username, u.avatar_url, pm.role,
+         u.id, COALESCE(u.display_name, u.github_username) AS github_username, u.avatar_url, pm.role,
          COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
          COUNT(c.id)::int AS contribution_count
        FROM project_members pm
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
     pool.query(
       `SELECT
          c.id, c.category, c.description, c.status, c.source,
-         c.commit_sha, c.created_at, u.github_username
+         c.commit_sha, c.created_at, COALESCE(u.display_name, u.github_username) AS github_username
        FROM contributions c
        JOIN users u ON u.id = c.user_id
        WHERE c.project_id = $1

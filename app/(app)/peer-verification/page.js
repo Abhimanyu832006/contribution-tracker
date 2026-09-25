@@ -27,7 +27,7 @@ export default async function PeerVerificationPage() {
        c.attachment_name,
        c.attachment_size,
        c.attachment_type,
-       u.github_username,
+       COALESCE(u.display_name, u.github_username) AS github_username,
        u.avatar_url,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'approve'), 0)::int AS approves_count,
        COALESCE(COUNT(v.id) FILTER (WHERE v.vote = 'flag'), 0)::int AS flags_count,
@@ -35,7 +35,7 @@ export default async function PeerVerificationPage() {
        COALESCE(
          json_agg(
            jsonb_build_object(
-             'username', vu.github_username,
+             'username', COALESCE(vu.display_name, vu.github_username),
              'avatar_url', vu.avatar_url,
              'vote', v.vote,
              'comment', v.comment,
@@ -49,7 +49,7 @@ export default async function PeerVerificationPage() {
      LEFT JOIN contribution_votes v ON v.contribution_id = c.id
      LEFT JOIN users vu ON vu.id = v.user_id
      WHERE c.project_id = $1
-     GROUP BY c.id, u.github_username, u.avatar_url
+     GROUP BY c.id, u.id, u.avatar_url
      ORDER BY c.created_at DESC`,
     [projectId, currentUserId]
   );

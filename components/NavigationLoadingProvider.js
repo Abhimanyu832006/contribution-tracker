@@ -67,8 +67,19 @@ function cleanLabel(text) {
 
 const NavigationLoadingContext = createContext(null);
 
+// Falls back to a plain navigation instead of crashing when a component
+// renders outside NavigationLoadingProvider — e.g. a transient
+// layout-cache mismatch right after onboarding (create/join a project)
+// swaps the (app) layout from its chrome-less onboarding shape into the
+// full AppChrome-wrapped one. Degraded behavior (a real page nav, no
+// fancy overlay) beats a hard crash.
+function fallbackBeginTransition({ href }) {
+  if (typeof window !== "undefined") window.location.href = href;
+}
+
 export function useNavigationLoading() {
-  return useContext(NavigationLoadingContext);
+  const ctx = useContext(NavigationLoadingContext);
+  return ctx || { beginTransition: fallbackBeginTransition };
 }
 
 /**

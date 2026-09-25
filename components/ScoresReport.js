@@ -75,17 +75,17 @@ export default function ScoresReport({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="relative overflow-hidden" style={{ borderLeft: "6px solid var(--color-reports)" }}>
           <p className="label-mono">Team Total Hours</p>
-          <p className="stat-num text-4xl mt-2" style={{ color: "var(--color-primary)" }}>
+          <p className="text-4xl font-black mt-2 text-[var(--color-text-primary)]" style={{ color: "var(--color-primary)" }}>
             {teamTotalHours.toFixed(1)}
           </p>
         </Card>
         <Card style={{ borderLeft: "6px solid var(--color-contributions)" }}>
           <p className="label-mono">Total Contributions</p>
-          <p className="stat-num text-4xl mt-2">{teamTotalContributions}</p>
+          <p className="text-4xl font-black mt-2 text-[var(--color-text-primary)]">{teamTotalContributions}</p>
         </Card>
         <Card style={{ borderLeft: "6px solid var(--color-team)" }}>
           <p className="label-mono">Contributors</p>
-          <p className="stat-num text-4xl mt-2">{members.length}</p>
+          <p className="text-4xl font-black mt-2 text-[var(--color-text-primary)]">{members.length}</p>
         </Card>
       </div>
 
@@ -156,7 +156,7 @@ export default function ScoresReport({
                         </div>
                       </div>
                     </td>
-                    <td className="text-right px-4 py-3 stat-num text-base">
+                    <td className="text-right px-4 py-3 font-bold text-base text-[var(--color-text-primary)]">
                       {Number(m.total_hours).toFixed(1)}
                     </td>
                     <td className="text-right px-4 py-3 text-[var(--color-text-secondary)]">{m.github_count}</td>
@@ -179,7 +179,7 @@ export default function ScoresReport({
                       </div>
                     </td>
                     <td className="text-right px-5 py-3">
-                      <span className="stat-num text-base" style={{ color: "var(--color-settings)" }}>
+                      <span className="font-black text-base" style={{ color: "var(--color-settings)" }}>
                         {Number(m.score).toFixed(1)}
                       </span>
                     </td>

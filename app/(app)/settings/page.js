@@ -25,7 +25,7 @@ export default async function SettingsPage() {
     pool.query(
       `SELECT
          u.id,
-         u.github_username,
+         COALESCE(u.display_name, u.github_username) AS github_username,
          u.avatar_url,
          pm.role,
          COALESCE(SUM(c.time_estimate), 0) AS total_hours

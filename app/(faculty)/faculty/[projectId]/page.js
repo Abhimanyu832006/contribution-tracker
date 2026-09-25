@@ -31,7 +31,7 @@ export default async function FacultyProjectPage({ params }) {
     pool.query(
       `SELECT
          u.id,
-         u.github_username,
+         COALESCE(u.display_name, u.github_username) AS github_username,
          u.avatar_url,
          pm.role,
          COALESCE(SUM(c.time_estimate), 0)::float AS total_hours,
@@ -54,14 +54,14 @@ export default async function FacultyProjectPage({ params }) {
     pool.query(
       `SELECT
          c.id, c.category, c.description, c.time_estimate, c.status, c.source, c.created_at,
-         u.github_username, u.avatar_url,
+         COALESCE(u.display_name, u.github_username) AS github_username, u.avatar_url,
          COALESCE(
            json_agg(
              jsonb_build_object(
                'id', r.id,
                'remark', r.remark,
                'created_at', r.created_at,
-               'faculty_name', fu.github_username,
+               'faculty_name', COALESCE(fu.display_name, fu.github_username),
                'avatar_url', fu.avatar_url
              ) ORDER BY r.created_at DESC
            ) FILTER (WHERE r.id IS NOT NULL),
@@ -72,7 +72,7 @@ export default async function FacultyProjectPage({ params }) {
        LEFT JOIN contribution_remarks r ON r.contribution_id = c.id
        LEFT JOIN users fu ON fu.id = r.faculty_user_id
        WHERE c.project_id = $1
-       GROUP BY c.id, u.github_username, u.avatar_url
+       GROUP BY c.id, u.id, u.avatar_url
        ORDER BY c.created_at DESC`,
       [projectId]
     ),

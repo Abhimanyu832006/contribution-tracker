@@ -134,7 +134,7 @@ export async function POST(request, context) {
 
     // Fetch the full, updated verification history for this contribution
     const { rows: voteRows } = await pool.query(
-      `SELECT v.vote, v.comment, v.created_at, u.github_username AS username, u.avatar_url
+      `SELECT v.vote, v.comment, v.created_at, COALESCE(u.display_name, u.github_username) AS username, u.avatar_url
        FROM contribution_votes v
        JOIN users u ON u.id = v.user_id
        WHERE v.contribution_id = $1

@@ -29,7 +29,7 @@ export async function GET(request) {
       `SELECT
          c.id,
          u.id AS user_id,
-         u.github_username,
+         COALESCE(u.display_name, u.github_username) AS github_username,
          u.avatar_url,
          c.category,
          c.description,

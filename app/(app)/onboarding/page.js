@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
 export default function OnboardingPage() {
   const { data: session, update } = useSession();
-  const router = useRouter();
   const [mode, setMode] = useState(null); // 'create' | 'join'
   const [projectName, setProjectName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
@@ -36,7 +34,15 @@ export default function OnboardingPage() {
       const data = await res.json();
       // Update the session so projectId is available
       await update({ projectId: data.project_id, role: "leader" });
-      router.push("/dashboard");
+      // A hard navigation, not router.push: the (app) layout renders
+      // without AppChrome/NavigationLoadingProvider while there's no
+      // membership yet (onboarding), and Next's client router cache can
+      // otherwise reuse that chrome-less layout render for a moment after
+      // the switch, crashing any component that expects the provider.
+      // Signing in fresh (a real page load) never hits this, so a full
+      // reload here keeps both paths landing the same way.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/dashboard";
     } catch (err) {
       setError(err.message);
     } finally {
@@ -63,7 +69,9 @@ export default function OnboardingPage() {
       }
       const data = await res.json();
       await update({ projectId: data.project_id, role: "member" });
-      router.push("/dashboard");
+      // See handleCreate's comment above — hard navigation, not router.push.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/dashboard";
     } catch (err) {
       setError(err.message);
     } finally {
