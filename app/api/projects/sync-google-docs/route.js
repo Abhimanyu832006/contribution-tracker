@@ -100,7 +100,7 @@ export async function POST() {
     try {
       const q = `'${project.google_folder_id}' in parents and mimeType='application/vnd.google-apps.document' and trashed=false`;
       const driveRes = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&pageSize=100&orderBy=modifiedTime desc&fields=${encodeURIComponent("files(id,name,webViewLink,modifiedTime)")}`,
+        `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&pageSize=100&orderBy=modifiedTime desc&fields=${encodeURIComponent("files(id,name,webViewLink,modifiedTime,owners(emailAddress,displayName))")}`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
@@ -134,19 +134,57 @@ export async function POST() {
       );
     }
 
-    const { rows: existingDocs } = await pool.query(
-      "SELECT doc_id FROM contributions WHERE project_id = $1 AND doc_id IS NOT NULL",
-      [membership.project_id]
-    );
+    const [{ rows: existingDocs }, { rows: projectMembers }] = await Promise.all([
+      pool.query(
+        "SELECT doc_id FROM contributions WHERE project_id = $1 AND doc_id IS NOT NULL",
+        [membership.project_id]
+      ),
+      pool.query(
+        `SELECT u.id, u.github_username, u.display_name
+         FROM project_members pm
+         JOIN users u ON u.id = pm.user_id
+         WHERE pm.project_id = $1`,
+        [membership.project_id]
+      ),
+    ]);
     const existingIds = new Set(existingDocs.map((d) => d.doc_id));
 
-    // Attribution note: unlike a GitHub commit (which carries an author
-    // login/email we can match to a project member), Drive's file
-    // metadata has no identity shared with this app's GitHub-based user
-    // accounts — there's no reliable way to know which team member wrote
-    // a given doc. Synced docs are attributed to whoever ran the sync,
-    // same as any other member-triggered action in this app.
+    // Attribute each doc to whichever project member owns it in Drive,
+    // the same way sync-github matches a commit's author to a member:
+    // by email-local-part, then by normalized display name. Google
+    // Docs created inside the shared folder keep their creator as
+    // "owner" even after sharing, so this reflects who actually wrote
+    // the doc rather than whoever happened to click Sync — unlike a
+    // GitHub login, Drive's owner identity is a Google account, so the
+    // match is against whatever name/email that Google account shows,
+    // not a stored email column (this app doesn't collect student email
+    // addresses). Anything that doesn't match falls back to whoever ran
+    // the sync, same as before.
+    function findMatchingMember(owner) {
+      if (!owner) return null;
+      const email = owner.emailAddress;
+      if (email) {
+        const prefix = email.split("@")[0].toLowerCase();
+        const match = projectMembers.find(
+          (m) => m.github_username.toLowerCase() === prefix
+        );
+        if (match) return match;
+      }
+      const name = owner.displayName;
+      if (name) {
+        const normalized = name.replace(/\s+/g, "").toLowerCase();
+        const match = projectMembers.find(
+          (m) =>
+            m.github_username.replace(/\s+/g, "").toLowerCase() === normalized ||
+            (m.display_name || "").replace(/\s+/g, "").toLowerCase() === normalized
+        );
+        if (match) return match;
+      }
+      return null;
+    }
+
     let skipped = 0;
+    let unmatched = 0;
     const newFiles = [];
     for (const file of files) {
       if (!file.id) continue;
@@ -154,7 +192,10 @@ export async function POST() {
         skipped++;
         continue;
       }
-      newFiles.push(file);
+      const owner = file.owners?.[0];
+      const matchedMember = findMatchingMember(owner);
+      if (!matchedMember) unmatched++;
+      newFiles.push({ ...file, matchedUserId: matchedMember?.id || session.user.dbId });
     }
 
     // One export request per new doc — sequential, not Promise.all, so a
@@ -167,7 +208,7 @@ export async function POST() {
 
     const toInsert = newFiles.map((file, i) => [
       membership.project_id,
-      session.user.dbId,
+      file.matchedUserId,
       "google_docs",
       "Documentation",
       (file.name || "Google Doc").substring(0, 255),
@@ -197,7 +238,7 @@ export async function POST() {
       added = toInsert.length;
     }
 
-    return NextResponse.json({ success: true, added, skipped });
+    return NextResponse.json({ success: true, added, skipped, unmatched });
   } catch (err) {
     console.error("POST /api/projects/sync-google-docs error:", err);
     return NextResponse.json(

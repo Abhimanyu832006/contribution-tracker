@@ -156,6 +156,9 @@ export default function GoogleDocsForm({ initialFolderId = "", isLeader = false,
           <div className="flex items-center gap-2 text-sm font-bold text-[var(--color-contributions)] bg-[var(--color-contributions-light)] rounded px-4 py-3 border border-[var(--color-border)] animate-scale-in">
             Synced {syncResult.added} new doc{syncResult.added === 1 ? "" : "s"}
             {syncResult.skipped > 0 ? ` (${syncResult.skipped} already synced)` : ""}.
+            {syncResult.unmatched > 0
+              ? ` ${syncResult.unmatched} doc${syncResult.unmatched === 1 ? "" : "s"} couldn't be matched to a team member by owner and ${syncResult.unmatched === 1 ? "was" : "were"} credited to whoever ran the sync.`
+              : ""}
           </div>
         )}
 
