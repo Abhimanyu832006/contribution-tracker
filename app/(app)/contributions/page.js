@@ -10,7 +10,7 @@ import ContributionList from "@/components/ContributionList";
 import { CATEGORY_NAMES } from "@/lib/constants";
 
 export default function ContributionsPage() {
-  const [filter, setFilter] = useState("mine"); // "mine" | "everyone"
+  const [filter, setFilter] = useState("everyone"); // "mine" | "everyone"
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(true);
@@ -165,33 +165,32 @@ export default function ContributionsPage() {
         </div>
       )}
 
-      {/* Log new contribution — only shown on "Mine" tab */}
-      {filter === "mine" && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="label-mono">
-              Log New Contribution
-            </h2>
-            <button
-              type="button"
-              onClick={() => setShowForm((p) => !p)}
-              className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
-            >
-              {showForm ? "Hide form" : "Show form"}
-            </button>
-          </div>
-
-          {showForm && (
-            <Card accent="manual">
-              <ContributionForm
-                onSuccess={() => {
-                  fetchContributions();
-                }}
-              />
-            </Card>
-          )}
+      {/* Log new contribution — always available, regardless of which
+          tab (Mine/Everyone's) is being browsed below */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="label-mono">
+            Log New Contribution
+          </h2>
+          <button
+            type="button"
+            onClick={() => setShowForm((p) => !p)}
+            className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+          >
+            {showForm ? "Hide form" : "Show form"}
+          </button>
         </div>
-      )}
+
+        {showForm && (
+          <Card accent="manual">
+            <ContributionForm
+              onSuccess={() => {
+                fetchContributions();
+              }}
+            />
+          </Card>
+        )}
+      </div>
 
       {/* Filter toggle */}
       <div className="space-y-4">

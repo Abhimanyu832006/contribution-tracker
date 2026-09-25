@@ -1,9 +1,6 @@
 import { requireProject } from "@/lib/auth";
 import pool, { ensureSchema } from "@/lib/db";
 import ProjectSettingsCard from "@/components/ProjectSettingsCard";
-import InviteCodeCard from "@/components/InviteCodeCard";
-import FacultyInviteCodeCard from "@/components/FacultyInviteCodeCard";
-import TeamMemberCard from "@/components/TeamMemberCard";
 import GitHubRepoForm from "@/components/GitHubRepoForm";
 
 export const metadata = {
@@ -15,31 +12,19 @@ export default async function SettingsPage() {
   const projectId = session.user.projectId;
   await ensureSchema();
 
-  // Fetch project details + team members with hours in parallel — independent queries
-  const [{ rows: projects }, { rows: members }] = await Promise.all([
+  const [{ rows: projects }, { rows: memberCountRows }] = await Promise.all([
     pool.query(
-      `SELECT id, name, invite_code, faculty_invite_code, repo_owner, repo_name, leader_id, created_at
+      `SELECT id, name, invite_code, repo_owner, repo_name, leader_id, created_at
        FROM projects WHERE id = $1`,
       [projectId]
     ),
     pool.query(
-      `SELECT
-         u.id,
-         COALESCE(u.display_name, u.github_username) AS github_username,
-         u.avatar_url,
-         pm.role,
-         COALESCE(SUM(c.time_estimate), 0) AS total_hours
-       FROM project_members pm
-       JOIN users u ON u.id = pm.user_id
-       LEFT JOIN contributions c ON c.user_id = u.id AND c.project_id = pm.project_id
-       WHERE pm.project_id = $1
-       GROUP BY u.id, pm.role
-       ORDER BY pm.role DESC, total_hours DESC`,
+      `SELECT COUNT(*)::int AS count FROM project_members WHERE project_id = $1`,
       [projectId]
     ),
   ]);
   const project = projects[0];
-  const memberCount = members.length;
+  const memberCount = memberCountRows[0]?.count || 0;
 
   return (
     <div className="space-y-10 animate-fade-in">
@@ -48,8 +33,7 @@ export default async function SettingsPage() {
         <div>
           <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-primary)]">Project Settings</h1>
           <p className="text-sm text-[var(--color-text-muted)] mt-1">
-            Manage workspace details, team membership, and integrations for{" "}
-            {project?.name}
+            Manage workspace details and integrations for {project?.name}
           </p>
         </div>
         <span className="label-mono border border-[var(--color-border)] rounded px-2.5 py-1.5 bg-[var(--color-surface)]">
@@ -62,38 +46,6 @@ export default async function SettingsPage() {
         initialRepo={project?.repo_owner && project?.repo_name ? `${project.repo_owner}/${project.repo_name}` : ""}
         isLeader={session.user.role === "leader"}
       />
-
-      {/* ── Team Management ─────────────────────────────────────────── */}
-      <section className="space-y-4">
-        <h2 className="label-mono">
-          Team Management
-        </h2>
-
-        {/* Invite codes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <InviteCodeCard inviteCode={project?.invite_code} />
-          {session.user.role === "leader" && (
-            <FacultyInviteCodeCard inviteCode={project?.faculty_invite_code} />
-          )}
-        </div>
-
-        {/* Member roster */}
-        <div>
-          <h3 className="label-mono mb-3">
-            Members ({memberCount})
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 stagger-children">
-            {members.map((m) => (
-              <TeamMemberCard
-                key={m.id}
-                member={m}
-                isLeader={session.user.role === "leader"}
-                currentUserId={session.user.dbId}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Project lifecycle (leave / delete) ──────────────────────── */}
       <section className="space-y-4">
